@@ -6,19 +6,19 @@ b = 1;
 N = 30;
 M = 128;
 
-x = linspace(a, b * (1 - 1 / N), N);
+x = [0:N-1] / N;
 f1 = cos(2 * pi * x);
 f2 = (x - x(2)) .^ 2;
 
-F1 = fourier_transform2(f1, M);
-F2 = fourier_transform(f2);
+F1 = fft(f1, M);
+F2 = fft(f2, M);
 
 x_plot = [0:M-1] / M;
 figure(1)
 hold on
 grid on
-plot(x_plot, real(F1), 'r*');
-plot(x_plot, imag(F1), 'bo');
+plot(x_plot, real(F1), 'r-x');
+plot(x_plot, imag(F1), 'g-x');
 legend('real', 'imag');
 axis([0 1 0 2]);
 
