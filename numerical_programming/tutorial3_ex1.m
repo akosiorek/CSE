@@ -5,12 +5,20 @@ function tutorial3_ex2()
 
     t = (0:9) / 10;
     flow_rate = [0 35 0.125 5 0 5 1 0.5 0.125 0];
+    
+    % add points to show periodicity
+    t = [t 1];
+    flow_rate = [flow_rate 0];
+    
     f_coefs = fft(flow_rate) / length(flow_rate);
-
+    
     N = 1000;
-    t_vis = linspace(0, 0.9 - 1/N, N);
+    t_vis = linspace(0, 1 - 1/N, N);
     y_trig = trig_interp(t_vis, f_coefs);
 
+    % normalize t before fitting the poly
+%     t = (t - mean(t_vis)) / std(t);
+    
     poly = polyfit(t, flow_rate, length(flow_rate) - 1);
     y_poly = polyval(poly, t_vis);
 
