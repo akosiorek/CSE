@@ -1,0 +1,94 @@
+\documentclass[journal, a4paper]{IEEEtran}
+
+
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{amsmath} 
+
+
+\begin{document}
+
+
+	\title{SVM for MNIST Handwritten Digits Classification}
+	\author{Adam Kosiorek}
+	\thanks{Advisor: M.Sc. Caner Hazibras & M.Sc. Phillip , Chair for Computer Vision, TUM, SS 2015.}
+	\markboth{Machine Learning for Applications in Computer Vision}{}
+	\maketitle
+
+
+\begin{abstract}
+  This report describes classification of handwritten digits from the MNIST dataset by an SVM classifier.
+\end{abstract}
+
+\section{Introduction}
+    \PARstart{T}{he} first assignment was to explore the SVM classifier for the MNIST handwritten digits recognition. 
+
+\section{Dataset}
+    The MNIST dataset is comprised of 60000 training and 10000 testing samples \cite{MNIST}. Each sample is a 28x28 pixel black and white image of a single centered digit. It is widly used as a benchmark for comparing machine learning algorithms.
+	
+
+\section{Experiments}
+    All experiments were carried out on a notebook with Intel i7-2670QM quad core CPU and 8Gb RAM with Python SciPy package.
+    \subsection{Dataset Preparation}
+	It is known that processing input data prior to classification can improve results. In case of MNIST and SVM, however, state of the arts results have been achieved without preprocessing, that is, with raw pixels \cite{VSVM}. I compare the influence of mean intensity subtraction and ZCA-Whitening \cite{UFLDL} on classification accuracy.
+  
+    \subsection{Classifier Tuning}
+	The SVM classifier can be adapted to a particular task by choosing a kernel type and adjusting several parameters. Since the parameters might not be independent it is often necessary to perform an exhaustive grid search. Python's sklearn.grid\_search.GridSearchCV is well suited for this task. I explored linear kernel, rbf kernel with gamma between 1e-6 and 1 and a polynomial kernel of degree between 2 and 9. For all kernels the C parameter was taken from the range between 1e-2 and 1e4. Tuning was performed on a 10\% subset of the data - 6000 training and 1000 testing samples. Only the best performing classifiers were evaluated on the whole dataset.
+		
+		
+\section {Results and Discussion}
+
+	\begin{table}[!hbt]
+		\begin{center}
+		\label{tab:results}
+		\begin{tabular}{|c|c|}
+			% To create a horizontal line, type \hline
+			\hline
+			% To end a column type &
+			% For a linebreak type \\
+			Information message length & $k=16000$ bit \\
+			\hline
+			Radio segment size & $b=160$ bit \\
+			\hline
+			Rate of component codes & $R_{cc}=1/3$\\
+			\hline
+			Polynomial of component encoders & $[1 , 33/37 , 25/37]_8$\\
+			\hline
+		\end{tabular}
+		\end{center}
+	\end{table}
+
+
+
+% Now we need a bibliography:
+\begin{thebibliography}{5}
+
+	\bibitem{MNIST}
+	Y.~LeCun, L.~Bottou, Y.~Bengio, and P.~Haffner. ``Gradient-based learning applied to document recognition.'' Proceedings of the IEEE, 86(11):2278-2324, November 1998.
+	
+	\bibitem{MJH06} % Conference paper
+	T.~Mayer, H.~Jenkac, and J.~Hagenauer. Turbo base-station cooperation for intercell interference cancellation. {\em IEEE Int. Conf. Commun. (ICC)}, Istanbul, Turkey, pp.~356--361, June 2006.
+	
+	\bibitem{VSVM}
+	D.~Decoste and B.~Schölkopf. ``Training invariant support vector machines.'' Machine learning 46, no. 1-3 (2002): 161-190.
+
+	\bibitem{Proakis} % Book
+	J.~G.~Proakis. {\em Digital Communications}. McGraw-Hill Book Co.,
+	New York, USA, 3rd edition, 1995.
+
+	\bibitem{MNIST_Website} % Web document
+	Y.~LeCun, C.~Cortes, C.J.C.~Burges. The MNIST database of handwritten digits.
+	\url{http://yann.lecun.com/exdb/mnist/}.
+	
+	\bibitem{UFLDL} % Web document
+	A.~Ng, J,~Ngiam, C.Y.~Foo, Y.~Mai and C~Suen. ``Unsupervised Feature Learning and Deep Learning Tutorial.''
+	\url{http://ufldl.stanford.edu/wiki/index.php/UFLDL_Tutorial}.
+
+	\bibitem{5}
+	IEEE Transactions \LaTeX and Microsoft Word Style Files.
+	\url{http://www.ieee.org/web/publications/authors/transjnl/index.html}
+
+\end{thebibliography}
+
+% Your document ends here!
+\end{document}
