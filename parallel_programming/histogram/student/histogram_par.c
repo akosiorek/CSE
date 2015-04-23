@@ -7,62 +7,49 @@
 #define SIZE 'z' - 'a' + 1
 
 struct Data {
-  int histogram[SIZE];
-  int num_blocks;
+  unsigned int histogram[SIZE];
+  unsigned int num_blocks;
   block_t* blocks;
-  int num_threads;
-  int thread_id;
-  pthread_barrier_t* barrier;
 };
+
 
 void* build_histogram(void* arg) {
 
   struct Data* data = (struct Data*)arg;
 
+  for(int i = 0; i < SIZE; ++i) {
+    data->histogram[i] = 0;
+  }
+
   for (int i = 0; i < data->num_blocks; i++) {
     for (int j = 0; j < BLOCKSIZE; j++) {
       if (data->blocks[i][j] >= 'a' && data->blocks[i][j] <= 'z') {
 
-        data->histogram[data->blocks[i][j] - 'a']++;
+        data->histogram[data->blocks[i][j] - 'a'] += 1;
 
       } else if(data->blocks[i][j] >= 'A' && data->blocks[i][j] <= 'Z') {
 
-        data->histogram[data->blocks[i][j]-'A']++;
+        data->histogram[data->blocks[i][j]-'A'] += 1;
       } 
     }
   }
-
-  pthread_barrier_wait(data->barrier);
-  int step = 2;
-  int id = data->thread_id;
-  while(thread_id > 0 && id % step == 0) {
- 
-    step = step << 1;
-  }
   return NULL;
 }
+
 
 void get_histogram(unsigned int nBlocks,
       block_t *blocks,
       histogram_t histogram,
       unsigned int num_threads) {
 
- printf("#threads = %d\n", num_threads);
-
-  pthread_barrier_t barrier;
   pthread_t* thread = malloc(num_threads * sizeof(*thread));
   struct Data* data = malloc(num_threads * sizeof(*data));
-  int blocksPerThread = nBlocks / num_threads;
-  int remainingBlocks = nBlocks % num_threads;
-
-  pthread_barrier_init(&barrier, num_threads);
+  unsigned int blocksPerThread = nBlocks / num_threads;
+  unsigned int remainingBlocks = nBlocks % num_threads;
 
   // Spawn N threads to process the data
   for(int i = 0; i < num_threads; i++) {
     data[i].num_blocks = blocksPerThread;
-    data[i].num_threads = num_threads;
-    data[i].thread_it = i;
-    data[i].barrier = &barrier;
 
     if(remainingBlocks > 0) {
         data[i].num_blocks += 1;
@@ -79,6 +66,10 @@ void get_histogram(unsigned int nBlocks,
     pthread_join(thread[i], NULL);
   }
 
+  for(int i = 0; i < SIZE; ++i) {
+    histogram[i] = 0;
+  }
+
   // Accumulate the results
   for(int i = 0; i < num_threads; i++) {
     for(int j = 0; j < SIZE; j++) {
@@ -86,7 +77,13 @@ void get_histogram(unsigned int nBlocks,
     }
   }
 
-  pthread_barrier_destroy(&barrier);
+
   free(thread);
   free(data);
+//if(num_threads == 5)
+//  for(int i = 0; i < 'z' - 'a' + 1; i++) {
+//    printf("%c:\t%u\n", (char)('a'+i), histogram[i]);
+//  }
 }
+
+

@@ -1,4 +1,5 @@
 #include "histogram.h"
+#include <stdio.h>
 
 void get_histogram(unsigned int nBlocks,
 		   						 block_t *blocks,
@@ -16,4 +17,8 @@ void get_histogram(unsigned int nBlocks,
 				histogram[blocks[i][j]-'A']++;
 		}
 	}
+
+//  for(i = 0; i < 'z' - 'a' + 1; i++) {
+//    printf("%c:\t%u\n", (char)('a'+i), histogram[i]);
+//  }
 }
