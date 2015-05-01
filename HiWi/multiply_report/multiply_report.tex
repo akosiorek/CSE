@@ -20,7 +20,7 @@
 \end{abstract}
 
 \section{Introduction}
-    \PARstart{T}{he} majority of numerically intensive software projects can be reduced on the lowest evel to linear algebra problems. It is hardly surprising that the main suite of tools for them - Basic Linear Algebra Subroutines (BLAS) - is amongst the most heavily optimized software packages out there. Using advanced data distribution and load balancing techniques, it leverages data locality and various levels of parallelism to boost performance. Many BLAS implementations are, however, ill-suited for small sized problems. As shown later, Intel MKL~-- arguably the fastest implementation for x86 CPUs~\cite{MKL}~-- is easily outperformed by the most na\"ive general matrix-matrix multiplication code when inputs are not big enough. In many cases it is therefore possible and necessary to devise custom matrix multiplication routines optimized for smaller problems. We develop performance model and optimized code for the following cases of matrix-matrix multiplication:
+    \PARstart{T}{he} majority of numerically intensive software projects can be reduced on the lowest level to linear algebra problems. It is hardly surprising that the main suite of tools for them - Basic Linear Algebra Subroutines (BLAS) - is amongst the most heavily optimized software packages out there. Using advanced data distribution and load balancing techniques, it leverages data locality and various levels of parallelism to boost performance. Many BLAS implementations are, however, ill-suited for small sized problems. As shown later, Intel MKL~-- arguably the fastest implementation for x86 CPUs~\cite{MKL}~-- is easily outperformed by the most na\"ive general matrix-matrix multiplication code when inputs are not big enough. In many cases it is therefore possible and necessary to devise custom matrix multiplication routines optimized for smaller problems. We develop performance model and optimized code for the following cases of matrix-matrix multiplication:
     \begin{equation}
      C = Ax + C
     \end{equation}
@@ -28,11 +28,11 @@
 
 
 \section{Performance Model}
-    Theoretical performance models, while not perfectly accurate, can hugely benefit development of optimized numerical programming routines by providing maximum performance estimates as a goal to strive for. Maximum theoretical performace can be computed by: 
+    Theoretical performance models, while not perfectly accurate, can hugely benefit development of optimized numerical programming routines by providing maximum performance estimates as a goal to strive for. Maximum theoretical performance can be computed by: 
     \begin{equation}
      P_{peak} = IPC * FPI * Frequency
     \end{equation}
-    where $IPC$ - instructions per cycle, $FPI$ - floating point operations per instruction, $Frequency$ - CPU's frequency. Intel Xeon E5-2689 operates with the frequency of $2.9$ GHz and is capable of executing 1, 2 or 4 FPI, depending on the mode (Scalar, SSE, AVX) [need ref]. IPC depends on the numerical algorithm or the average number of floating point instructions executed per cycle to compute a single element of the output matrix. To derive IPC and $P_{peak}$, we refer to table \ref{tab:low_level}, which lists instructions that can be executed in one cycle by the Sandy Bridge CPU and to table \ref{tab:req}, which depicts number of each low level instructons needed to be executed to compute one entry of $C$ matrix. Finally, table \ref{tab:perf} summarizes results.
+    where $IPC$ - instructions per cycle, $FPI$ - floating point operations per instruction, $Frequency$ - CPU's frequency. Intel Xeon E5-2689 operates with the frequency of $2.9$ GHz and is capable of executing 1, 2 or 4 FPI, depending on the mode (Scalar, SSE, AVX) [need ref]. IPC depends on the numerical algorithm or the average number of floating point instructions executed per cycle to compute a single element of the output matrix. To derive IPC and $P_{peak}$, we refer to table \ref{tab:low_level}, which lists instructions that can be executed in one cycle by the Sandy Bridge CPU and to table \ref{tab:req}, which depicts number of each low level instructions needed to be executed to compute one entry of $C$ matrix. Finally, table \ref{tab:perf} summarizes results.
     
       \begin{table}[!hbt]
 	\begin{center}
@@ -127,14 +127,12 @@
       C(i) = C(i) + sum
     \end{lstlisting}
     
-   \subsection{Results}
-
-  
-  Achieved results, summarized in table \ref{tab:results} are not perfect and are true only for matrices small enough to fit in L2 cache. Divergence of theoretical and achieved results might stem from the fact that we did not take memory bandwitch or cache effects into consideration.
+   \subsection{Results}  
+    Achieved results, summarized in table \ref{tab:results}, are not perfect and are true only for matrices small enough to fit in L2 cache. Divergence of theoretical and achieved results might stem from the fact that we did not consider memory bandwidth or cache effects.
   
   \begin{table}[!hbt]
     \begin{center}
-      \caption{Achieved results and comparision with theoretical peak performance}
+      \caption{Achieved results and comparison with theoretical peak performance}
       \label{tab:results}
       \begin{tabular}{c|c|c}
 	K	& $P_{achieved}$ [Gflops] & $P_{achieved} / P_{peak}$\\

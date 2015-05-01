@@ -3,3 +3,5 @@
 *.aux
 *.o
 *.d
+.fuse*
+*.backup
