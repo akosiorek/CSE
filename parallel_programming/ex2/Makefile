@@ -1,5 +1,5 @@
 NAME = histogram
-CC = gcc -g
+CC = gcc -O3
 CFLAGS = -std=gnu99 -lpthread -fstrict-overflow -Werror -Wall -Wshadow -Wstrict-overflow=5 -pedantic
 LDFLAGS = -lm -lpthread -lrt -I$(CURDIR)
 

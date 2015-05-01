@@ -4,36 +4,35 @@
 
 #include "histogram.h"
 
+#pragma GCC optimize (3)
 
 struct Data {
 
-  pthread_mutex_t* mutex;
+  pthread_mutex_t* restrict mutex;
   char** globalBuffer;
   unsigned int chunkSize;
-  unsigned int* histogram;
+  unsigned int* restrict histogram;
+  char pad[64 - sizeof(int) - 3 * sizeof(int*)];
 };
 
 
-void buildHistogram(const char *buffer,
+void buildHistogram(const char* restrict buffer,
              int size,
-		   			 unsigned int* histogram) {
+		   			 unsigned int* restrict histogram) {
 
 	// build histogram
 	for (int i=0; i < size; i++) {
-		if (buffer[i] >= 'a' && buffer[i] <= 'z')
-			histogram[buffer[i]-'a']++;
-		else if(buffer[i] >= 'A' && buffer[i] <= 'Z')
-			histogram[buffer[i]-'A']++;
-    else if(buffer[i] == TERMINATOR)
-      break;
-  } 
+    if ((buffer[i]|32) >= 'a' && (buffer[i]|32) <= 'z')
+      histogram[(buffer[i]|32)-'a']++;
+    }
 }
 
-char* getDataChunk(struct Data* data) {
+
+char* getDataChunk(struct Data* restrict data) {
 
   pthread_mutex_lock(data->mutex);
 
-  char* dataChunkPtr = *data->globalBuffer;
+  char* restrict dataChunkPtr = *data->globalBuffer;
   if(*dataChunkPtr == TERMINATOR) {
     dataChunkPtr = NULL;
   } else {
@@ -41,16 +40,15 @@ char* getDataChunk(struct Data* data) {
   }
   pthread_mutex_unlock(data->mutex);
 
-  //printf("%p\n", dataChunkPtr);
   return dataChunkPtr;
 }
 
-void* histogramThreadFun(void* ptr) {
+void* histogramThreadFun(void* restrict ptr) {
 
-  struct Data* data = (struct Data*)ptr;
+  struct Data* restrict data = (struct Data*)ptr;
   unsigned int size = data->chunkSize;
   unsigned int* histogram = calloc(NALPHABET, sizeof(*histogram));
-  const char* dataChunk = getDataChunk(data);
+  const char* restrict dataChunk = getDataChunk(data);
   while(dataChunk) {
     buildHistogram(dataChunk, size, histogram);
     dataChunk = getDataChunk(data);
@@ -62,15 +60,15 @@ void* histogramThreadFun(void* ptr) {
 
 
 
-void get_histogram(char *buffer,
-		   			 unsigned int* histogram,
+void get_histogram(char* buffer,
+		   			 unsigned int* restrict histogram,
 		   			 unsigned int num_threads,
 						 unsigned int chunk_size) {
 
 
   pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
   pthread_t* thread = malloc(num_threads * sizeof(*thread));
-  struct Data* data = malloc(num_threads * sizeof(*data));
+  struct Data* restrict data = malloc(num_threads * sizeof(*data));
 
 
   for(int i = 0; i < num_threads; ++i) {
@@ -81,10 +79,6 @@ void get_histogram(char *buffer,
     pthread_create(&thread[i], NULL, histogramThreadFun, &data[i]);
   }
 
-  for(int i = 0; i < NALPHABET; ++i) {
-    histogram[i] = 0;
-  }
-
   for(int i = 0; i < num_threads; ++i) {
     pthread_join(thread[i], NULL);
     for(int j = 0; j < NALPHABET; j++) {
@@ -93,7 +87,6 @@ void get_histogram(char *buffer,
     free(data[i].histogram);
   }
 
- // pthred_mutex_destroy(mutex);
   free(thread);
   free(data);
 }
