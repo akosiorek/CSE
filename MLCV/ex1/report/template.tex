@@ -21,7 +21,7 @@
     \PARstart{T}{he} first assignment was to explore the SVM classifier, Decision Trees and Random Forests for the MNIST handwritten digits recognition. 
 
 \section{Dataset}
-    The MNIST dataset is comprised of 60000 training and 10000 testing samples \cite{MNIST}. Each sample is a 28x28 pixel black and white image of a single centered digit. It is widly used as a benchmark for comparing machine learning algorithms.	
+    The MNIST dataset is comprised of 60000 training and 10000 testing samples \cite{MNIST}. Each sample is a 28x28 pixel black and white image of a single centered digit. It is widely used as a benchmark for comparing machine learning algorithms.	
 
 \section{Experiments}
     All experiments were carried out on a notebook with Intel i7-2670QM quad core CPU and 8Gb RAM with Python SciPy package.
@@ -29,7 +29,7 @@
 	It is known that processing input data prior to classification can improve results. In case of MNIST and SVM, however, state of the arts results have been achieved without preprocessing, that is, with raw pixels \cite{VSVM}. I examine the influence of mean intensity subtraction and momentum-based deskewing on classification accuracy.
   
     \subsection{Classifier Tuning}
-	Most classifiers can be fine-tuned to a particular task by adjusting their hyperparameters. They are rarely independent of each other and it is necessary to perform an exhaustive grid search in the hyperparameter space. I chose to do so with 10\% of the training data and 5-fold cross-validation. The parameters optimized for each classifier are shown in table \ref{tab:parameters}. 
+	Most classifiers can be fine-tuned to a particular task by adjusting their hyper-parameters. They are rarely independent of each other and it is necessary to perform an exhaustive grid search in the hyper-parameter space. I chose to do so with 10\% of the training data and 5-fold cross-validation. The parameters optimized for each classifier are shown in table \ref{tab:parameters}. 
 	
 		\begin{table}[!hbt]
 		\begin{center}
@@ -52,11 +52,11 @@
 		
 		
 \section {Results and Discussion}
-    Table \ref{tab:results} summarizes results. Mean subtraction and deskewing applied together delieverd the highest accuracy for SVM. Therefore, this composition was used in the rest of the experiments. Parameter tuning resulted in the following parameters for each classifier:
+    Table \ref{tab:results} summarizes results. Mean subtraction and deskewing applied together delivered the highest accuracy for SVM. Therefore, this composition was used in the rest of the experiments. Parameter tuning resulted in the following parameters for each classifier:
     \begin{itemize}
      \item SVM: \hfill polynomial kernel of degree 2, $C = 1000$
      \item Decision Tree: 500 max features, 100 max depth, entropy criterion
-     \item Random Forest: 50 max features, 10 max depth, entripy criterion, 100 estimators
+     \item Random Forest: 50 max features, 10 max depth, entropy criterion, 100 estimators
     \end{itemize}
 
     \begin{table}[!hbt]
@@ -82,7 +82,7 @@
 	
     In this setting SVM outperforms Decision Tree and Random Forest classifiers. Random Forest is far better than the basic Decision Tree, even though it uses the latter as its building block. Each tree of Random Forest's ensemble uses only up to 10\% of the features and levels used by Decision Tree classifier.
     
-    Achieved performance is far from the state-of-the-art level, however. The highest classification performance up to date is by a convolutional neural network \cite{MNIST_Website}. The best performing SVM classifier levereges robustness to affine-transformations by a special way of training \cite{VSVM}.
+    Achieved performance is far from the state-of-the-art level, however. The highest classification performance up to date is by a convolutional neural network \cite{MNIST_Website}. The best performing SVM classifier leverages robustness to affine-transformations by a special way of training \cite{VSVM}.
     
     \begin{figure}[!hbt]
       \includegraphics[width=0.4\textwidth]{tree_importance}
