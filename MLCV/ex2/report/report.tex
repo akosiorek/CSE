@@ -14,25 +14,55 @@
 	
 	
 \section{Objective}
-    \PARstart{T}{he} aim of the second assignment was to develop thorough understanding of deep neural networks. Firstly, through literature research and derivation of backpropagation algorithm for arbitrary activation functions we gained insight into the inner workings of feed-forward neural networks. Secondly, we learned how to use a state-of-the-art open-source neural network package \textit{caffe} \cite{caffe} by classifing given images.
+    \PARstart{T}{he} aim of the second assignment was to develop thorough understanding of deep neural networks. Firstly, through literature research and derivation of Backpropagation algorithm for arbitrary activation functions we gained insight into the inner workings of feed-forward neural networks. Secondly, we learned how to use a state-of-the-art open-source neural network package \textit{caffe} \cite{caffe} by classifying given images.
 
 \section{Neural Networks and Deep Learning}
     Neural networks are nothing more than a composition of series of non-linear functions and matrix-matrix products. Yet, due to clever learning algorithms, they can be trained to approximate any function. Before we can teach a network, however, we need a dataset of inputs and ground truth pairs as well as a cost function. The latter quantifies differences between network's output and the ground truth for a given input and is being minimized by the training procedure on the whole dataset. The term ``deep learning'' describes neural networks with hidden layers - the layers between input and output layers. It is believed that deep networks learn feature hierarchies, thus alleviating the need for feature engineering.
 
 \section{Deriving Backpropagation}
-    In his book, M.~Nielsen derived the Backpropgation algorithm for a sigmoid activation function $\sigma$ \cite{MLDL}. Here, following the notaion, I derive it for an arbitrary function $f$.
+    In his book, M.~Nielsen derived the Backpropgation algorithm for a sigmoid activation function $\sigma$ \cite{MLDL}. Here, following the notation, I derive it for an arbitrary function $f$.
     
-    TODO
+    Let $\delta_j^L$ be the error of $j^{th}$ output neuron, then:
+    \begin{equation}
+      \delta_j^L = \frac{\partial C(a^L)}{\partial z_j^L} = \frac{\partial C(a^L)}{\partial a_j^L} \frac{\partial a_j^L}{\partial z_j^L}
+    \end{equation}
     
+    where:
+    
+    \begin{equation}
+      \frac{\partial a_j^L}{\partial z_j^L} = \frac{\partial f(z^L)}{\partial z_j^L} = f'(z_j^L)
+    \end{equation}
+    
+    and thus:
+    
+    \begin{equation}
+      \delta^L = \nabla C(a^L) \odot f'(z^L)
+    \end{equation}
+    
+    For the previous layer, denoted $l$:
+    
+    \begin{equation}
+    \begin{gathered}
+      \delta^l = \frac{\partial C(a^L)}{\partial z^l} = \frac{\partial a^L}{\partial z^l} \nabla C(a^L) = \\ = \frac{\partial z^L}{\partial z^l} (f'(z^L) \odot \nabla C(a^L) ) = \frac{\partial z^L}{\partial z^l} \delta^L = \\ = diag(f'(z^l))(w^L)^T \delta^L = f'(z^L) \odot ((w^L)^T \delta^L)
+    \end{gathered}
+    \end{equation}
+    
+    Since relations between any two adjacent layers are the same it holds that:
+    
+    \begin{equation}
+      \delta^l  = f'(z^{l+1}) \odot ((w^{l+1})^T \delta^{l+1})
+    \end{equation}
+    
+    The final equations for gradients w.r.t. weights and biases do not depend on the activation function and has the same form as in \cite{MLDL}.    
     		
 \section {Classification}
-  \textit{caffe} is easy to use. Written in C++ with CUDA acceleration, it is high performance, yet, due to Python and Matlab bindings and configuration-oriented architecture it is user-friendly. After completing \textit{ImageNet classification} Notebook I decided to write a custom script for performing this assignment \cite{code}.
+  \textit{caffe} is easy to use. Written in C++ with CUDA acceleration, it is high performance, yet, due to Python and Matlab bindings and configuration-oriented architecture it is user-friendly. After completing \textit{ImageNet classification} Notebook I have written a custom script for the assignment~\cite{code}.
   
   \subsection{Configuration}
-    Every neural network in \textit{caffe} needs to be configured before it becomes operational. It needs a deployment configuration file - Google Protocol Buffer file defining the network with free (e.g. non-database) inputs, and a trained model. Since we wanted the output class name after classification we also need a synset file with class names and identifiers from ILSVRC2012 \cite{ImageNet}
+    Every neural network in \textit{caffe} needs to be configured before being operational. It needs a deployment configuration file - Google Protocol Buffer file defining the network with free (e.g. non-database) inputs and a trained model. Since we wanted the output class name after classification we also need a synset file with class names and identifiers from ILSVRC2012 \cite{ImageNet}
    
   \subsection{Data Preparation}
-    Provided images are 3-channel with various sizes and aspect ratios, while the reference \textit{caffe} model operates on $256\times 256\times 3$ data. Convolutional neural networks are scale invariant but are also sensitive to changes in aspect ratio. I have therefore resized each input image to 256 px on the longer size and then padded it with zeros to form a square matrix. Padding with zeros should not affect classification, since zeros do not contribute to convolution results. Moreover, the training data for the ImageNet model had intensity values between 0 and 255 and was preprocessed by subtracting mean value computed on the whole dataset and I preprocessed input images accordingly.
+    Provided images are 3-channel with various sizes and aspect ratios, while the reference \textit{caffe} model operates on $256\times 256\times 3$ data. Convolutional neural networks are scale invariant but are sensitive to changes in aspect ratio. I have therefore resized each input image to 256 px on the longer size and then padded it with zeros to form a square matrix. Padding with zeros should not affect classification, since zeros do not contribute to convolution results. Moreover, the training data for the ImageNet model had intensity values between 0 and 255 and was preprocessed by subtracting mean value computed on the whole dataset and I preprocessed input images accordingly.
     
   \subsection{Results and Discussion}
     Figure \ref{fig:imgs} depicts images given for classification and table \ref{tab:results} shows results. Only images (f) and (g) were classified correctly, as might be suggested by high classification probability and low entropy. Images (e) and (h) can be seen as similar to their predicted categories with lower classification probability and higher entropy. All other images have very low probability and high entropy, suggesting that the classifier is wrong. It seems that classification probability and entropy can be good measures of prediction credibility. According to expectations, the lower the probability (the wider it is spread), the higher the entropy.
