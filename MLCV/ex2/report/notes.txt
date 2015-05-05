@@ -1,0 +1,25 @@
+- write script to:
+  * use custom preprocessing
+  * access data on different layers
+  * compute entropy with scipy.stats.entropy
+ 
+- download class names with data/ilscrv12/get_ilsvrc12_aux.sh
+- download berkely caffe reference imagenet model
+
+- preprocess files:
+  * resize to longer to match
+  * mirror pad
+  * subtract mean
+  * don't scale, imagenet works on 0-255 range
+
+results:
+name, class number, class name, probability, entropy
+IMG_1.jpg, 428, barrow, garden cart, lawn cart, wheelbarrow, 0.071166962, 5.2218533
+IMG_2.jpg, 311, grasshopper, hopper, 0.13906515, 3.7246027
+IMG_3.jpg, 403, aircraft carrier, carrier, flattop, attack aircraft carrier, 0.13289961, 4.6699629
+IMG_4.jpg, 620, laptop, laptop computer, 0.11619379, 4.6342902
+IMG_5.jpg, 673, mouse, computer mouse, 0.40890202, 2.7502782
+IMG_6.jpg, 947, mushroom, 0.75783598, 1.170288
+IMG_7.jpg, 834, suit, suit of clothes, 0.61614847, 1.0867107
+IMG_8.jpg, 980, volcano, 0.36421964, 3.3183484
+
