@@ -9,7 +9,7 @@
 
 	\title{Assignment II\\Neural Networks and Deep Learning}
 	\author{Adam Kosiorek}	
-	\markboth{Machine Learning for Applications in Computer Vision}{}
+	\markboth{Machine Learning for Applications in Computer Vision, Institute of Computer Vision, Technische Universit\'at M\"unchen}{}
 	\maketitle
 	
 	
@@ -20,7 +20,7 @@
     Neural networks are nothing more than a composition of series of non-linear functions and matrix-matrix products. Yet, due to clever learning algorithms, they can be trained to approximate any function. Before we can teach a network, however, we need a dataset of inputs and ground truth pairs as well as a cost function. The latter quantifies differences between network's output and the ground truth for a given input and is being minimized by the training procedure on the whole dataset. The term ``deep learning'' describes neural networks with hidden layers - the layers between input and output layers. It is believed that deep networks learn feature hierarchies, thus alleviating the need for feature engineering.
 
 \section{Deriving Backpropagation}
-    In his book, M.~Nielsen derived the Backpropgation algorithm for a sigmoid activation function $\sigma$ \cite{MLDL}. Here, following the notation, I derive it for an arbitrary function $f$.
+    In his book, M.~Nielsen derived the Backpropgation algorithm for the sigmoid activation function $\sigma$ \cite{MLDL}. Here, following the notation, I derive it for an arbitrary function $f$.
     
     Let $\delta_j^L$ be the error of $j^{th}$ output neuron, then:
     \begin{equation}
@@ -43,17 +43,17 @@
     
     \begin{equation}
     \begin{gathered}
-      \delta^l = \frac{\partial C(a^L)}{\partial z^l} = \frac{\partial a^L}{\partial z^l} \nabla C(a^L) = \\ = \frac{\partial z^L}{\partial z^l} (f'(z^L) \odot \nabla C(a^L) ) = \frac{\partial z^L}{\partial z^l} \delta^L = \\ = diag(f'(z^l))(w^L)^T \delta^L = f'(z^L) \odot ((w^L)^T \delta^L)
+      \delta^l = \frac{\partial C(a^L)}{\partial z^l} = \frac{\partial a^L}{\partial z^l} \nabla C(a^L) = \\ = \frac{\partial z^L}{\partial z^l} (f'(z^L) \odot \nabla C(a^L) ) = \frac{\partial z^L}{\partial z^l} \delta^L = \\ = diag(f'(z^l))(w^L)^T \delta^L = f'(z^l) \odot ((w^L)^T \delta^L)
     \end{gathered}
     \end{equation}
     
     Since relations between any two adjacent layers are the same it holds that:
     
     \begin{equation}
-      \delta^l  = f'(z^{l+1}) \odot ((w^{l+1})^T \delta^{l+1})
+      \delta^l  = f'(z^l) \odot ((w^{l+1})^T \delta^{l+1})
     \end{equation}
     
-    The final equations for gradients w.r.t. weights and biases do not depend on the activation function and has the same form as in \cite{MLDL}.    
+    The final equations for gradients w.r.t. weights and biases do not depend on the activation function and have the same form as in \cite{MLDL}.    
     		
 \section {Classification}
   \textit{caffe} is easy to use. Written in C++ with CUDA acceleration, it is high performance, yet, due to Python and Matlab bindings and configuration-oriented architecture it is user-friendly. After completing \textit{ImageNet classification} Notebook I have written a custom script for the assignment~\cite{code}.
