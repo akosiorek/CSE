@@ -25,12 +25,14 @@
     Let $\delta_j^L$ be the error of $j^{th}$ output neuron, then:
     \begin{equation}
       \delta_j^L = \frac{\partial C(a^L)}{\partial z_j^L} = \frac{\partial C(a^L)}{\partial a_j^L} \frac{\partial a_j^L}{\partial z_j^L}
+      \label{eq:error_L}
     \end{equation}
     
     where:
     
     \begin{equation}
       \frac{\partial a_j^L}{\partial z_j^L} = \frac{\partial f(z^L)}{\partial z_j^L} = f'(z_j^L)
+      \label{eq:activ_L}
     \end{equation}
     
     and thus:
@@ -53,7 +55,28 @@
       \delta^l  = f'(z^l) \odot ((w^{l+1})^T \delta^{l+1})
     \end{equation}
     
-    The final equations for gradients w.r.t. weights and biases do not depend on the activation function and have the same form as in \cite{MLDL}.    
+    The final equations for gradients w.r.t. weights and biases do not depend on the activation function and have the same form as in \cite{MLDL}.
+    
+    If, on the other hand, only a single neuron in one of the layers has a different activation function, the errors for that layer have to be computed for one neuron at a time. Suppose that all neurons but the neuron $j$ in layer $l$ use the sigmoid function $\sigma$ and this one neuron uses the function $f$. If $l = L$ equation \ref{eq:error_L} holds. Equation \ref{eq:activ_L} changes, however, for all but the $j^{th}$ neuron and it reads:
+    
+    \begin{equation}
+     \frac{\partial a_j^L}{\partial z_j^L} = \frac{\partial \sigma(z^L)}{\partial z_j^L} = \sigma'(z_j^L)
+    \end{equation}
+    
+    If $l < L$, then the error for the odd neuron reads:
+    
+    \begin{equation}
+      \delta_j^l = f'(z_j^L) \sum_i w_{i, j}^{l+1} \delta_i^{l+1}
+    \end{equation}
+    
+    and for all the other neurons of that layer:
+    
+    \begin{equation}
+      k \neq j: \;\; \delta_k^l = \sigma'(z_k^L) \sum_i w_{i, k}^{l+1} \delta_i^{l+1}
+    \end{equation}
+    
+    The simplicity and symmetry of matrix-matrix multiplication is therefore lost and errors have to be computed element-wise. Again, the gradient equations do not change.
+
     		
 \section {Classification}
   \textit{caffe} is easy to use. Written in C++ with CUDA acceleration, it is high performance, yet, due to Python and Matlab bindings and configuration-oriented architecture it is user-friendly. After completing \textit{ImageNet classification} Notebook I have written a custom script for the assignment~\cite{code}.
