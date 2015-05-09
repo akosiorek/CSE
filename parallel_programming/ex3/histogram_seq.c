@@ -1,6 +1,10 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "histogram.h"
+
+
+int chunkNum = 0;
 
 void get_histogram(unsigned int* histogram,
 		   			 unsigned int num_threads) {
@@ -9,7 +13,7 @@ void get_histogram(unsigned int* histogram,
 	char *buffer = malloc(CHUNKSIZE);
 
 	while ((size = get_chunk(buffer)) > 0) {
-
+  printf("%d\n", chunkNum++);
 		// build histogram
 		for (int i=0; i<size; i++) {
 			if (buffer[i] >= 'a' && buffer[i] <= 'z')

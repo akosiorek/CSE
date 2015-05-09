@@ -13,8 +13,8 @@ endif
 ifeq ($(mode),debug)
 	CFLAGS += -O0 -g
 else
-	mode = release
 	CFLAGS += -O2
+	mode = release
 endif
 
 VPATH = $(SDIR)

@@ -1,8 +1,15 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <errno.h>
+#include <assert.h>
 
 #include "histogram.h"
+
+
+#define WAIT_TIME (int)9e8
 
 void build_histogram(unsigned int* histogram,
 		   			 char* buffer, unsigned int size) {
@@ -61,21 +68,35 @@ void buffer_destroy(struct CyclicBuffer* buffer) {
 
 struct Data* buffer_read(struct CyclicBuffer* buffer) {
   pthread_mutex_lock(&buffer->mutex);
+  int waitStatus = 0;
+  struct timespec timeSpec;
+  struct Data* data = NULL;
 
   //wait for data to be read
-  if(buffer->write == buffer->read) {
-    pthread_cond_wait(&buffer->condRead, &buffer->mutex);
+  while(buffer->occupied <= 0) {
+    timeSpec.tv_sec = time(0);
+    timeSpec.tv_nsec = WAIT_TIME;
+
+    waitStatus = pthread_cond_timedwait(&buffer->condRead, &buffer->mutex, &timeSpec);
+    if(waitStatus == ETIMEDOUT) {
+      break;
+    }
   }
 
-  // read data and free a slot
-  struct Data* data = buffer->buffer[buffer->read];
-  buffer->buffer[buffer->read] = NULL;
-  buffer->read = incrementCyclic(buffer->read, buffer->size);
-  buffer->occupied--;
 
-  // signal that a slot has just been freed
-  pthread_cond_signal(&buffer->condWrite);
+  if(waitStatus != ETIMEDOUT) {
+    assert(buffer->occupied > 0);
 
+    // read data and free a slot
+    data = buffer->buffer[buffer->read];
+
+    buffer->buffer[buffer->read] = NULL;
+    buffer->read = incrementCyclic(buffer->read, buffer->size);
+    buffer->occupied--;
+
+    // signal that a slot has just been freed
+    pthread_cond_signal(&buffer->condWrite);
+  }
   pthread_mutex_unlock(&buffer->mutex);
   return data;
 }
@@ -84,13 +105,15 @@ void buffer_write(struct CyclicBuffer* buffer, struct Data* data) {
   pthread_mutex_lock(&buffer->mutex);
 
   // wait for a slot to write
-  if(buffer->occupied == buffer->size) {
+  while(buffer->occupied >= buffer->size) {
     pthread_cond_wait(&buffer->condWrite, &buffer->mutex);
   }
+  assert(buffer->occupied < buffer->size);
 
   // write some data
   buffer->buffer[buffer->write] = data;
   buffer->write = incrementCyclic(buffer->write, buffer->size);
+  buffer->occupied++;
 
   // signal that some data has just been written
   pthread_cond_signal(&buffer->condRead);
@@ -110,21 +133,28 @@ struct ProducerData {
   int* keepWorking;
 };
 
+
 void* producer(void* arg) {
 
   struct ProducerData* data = (struct ProducerData*)arg;
   *data->keepWorking = 1;
 
   struct Data* chunk = malloc(sizeof(*chunk)); 
-  get_chunk(chunk->data);
-  while(chunk->data != NULL) {
+  chunk->size = get_chunk(chunk->data);
+
+  while(chunk->size != 0) {
+
     buffer_write(data->buffer, chunk);
     chunk = malloc(sizeof(*chunk));
-    get_chunk(chunk->data);
+    chunk->size = get_chunk(chunk->data);
   }
- 
+
+  while(data->buffer->occupied > 0) {
+    pthread_cond_signal(&data->buffer->condRead);
+  };
+
+  free(chunk);
   *data->keepWorking = 0;
-  pthread_cond_broadcast(&data->buffer->condRead);
 
   return NULL;
 }
@@ -132,12 +162,14 @@ void* producer(void* arg) {
 void* consumer(void* arg) {
 
   struct ConsumerData* data = (struct ConsumerData*)arg;
-  data->histogram = calloc(NALPHABET, 0);
+  data->histogram = calloc(NALPHABET, sizeof(*data->histogram));
 
   while(*data->keepWorking) {
+
     struct Data* chunk = buffer_read(data->buffer);
     if(chunk != NULL) {
       build_histogram(data->histogram, chunk->data, chunk->size);
+      free(chunk);
     }
   }
 
@@ -149,40 +181,41 @@ void get_histogram(unsigned int* histogram,
                    unsigned int num_threads) {
   
   // initialize stuff
+  int numConsumers = num_threads - 1;
+
   struct CyclicBuffer* buffer = malloc(sizeof(*buffer));
-  buffer_init(buffer);
+  buffer_init(buffer, numConsumers);
 
   pthread_t* threads = malloc(num_threads * sizeof(*threads));
-  struct ConsumerData* consumerData = malloc((num_threads - 1) * sizeof(*consumerData));
+  struct ConsumerData* consumerData = malloc(numConsumers * sizeof(*consumerData));
   int keepWorking = 1;
 
   // create producer
   struct ProducerData producerData;
   producerData.buffer = buffer;
   producerData.keepWorking = &keepWorking;
-  pthread_create(&threads[0], NULL, producer, NULL);
+  pthread_create(&threads[numConsumers], NULL, producer, &producerData);
 
   // create consumers
-  for(int i = 1; i < num_threads; ++i) {
+  for(int i = 0; i < numConsumers; ++i) {
     
-    consumerData[i - 1].buffer = buffer;
-    consumerData[i - 1].keepWorking = &keepWorking;
+    consumerData[i].buffer = buffer;
+    consumerData[i].keepWorking = &keepWorking;
 
-    pthread_create(&threads[i], NULL, consumer, &consumerData[i - 1]);
+    pthread_create(&threads[i], NULL, consumer, &consumerData[i]);
   }
 
-
   // finalize consumers
-  for(int i = 1; i < num_threads; ++i) {
-    pthread_join(thread[i], NULL);
+  for(int i = 0; i < numConsumers; ++i) {
+    pthread_join(threads[i], NULL);
     for(int j = 0; j < NALPHABET; j++) {
         histogram[j] += consumerData[i].histogram[j];
     }
-    free(data[i].histogram);
+    free(consumerData[i].histogram);
   }
 
   // finalize producer
-  pthread_join(threads[0], NULL);
+  pthread_join(threads[numConsumers], NULL);
 
   buffer_destroy(buffer);
   free(threads);
