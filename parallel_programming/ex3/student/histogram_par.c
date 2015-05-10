@@ -137,7 +137,7 @@ struct ProducerData {
 void* producer(void* arg) {
 
   struct ProducerData* data = (struct ProducerData*)arg;
-  *data->keepWorking = 1;
+  //*data->keepWorking = 1;
 
   struct Data* chunk = malloc(sizeof(*chunk)); 
   chunk->size = get_chunk(chunk->data);
@@ -149,13 +149,16 @@ void* producer(void* arg) {
     chunk->size = get_chunk(chunk->data);
   }
 
+  pthread_mutex_lock(&data->buffer->mutex);
   while(data->buffer->occupied > 0) {
+    pthread_cond_wait(&data->buffer->condWrite, &data->buffer->mutex);
     pthread_cond_signal(&data->buffer->condRead);
   };
 
-  free(chunk);
   *data->keepWorking = 0;
+  pthread_mutex_unlock(&data->buffer->mutex);
 
+  free(chunk);
   return NULL;
 }
 
@@ -164,14 +167,19 @@ void* consumer(void* arg) {
   struct ConsumerData* data = (struct ConsumerData*)arg;
   data->histogram = calloc(NALPHABET, sizeof(*data->histogram));
 
+  pthread_mutex_lock(&data->buffer->mutex);
+  //asm("" : "=m" (data->keepWorking));
   while(*data->keepWorking) {
-
+    pthread_mutex_unlock(&data->buffer->mutex);
     struct Data* chunk = buffer_read(data->buffer);
     if(chunk != NULL) {
       build_histogram(data->histogram, chunk->data, chunk->size);
       free(chunk);
     }
+    pthread_mutex_lock(&data->buffer->mutex);
+    //asm("" : "=m" (data->keepWorking));
   }
+  pthread_mutex_unlock(&data->buffer->mutex);
 
   return NULL;
 }
