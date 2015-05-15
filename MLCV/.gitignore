@@ -1,5 +1,7 @@
 data/*
 .idea
 *.pyc
-
+*-eps-converted-to.pdf
+*.mat
 *.kilepr
+*~
