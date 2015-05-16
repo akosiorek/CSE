@@ -5,3 +5,8 @@
 *.d
 .fuse*
 *.backup
+*.vrb
+*.toc
+*.snm
+*.out
+*.nav
