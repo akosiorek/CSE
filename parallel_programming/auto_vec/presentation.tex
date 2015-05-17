@@ -29,13 +29,10 @@
 
 \frame{\titlepage}
 
-\section*{Outline}
-\frame{\tableofcontents}
+%\section*{Outline}
+%\frame{\tableofcontents}
 
 \section{Vectorization}
-
-\frame{ 
-}
 
 \begin{frame}[fragile]
   \frametitle{What is vectorization?}
@@ -44,7 +41,7 @@
     Vectorization = {Loop\ unrolling} + {packed\ SIMD\ instructions}  
   \end{equation}
   
-  Loop unrolling: easy \\\ \\
+  Loop unrolling: manually or by compiler \\\ \\
   SIMD: SSE, AVX, Nano etc. \\\ \\
   How to get them:
   \begin{itemize}
@@ -88,15 +85,24 @@
 
 \begin{frame}[fragile]
   \frametitle{Why was it vectorized?}
-  Properties needed for vectorization:
-  \begin{itemize}
-   \item countable
-   \item single entry, single exit
-   \item no branching
-   \item the innermost loop
-   \item no function calls
-   \item no data dependencies
-  \end{itemize}
+   \begin{columns}[onlytextwidth]
+    \begin{column}{0.4\textwidth}
+     \includegraphics[width=0.75\textwidth]{countable}
+    \end{column}
+    
+    \begin{column}{0.6\textwidth}
+      Properties needed for vectorization:
+      \begin{itemize}
+      \item countable
+      \item single entry, single exit
+      \item no branching
+      \item the innermost loop
+      \item no function calls
+      \item no data dependencies
+      \end{itemize}
+    \end{column}
+  \end{columns}  
+  
 \end{frame}
 
 \section{What can be vectorized?}
@@ -224,12 +230,77 @@
     \end{itemize}    
 \end{frame}
 
+\section{Obstacles to vectorization}
+
 \begin{frame}[fragile]
-  \frametitle{a}
+  \frametitle{Non-contiguous Memory Access}
+  \begin{figure}
+    \begin{center}
+      \includegraphics[width=0.75\textwidth]{non-contigous}
+    \end{center}
+  \end{figure}
+  
+  \begin{itemize}
+   \item each entry loaded separately
+   \item happens with non-unit stride and indirect adressing e.g.
+   \begin{lstlisting}[language=C++]
+    C[i] = C[i] * A[i * 2];
+    C[i] = C[i] * A[B[i]];
+   \end{lstlisting}
+
+  \end{itemize}
+
+
+  
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{a}
+  \frametitle{Data Dependencies}
+  Read-after-write (flow dependency): \textcolor{red}{$\times$}
+  \begin{lstlisting}[language=C++]
+    for(i=1; i<MAX; ++i) 
+      A[i] = A[i-1] + 1;
+  \end{lstlisting}
+  Write-after-read (anti-dependency): \textcolor{green}{\checkmark}
+  \begin{lstlisting}[language=C++]
+    for(i=1; i<MAX; ++i) 
+      A[i-1] = A[i] + 1;
+  \end{lstlisting}
+  Write-after-write (output dependency): \textcolor{red}{$\times$}
+  \begin{lstlisting}[language=C++]
+   for(i=0; i<MAX; ++i)
+     A[i - i%2] = A[i] * B[i]; 
+  \end{lstlisting}
+  Reduction: \textcolor{green}{\checkmark}
+  \begin{lstlisting}[language=C++]
+   double sum = 0;
+   for(i=0; i<MAX; ++i)
+     sum = sum + A[i];
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Assumed Data Dependencies - Pointer Aliasing}
+  \begin{lstlisting}[language=C++]
+    void compute(int* A, int* B, int* C, int N) {
+      for(int i = 0; i<N; ++i) 
+        C[i] = A[i] + B[i];
+    }
+  \end{lstlisting}
+  
+  \begin{itemize}
+   \item C/C++ makes no assumptions about pointers:
+   \begin{lstlisting}[language=C++]
+      compute(a, b, a);
+  \end{lstlisting}
+  is legal!
+  \end{itemize}
+
+  
+  
+  \begin{lstlisting}[language=C++]
+
+  \end{lstlisting}
 \end{frame}
 
 \end{document}
