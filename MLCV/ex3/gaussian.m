@@ -45,14 +45,14 @@ function gaussian()
     
  
     
-    name = 'covLINard_likLogistic_infEP'
+    name = 'covLINiso_likErf_infEP'
     meanfunc = @meanConst; 
     hyp.mean = 0;
     covfunc = @covLINard;   
     hyp.cov = log([1 1]);
 %     covfunc = @covSEard;   
 %     hyp.cov = log([1 1 1]);
-    likfunc = @likLogistic;
+    likfunc = @likErf;
 %     hyp.lik = log([1]);
     infFunc = @infEP;
 
@@ -70,9 +70,10 @@ function gaussian()
     trueUncertainty = uncertainty(trueProbs);
     falseUncertainty = uncertainty(falseProbs);
     
-    
-    plotHistogram(trueUncertainty, 10, strcat(name, '_gaussian_true'));
-    plotHistogram(falseUncertainty, 10, strcat(name, '_gaussian_false'));
+    figure(3)
+    plotHistogram(trueUncertainty, 10, strcat(name, '_true'));
+    figure(4)
+    plotHistogram(falseUncertainty, 10, strcat(name, '_false'));
 end
 
 
@@ -87,7 +88,7 @@ function acc = checkModel(labels, groundtruth)
 end
 
 function u = uncertainty(p)
-    u = -(p .* log(p) + (1 - p .* log(1 - p)));
+    u = -(p .* log(p) + (1 - p) .* log(1 - p));
 end
 
 function probs = getProbs(logProbs)
@@ -98,30 +99,4 @@ function labels = toLabels(probs)
     labels = probs;
     labels(labels < 0.5) = -1;
     labels(labels > 0.5) = 1;
-end
-
-function plotHistogram(data, bins, name)
-   
-    minValue = min(data);
-    maxValue = max(data);
-    
-    x = linspace(minValue, maxValue, bins + 1);
-    xx = zeros(bins, 1);
-    y = zeros(bins, 1);
-    
-    for i = 1:bins
-        y(i) = nnz(data >= x(i) & data < x(i + 1)); 
-        xx(i) = (x(i) + x(i+1)) / 2;
-    end
-    
-    x = round(100*x)/100;
-    figure(100)    
-    plot(xx, y, '*');  
-    xlabel('Uncertainty')
-    ylabel('Number of data points')
-    grid on
-    set(gca, 'XTick', x);
-    axis([minValue maxValue 0 max(y)+1])
-    
-    print('-depsc', name);
 end
