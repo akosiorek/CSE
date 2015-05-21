@@ -4,8 +4,8 @@ CFLAGS = -std=gnu99 -fopenmp -fstrict-overflow -Werror -Wshadow -Wstrict-overflo
 LDFLAGS = -lm -lrt -I $(CURDIR)
 
 #error if student directory is not set
-ifndef SDIR
-SDIR = student
+ifndef BDIR
+BDIR = build
 endif
 
 #Compiler flags
@@ -20,35 +20,35 @@ endif
 VPATH = $(SDIR)
 SRC = $(wildcard *.c) $(wildcard */*.c)
 
-OBJ_SEQ = $(SDIR)/main.o $(SDIR)/$(NAME)_seq.o $(SDIR)/helper.o
-OBJ_PAR = $(SDIR)/main.o $(SDIR)/$(NAME)_par.o $(SDIR)/helper.o
-OBJ_UNIT = $(SDIR)/unit_test.o $(SDIR)/$(NAME)_par.o $(SDIR)/helper.o
+OBJ_SEQ = $(BDIR)/main.o $(BDIR)/$(NAME)_seq.o $(BDIR)/helper.o
+OBJ_PAR = $(BDIR)/main.o $(BDIR)/$(NAME)_par.o $(BDIR)/helper.o
+OBJ_UNIT = $(BDIR)/unit_test.o $(BDIR)/$(NAME)_par.o $(BDIR)/helper.o
 
 # The dependency file names.
 DEPS := $(OBJ_SEQ:.o=.d)
 
-all: sequential parallel
+all: sequential parallel unit_test
 
-sequential: $(SDIR)/$(NAME)_seq
+sequential: $(BDIR)/$(NAME)_seq
 
-parallel: $(SDIR)/$(NAME)_par
+parallel: $(BDIR)/$(NAME)_par
 
-unit_test: $(SDIR)/unit_test
+unit_test: $(BDIR)/unit_test
 
-$(SDIR)/$(NAME)_seq : $(OBJ_SEQ)
+$(BDIR)/$(NAME)_seq : $(OBJ_SEQ)
 	$(CC) -o $@ $(OBJ_SEQ) $(CFLAGS) $(LDFLAGS)
 
-$(SDIR)/$(NAME)_par : $(OBJ_PAR)
+$(BDIR)/$(NAME)_par : $(OBJ_PAR)
 	$(CC) -o $@ $(OBJ_PAR) $(CFLAGS) $(LDFLAGS)
 
-$(SDIR)/unit_test: $(OBJ_UNIT)
+$(BDIR)/unit_test: $(OBJ_UNIT)
 	$(CC) -o $@ $(OBJ_UNIT) $(CFLAGS) $(LDFLAGS) 
 
-$(SDIR)/%.o: %.c
+$(BDIR)/%.o: %.c
 	$(CC) -c -MMD -MP $< -o $@ $(CFLAGS) $(LDFLAGS)
 
 clean:
-	rm -f $(SDIR)/$(NAME)_par $(SDIR)/$(NAME)_seq $(SDIR)/unit_test $(SDIR)/*.o $(SDIR)/*.d
+	rm -f $(BDIR)/$(NAME)_par $(BDIR)/$(NAME)_seq $(BDIR)/unit_test $(BDIR)/*.o $(BDIR)/*.d
 	
 -include $(DEPS)
 
