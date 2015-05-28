@@ -5,7 +5,7 @@ LDFLAGS = -lm -lrt -I $(CURDIR)
 
 #error if student directory is not set
 ifndef SDIR
-SDIR = student
+SDIR = build
 endif
 
 #Compiler flags
