@@ -11,10 +11,11 @@
 
 static void quicksort_seq(int *a, int left, int right)
 {
-	if(left > right)
+	if(left >= right)
 	{
     return;
   }
+  //printf("sq: left = %d, right = %d\n", left, right);
   int x = left, y = (left+right)/2, z =right;
   int pivotIdx = (a[x] <= a[y])
       ? ((a[y] <= a[z]) ? y : ((a[x] < a[z]) ? z : x))
@@ -47,47 +48,49 @@ static void quicksort_par(int *a, int left, int right, int num_threads)
     return;
   }
 
+  //printf("left = %d, right = %d\n", left, right);
   int swapIdx;
-  #pragma omp parallel shared(swapIdx)
+  int x = left, y = (left+right)/2, z = right;
+  int pivotIdx = (a[x] <= a[y])
+      ? ((a[y] <= a[z]) ? y : ((a[x] < a[z]) ? z : x))
+      : ((a[x] <= a[z]) ? x : ((a[y] < a[z]) ? z : y));
+
+  int pivotVal = a[pivotIdx];
+  swap(a + pivotIdx, a + right);
+
+  swapIdx = left;
+
+  for(int i=left; i < right; i++)
   {
-  #pragma omp sections
-  { 
-    #pragma omp section
-    { 
-    int x = left, y = (left+right)/2, z = right;
-    int pivotIdx = (a[x] <= a[y])
-        ? ((a[y] <= a[z]) ? y : ((a[x] < a[z]) ? z : x))
-        : ((a[x] <= a[z]) ? x : ((a[y] < a[z]) ? z : y));
-
-    int pivotVal = a[pivotIdx];
-    swap(a + pivotIdx, a + right);
-
-    swapIdx = left;
-
-    for(int i=left; i < right; i++)
+    if(a[i] <= pivotVal)
     {
-      if(a[i] <= pivotVal)
-      {
-        swap(a + swapIdx, a + i);
-        swapIdx++;
-      }
+      swap(a + swapIdx, a + i);
+      swapIdx++;
     }
-    swap(a + swapIdx, a + right);
-    }
+  }
+  swap(a + swapIdx, a + right);
 
-    #pragma omp section
+  #pragma omp parallel sections
+  { 
+    //#pragma omp section 
+    //{
     quicksort_par(a, left, swapIdx - 1, num_threads);
-
+    //}
     #pragma omp section
+    {
     quicksort_par(a, swapIdx + 1, right, num_threads);
     }
-    }
+  }
 }
 
 void quicksort(int *a, int left, int right, int num_threads) {
   
-  omp_set_num_threads(num_threads);
+  omp_set_num_threads(num_threads * 3);
   omp_set_nested(1);
-  omp_set_max_active_levels(100);
-  quicksort_par(a, left, right, num_threads);
+  omp_set_max_active_levels(5);
+  #pragma omp parallel
+  {
+    #pragma omp single
+    quicksort_par(a, left, right, num_threads);
+  }
 }

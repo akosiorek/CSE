@@ -27,7 +27,7 @@ OBJ_UNIT = $(SDIR)/unit_test.o $(SDIR)/$(NAME)_par.o $(SDIR)/helper.o
 # The dependency file names.
 DEPS := $(OBJ_SEQ:.o=.d)
 
-all: sequential sections
+all: sequential sections unit_test
 
 sequential: $(SDIR)/$(NAME)_seq
 
