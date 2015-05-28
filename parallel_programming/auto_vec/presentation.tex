@@ -35,6 +35,12 @@
 \section{Vectorization}
 
 \begin{frame}[fragile]
+  \frametitle{Why do we need vectorization?}
+   \hspace*{-1.25cm}
+   \includegraphics[width=1.2\textwidth]{data/untitled}
+\end{frame}
+
+\begin{frame}[fragile]
   \frametitle{What is vectorization?}
 
   \begin{equation}
@@ -51,6 +57,8 @@
    \item vectorizing compiler + guidelines
   \end{itemize}
 \end{frame}
+
+
 
 \begin{frame}[fragile]
   \frametitle{The simplest case}
@@ -315,8 +323,8 @@
   \frametitle{Assumed Data Dependencies - Pointer Aliasing}
   \begin{lstlisting}[language=C++]
     void compute(int* A, int* B, int* C, int N) {
-      for(int i = 0; i<N; ++i) 
-        C[i] = A[i] + B[i];
+      for(int i = 1; i<N; ++i) 
+        C[i] = A[i-1] + B[i];
     }
   \end{lstlisting}
   
@@ -338,8 +346,8 @@
 \begin{frame} 
  \frametitle{References}
  \begin{enumerate}
-  \item A Guide to Vectorization with Intel® C++ Compilers \url{https://software.intel.com/en-us/articles/a-guide-to-auto-vectorization-with-intel-c-compilers}
-  \item Intel Intrinsics Guide \url{https://software.intel.com/sites/landingpage/IntrinsicsGuide/}
+  \item A Guide to Vectorization with Intel® C++ Compilers \\ \small{\textcolor{gray}{\url{https://software.intel.com/en-us/articles/a-guide-to-auto-vectorization-with-intel-c-compilers}}}
+  \item \Intel Intrinsics Guide \\ \small{\textcolor{gray}{\url{https://software.intel.com/sites/landingpage/IntrinsicsGuide/}}}
  \end{enumerate}
 
  
@@ -347,7 +355,8 @@
 \end{frame}
 
 \begin{frame} 
- Thank you for your attention
+ \frametitle{Questions?}
+ \includegraphics[width=1\textwidth]{SIMD}
 \end{frame}
 
 
