@@ -3,6 +3,7 @@
 \usepackage{beamerthemeboxes}
 \usepackage{listings}
 \usepackage{color}
+\usepackage{overpic}
 
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
@@ -37,7 +38,9 @@
 \begin{frame}[fragile]
   \frametitle{Why do we need vectorization?}
    \hspace*{-1.25cm}
-   \includegraphics[width=1.2\textwidth]{data/untitled}
+   \begin{overpic}[width=1.2\textwidth]{data/timing}
+      \put(24,10){$C(i) = C(i) + A(i, 1) \cdot B(1) + A(i, 2) \cdot B(2)$}
+   \end{overpic}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -57,6 +60,13 @@
    \item vectorizing compiler + guidelines
   \end{itemize}
 \end{frame}
+
+\begin{frame}
+ \frametitle{What is SIMD?}
+ \hspace*{-1cm}
+ \includegraphics[width=1.2\textwidth]{simd_example}
+\end{frame}
+
 
 
 
@@ -133,166 +143,17 @@
     \begin{column}{0.6\textwidth}
       Properties needed for vectorization:
       \begin{itemize}
-      \item countable
+      \item no data dependencies
       \item single entry, single exit
       \item no branching
       \item the innermost loop
-      \item no function calls
-      \item no data dependencies
+      \item no function calls      
       \end{itemize}
     \end{column}
   \end{columns}  
   
 \end{frame}
 
-\section{What can be vectorized?}
-
-\begin{frame}[fragile]
-  \frametitle{Countable}
-    \begin{columns}[onlytextwidth]
-      \begin{column}{0.5\textwidth}
-	 \textbf{(a)} countable:
-	 \begin{lstlisting}[language=C++]
-	  for(i = 0; i < MAX; ++i) 
-	    C[i] = A[i] * B[i];   
-	\end{lstlisting}
-      \end{column}
-      \begin{column}{0.5\textwidth}
-	\textbf{(b)} uncountable:
-	\begin{lstlisting}[language=C++]
-	  for(i = 0; i < MAX; ++i) 
-	  {
-	    C[i] = A[i] * B[i];
-	    if(A[i] < B[i])
-	      MAX--;
-	   }
-	\end{lstlisting}
-      \end{column}
-    \end{columns}
-    
-    Index cannot depend on the loop execution!   
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Single entry, single exit}
-    \begin{columns}[onlytextwidth]
-      \begin{column}{0.5\textwidth}
-	 \textbf{(a)} single exit:
-	 \begin{lstlisting}[language=C++]
-	  for(i = 0; i < MAX; ++i) 
-	    C[i] = A[i] * B[i];   
-	\end{lstlisting}
-      \end{column}
-      \begin{column}{0.5\textwidth}
-	\textbf{(b)} multiple exits:
-	\begin{lstlisting}[language=C++]
-	  for(i = 0; i < MAX; ++i) 
-	  {
-	    C[i] = A[i] * B[i];
-	    if(A[i] < B[i])
-	      break;
-	   }
-	\end{lstlisting}
-      \end{column}
-    \end{columns}
-    
-    Vectorization could ``skip'' the termination condition!
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{No branching}
-    \begin{columns}[onlytextwidth]
-      \begin{column}{0.5\textwidth}
-	 \textbf{(a)} no branching?:
-	 \begin{lstlisting}[language=C++]
-	  for(i = 0; i < MAX; ++i) 
-	    if(A[i] != 0)
-	      C[i] = A[i];
-	    else
-	      C[i] = B[i];
-	\end{lstlisting}
-      \end{column}
-      \begin{column}{0.5\textwidth}
-	\textbf{(b)} branching:
-	\begin{lstlisting}[language=C++]
-	  for(i = 0; i < MAX; ++i) 
-	    switch(i % 3) {
-	    case 0: C[i] = A[i]; 
-	            break;
-	    case 1: C[i] = B[i]; 
-	            break;
-	    default: C[i] = 0;
-	    }
-	\end{lstlisting}
-      \end{column}
-    \end{columns}
-    
-    If statements implemented by ``masking assignment'' are ok.
-\end{frame}
-
-
-\begin{frame}[fragile]
-  \frametitle{Innermost loops}
-    \begin{lstlisting}[language=C++]
-	for(int i = 0; i < 10; ++i)
-	  for(j = 0; j < MAX; ++j) 
-	    C[i][j] = A[i][j] * B[i][j];   
-    \end{lstlisting}
-    \begin{itemize}
-     \item Only j-loop vectorized
-     \item Outer-loop vectorization inefficient
-     \item Can be enforced with \#pragma SIMD
-     \item Outer-loop vectorization possible after loop interchange
-    \end{itemize}    
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Function Calls}
-     
-     \begin{lstlisting}[language=C++]
-	int compute(int a, int b);
-	...
-	for(i = 0; i < MAX; ++i) 
-	  C[i] = compute(A[i], B[i]);   
-     \end{lstlisting}
-    
-    works if the function:
-    \begin{itemize}
-     \item can be inlined
-     \item is declared as a vector function:
-     \begin{lstlisting}[language=C++]
-	__attribute__((vector))
-	int compute(int a, int b);
-     \end{lstlisting}
-
-     \item is compiler intrinsic function
-     \item is one of the math functions: sin, cos, exp, pow, etc.
-    \end{itemize}    
-\end{frame}
-
-\section{Obstacles to vectorization}
-
-\begin{frame}[fragile]
-  \frametitle{Non-contiguous Memory Access}
-  \begin{figure}
-    \begin{center}
-      \includegraphics[width=0.75\textwidth]{non-contigous}
-    \end{center}
-  \end{figure}
-  
-  \begin{itemize}
-   \item each entry loaded separately
-   \item happens with non-unit stride and indirect adressing e.g.
-   \begin{lstlisting}[language=C++]
-    C[i] = C[i] * A[i * 2];
-    C[i] = C[i] * A[B[i]];
-   \end{lstlisting}
-
-  \end{itemize}
-
-
-  
-\end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Data Dependencies}
@@ -341,6 +202,114 @@
   \begin{lstlisting}[language=C++]
 
   \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Single entry, single exit}
+    \begin{columns}[onlytextwidth]
+      \begin{column}{0.5\textwidth}
+	 \textbf{(a)} single exit:
+	 \begin{lstlisting}[language=C++]
+	  for(i = 0; i < MAX; ++i) 
+	    C[i] = A[i] * B[i];   
+	\end{lstlisting}
+      \end{column}
+      \begin{column}{0.5\textwidth}
+	\textbf{(b)} multiple exits:
+	\begin{lstlisting}[language=C++]
+	  for(i = 0; i < MAX; ++i) 
+	  {
+	    C[i] = A[i] * B[i];
+	    if(A[i] < B[i])
+	      break;
+	    else
+	      MAX -= 1
+	   }
+	\end{lstlisting}
+      \end{column}
+    \end{columns}
+    
+    \begin{itemize}
+     \item ``Skip'' the termination condition
+     \item Modify the termination condition
+    \end{itemize}
+
+    
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{No branching}
+    \begin{columns}[onlytextwidth]
+      \begin{column}{0.5\textwidth}
+	 \textbf{(a)} no branching?:
+	 \begin{lstlisting}[language=C++]
+	  for(i = 0; i < MAX; ++i) 
+	    if(A[i] != 0)
+	      C[i] = A[i];
+	    else
+	      C[i] = B[i];
+	\end{lstlisting}
+      \end{column}
+      \begin{column}{0.5\textwidth}
+	\textbf{(b)} branching:
+	\begin{lstlisting}[language=C++]
+	  for(i = 0; i < MAX; ++i) 
+	    switch(i % 3) {
+	    case 0: C[i] = A[i]; 
+	            break;
+	    case 1: C[i] = B[i]; 
+	            break;
+	    default: C[i] = 0;
+	    }
+	\end{lstlisting}
+      \end{column}
+    \end{columns}
+    
+    If statements implemented by ``masking assignment'' are ok.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Function Calls}
+     
+     \begin{lstlisting}[language=C++]
+	int compute(int a, int b);
+	...
+	for(i = 0; i < MAX; ++i) 
+	  C[i] = compute(A[i], B[i]);   
+     \end{lstlisting}
+    
+    works if the function:
+    \begin{itemize}
+     \item can be inlined
+     \item is declared as a vector function:
+     \begin{lstlisting}[language=C++]
+	__attribute__((vector))
+	int compute(int a, int b);
+     \end{lstlisting}
+
+     \item is compiler intrinsic function
+     \item is one of the math functions: sin, cos, exp, pow, etc.
+    \end{itemize}    
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Non-contiguous Memory Access}
+  \begin{figure}
+    \begin{center}
+      \includegraphics[width=0.75\textwidth]{non-contigous}
+    \end{center}
+  \end{figure}
+  
+  \begin{itemize}
+   \item each entry loaded separately
+   \item happens with non-unit stride and indirect adressing e.g.
+   \begin{lstlisting}[language=C++]
+    C[i] = C[i] * A[i * 2];
+    C[i] = C[i] * A[B[i]];
+   \end{lstlisting}
+  \end{itemize}
+  
+  \textcolor{red}{Note:} supported by Intel AVX2 
 \end{frame}
 
 \begin{frame} 
