@@ -22,8 +22,7 @@ void reverse(char *str, int strlen) {
   int charsLeft = strlen % np;
 
   int bufferSize = charsPerProcess + (charsLeft > rank);
-  char* buffer = malloc((bufferSize + 1) * sizeof(*buffer));
-  buffer[bufferSize] = '\0'; // string termination character
+  char* buffer = malloc(bufferSize * sizeof(*buffer));
 
   int* sendCounts = NULL;
   int* displacement = NULL;
@@ -39,9 +38,6 @@ void reverse(char *str, int strlen) {
     for(int i = 1; i < np; ++i) {
       displacement[i] = displacement[i-1] + sendCounts[i-1];
     }
-
-
-	
   }
   
   MPI_Scatterv(str,		// send buffer
@@ -56,28 +52,22 @@ void reverse(char *str, int strlen) {
 
 
 
-  reverse_str(buffer, bufferSize);
 
   if(rank == 0) {
    
     MPI_Status status;
     //handle own stuff
     for(int i = 0; i < bufferSize; ++i) {
-      str[strlen - bufferSize + i] = buffer[i];
+      str[strlen - bufferSize + i] = buffer[bufferSize - 1 - i];
     }
 
-    strlen -= bufferSize;
     for(int i = 1; i < np; ++i) {
-      int currentLength = sendCounts[i];
-      MPI_Recv(buffer, currentLength, MPI_CHAR, i, 0, MPI_COMM_WORLD, &status);
-      for(int j = 0; j < currentLength; ++j) {
-        str[strlen - currentLength + j] = buffer[j];
-      }
-      strlen -= currentLength;
+      MPI_Recv(&str[strlen - displacement[i] - sendCounts[i]], sendCounts[i],
+          MPI_CHAR, i, 0, MPI_COMM_WORLD, &status);
     }
 
   } else {
-
+    reverse_str(buffer, bufferSize);
     MPI_Send(buffer, bufferSize, MPI_CHAR, 0, 0, MPI_COMM_WORLD);
   }
 
