@@ -11,3 +11,4 @@
 *.out
 *.nav
 *-eps-converted-to.pdf
+*.m~ 
