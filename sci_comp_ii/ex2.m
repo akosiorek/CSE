@@ -7,7 +7,7 @@ function ex2()
    b = 1;
    preSmoothing = 2;
    postSmoothing = 2;
-   level = 5;   
+   level = 6;   
    
    % Initialization
    Nx = 2 ^ level;

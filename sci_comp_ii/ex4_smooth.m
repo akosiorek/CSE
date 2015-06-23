@@ -1,6 +1,6 @@
 % Gauss-Seidel smoother using a three-point stencil, a solution
 % vector y and a right hand side rhs as input.
-function y = ex4_smooth(stencil,y,rhs);
+function y = smooth(stencil,y,rhs);
 
 l = length(y);
 
