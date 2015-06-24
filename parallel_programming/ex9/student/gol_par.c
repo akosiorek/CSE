@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <mpi.h>
+#include <math.h>
 
 #include "helper.h"
 
@@ -20,28 +22,30 @@ unsigned int gol(unsigned char *grid, unsigned int dim_x, unsigned int dim_y, un
 		return 0;
         }
 
-	np = min(np, dim_y);
+	if(np > dim_y) {
+		np = dim_y;
+	}
 
-	size_t rowsPerProc = dim_y / np;
-	size_t remainderRows = dim_y % np;
+	int rowsPerProc = dim_y / np;
+	int remainderRows = dim_y % np;
 
 	rowsPerProc += remainderRows > rank;
 
 
-	size_t size = dim_x * (rowsPerProc + 2);
-	size_t bytes = size * sizeof(uchar);
-	size_t offset = dim_x * sizeof(uchar);
+	int offset = dim_x ;
+	int size = dim_x * rowsPerProc;
+	int bytes = (2 * offset + size) * sizeof(uchar);
 
 	uchar* grid_in = malloc(bytes);
         uchar* grid_out = malloc(bytes);
 
 
 	int* counts = NULL;
-	int* displacment = NULL;
+	int* displacement = NULL;
 
 	if(rank == 0) {
 		 counts = malloc(np * sizeof(*counts));
-		 displacment = malloc(np * sizeof(*displacement));
+		 displacement = malloc(np * sizeof(*displacement));
 
 		for(int i = 0; i < np; ++i) {
 			counts[i] = rowsPerProc + (remainderRows > 0);
@@ -59,7 +63,8 @@ unsigned int gol(unsigned char *grid, unsigned int dim_x, unsigned int dim_y, un
 			counts,
 			displacement,
 			MPI_CHAR,
-			buffer + offset, // begin of true data
+			grid_in + offset, // begin of true data
+			size,
 			MPI_CHAR,
 			0,	// root
 			MPI_COMM_WORLD);
@@ -77,15 +82,8 @@ unsigned int gol(unsigned char *grid, unsigned int dim_x, unsigned int dim_y, un
 		swap((void**)&grid_in, (void**)&grid_out);
 	}
 
-	if(rank == 0) {
-		size_t totalSize = dim_x * dim_y;
-		for(int i = 0; i < np; ++i) {
-			displacement[i] = totalSize - displacement[i] - counts[i];
-		}
-	}
-
-	MPI_Gatherv(	buffer,
-			bufferSize,
+	MPI_Gatherv(	grid_in + offset,
+			size,
 			MPI_CHAR,
 			grid,
 			counts,
@@ -102,5 +100,10 @@ unsigned int gol(unsigned char *grid, unsigned int dim_x, unsigned int dim_y, un
 		free(displacement);
 	}
 
-	return cells_alive(grid, dim_x, dim_y);
+	int alive = 0;
+	if(rank == 0) {
+		alive = cells_alive(grid, dim_x, dim_y);
+	}
+	return alive;
 }
+
