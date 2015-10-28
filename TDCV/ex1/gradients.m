@@ -15,7 +15,6 @@ function [magnitude, orientation] = gradients(img, smooth)
     
     grad_h = convolution(img, filter_h, 'mirror');
     grad_v = convolution(img, filter_v, 'mirror');
-    
     magnitude = sqrt(grad_h.^2 + grad_v.^2);
     orientation = atan2(grad_v, grad_h);
 end

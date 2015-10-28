@@ -15,7 +15,7 @@ function ex1
     subplot(1, 2, 2)
     subimage(blurred)
     title('blurred')
-    suptitle('Ex 1.1 - Convolution')
+    %suptitle('Ex 1.1 - Convolution')
 
 
     %% Gaussian
