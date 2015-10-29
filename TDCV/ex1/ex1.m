@@ -5,6 +5,9 @@ function ex1
     disp('Ex1 Convolution')
     lena = read_lena();
     kernel = ones(3) / 9;
+    
+    % convolution and make_bored (used inside) implement 1a
+    % results of 1b are plotted against the original image
     blurred = convolution(lena, kernel, 'mirror');
 
     figure(1)
@@ -23,12 +26,15 @@ function ex1
     lena = read_lena();
     for sigma = [1, 3]
 
-
+        % 2a, gaus2d generates 2d gaussian
         filter2d = gaus2d(sigma);
         tic
         filtered_2d = convolution(lena, filter2d, 'mirror');
         time2d = toc;
+       
+        
 
+        % 2b, gaus generates 1d vertical gaussian
         filterX = gaus(sigma);
         filterY = filterX';
 
@@ -41,6 +47,12 @@ function ex1
         fprintf('2x 1d convolution done in: %f s\n', time1d);
         fprintf('   2d convolution done in: %f s\n', time2d);
         fprintf('Results are the same: %d\n', same);
+        
+        % conclusion: gaussian blurrs the image, the more the bigger the 
+        % filter size; 2x gaussian1d give the same results as the 2d gaussian
+        % contratry to expectations, separable gaussians are slower than the
+        % 2d one, probably due to loops written in Matlab, which are
+        % pretty slow
     end
 
 
@@ -48,8 +60,11 @@ function ex1
     disp('Ex3 Image Gradients')
 
     lena = read_lena();
+    % 3a
     [m0, o0] = gradients(lena, 0);
+    % 3b
     [m1, o1] = gradients(lena, 1);
+    % 3c
     [m2, o2] = gradients(lena, 2);
 
     figure(3)
@@ -82,5 +97,5 @@ function ex1
 end
 
 function lena = read_lena()
-   lena = double(imread('../lena.gif'))/255;
+   lena = double(imread('lena.gif'))/255;
 end
