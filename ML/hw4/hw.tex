@@ -1,0 +1,131 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\topmargin}{-.3in}
+\setlength{\textheight}{9in}
+% \pagestyle{empty}
+\pagestyle{fancy}
+\begin{document}
+
+\begin{center}
+{\Large Machine Learnig Homework 4} \\[.3in]
+\end{center}
+\lhead{Adam Kosiorek}
+\rhead{IMAT: 03661883}
+\vspace*{.5in}
+
+\section{Problem 1}
+
+Let $|H|$ denote number of heads and $|T|$ number of tails. We are interested in sequences like: 'H', 'TH', 'TTTH' etc. Since these are coin tosses, probability of events corresponding to these sequences are $\frac{1}{2}$, $\frac{1}{4}$, $\frac{1}{8}$ and so on. Therefore:
+
+\begin{equation}
+ E[|H|] = \sum_{i=1}^{\infty} \frac{1}{2^i} = 1
+\end{equation}
+\begin{equation}
+ E[|T|\ = 0 + \frac{1}{4} \cdot 1 + \frac{1}{8} \cdot 2 + \frac{1}{16} \cdot 3 + ... = \frac{1}{2} \sum_{i=1}^{\infty} \frac{1}{2^i} \cdot i = \frac{1}{2} \cdot 2 = 1
+\end{equation}
+
+\section{Problem 2}
+
+Let $U$ number of urns, $M$ number of balls in each urn, $N$ number of balls draw with replacement, $n_B$ number of back balls draw, $B$ the event of drawing a single black ball. We know that the probability of drawing a single black ball from the urn $u$ is $P(B|u) = \frac{u}{M}$ and the probability of drawing $n_B$ black urns from the same urn is $P(n_B|u) = \binom{N}{n_B} P(B|u)^{n_b}(1-P(B|u))^{N-n_b}$. Due to the Bayes rule:
+\begin{equation}
+ P(u|n_B) = \frac{P(n_B|u)P(u)}{P(n_b)}
+\end{equation}
+where $P(u) = \frac{1}{U}$ and 
+\begin{equation}
+ P(n_b) = \sum_{u=1}^U P(n_B|u)P(u) = \frac{1}{U} \sum_{u=1}^U \binom{N}{n_B} \left(\frac{u}{M}\right)^{n_b}\left(1-\frac{u}{M}\right)^{N-n_b}
+\end{equation}
+
+Since we don't know which urn we have, we must rely on the data for the purpose of computing the probability of the next drawn ball being black. It is the MLE estimate of $\theta = P(B|u) = \frac{n_B}{M} = 0.3$
+
+
+\section{Problem 3}
+
+\begin{equation}
+ P(X=x|\theta) = \theta^x (1-\theta)^{1-x}
+\end{equation}
+\begin{equation}
+ \log(P(X=x|\theta)) = \log\left(\theta^x (1-\theta)^{1-x}\right) = x \log{\theta} + (1-x)\log(1-\theta)
+\end{equation}
+
+\begin{equation}
+ \theta_{MLE} \Leftrightarrow 0 = \frac{\partial}{\partial \theta} \log(P(X=x|\theta)) = \frac{x}{\theta} - \frac{1-x}{1-\theta}
+\end{equation}
+\begin{equation}
+ \theta_{MLE} = x
+\end{equation}
+
+\section{Problem 4}
+
+We have that the prior is given by $Beta(\mu, a, b)$ with $E[Beta(\mu, a, b)] = \frac{a}{a+b}$, the posterior is given by $Beta(\mu, m + a, N - m + b)$ with $E[Beta(\mu, m + a, N - m + b)] = \frac{m+a}{N+a+b}$ and $\mu_{MLE} = \frac{m}{N}$.
+
+\begin{equation}
+ \begin{align}
+    &E[Beta(\mu, m + a, N - m + b)] = \\
+    &= \frac{m+a}{N+a+b} \\
+    &= \frac{a+b}{N+a+b} \frac{m+a}{a+b} \\
+    &= \frac{a+b}{N+a+b} \frac{a}{a+b} + \frac{N}{N+a+b} \frac{m}{N} \\
+    &= \lambda \frac{a}{a+b} + (1-\lambda) \frac{m}{N} \\
+    &= \lambda E[Beta(\mu, a, b)] + (1 - \lambda) \mu_{MLE}
+ \end{align}
+\end{equation}
+
+
+\section{Problem 5}
+
+For n i.i.d. samples $x_i \sim  Poi(\lambda) = \frac{e^{-\lambda} \lambda^x}{x!}$ we have
+\begin{equation}
+  P(x_1, \ldots, x_n | \lambda) = \prod_{i=1}^{n} P(x_i | \lambda) = \frac{e^{-n\lambda} \lambda^{\sum_{i=1}^{n} x_i}}{\sum_{i=1}^{n} x!}
+\end{equation}
+\begin{equation}
+  log\left(P(x_1, \ldots, x_n | \lambda)\right) \propto -n\lambda + \log(\lambda) \sum_{i=1}^{n} x_i
+\end{equation}
+\begin{equation}
+  \frac{\partial}{\partial \lambda} log\left(P(x_1, \ldots, x_n | \lambda)\right) \propto -n + \frac{1}{\lambda} \sum_{i=1}^{n} x_i = 0
+\end{equation}
+\begin{equation}
+ \lambda_{MLE} = \frac{1}{n} \sum_{i=1}^{n} x_i
+\end{equation}
+
+It is unbiased, since due to the linearity of the expected value operator we have:
+
+\begin{equation}
+ E[\lambda_{MLE}] = E[\frac{1}{n} \sum_{i=1}^{n} x_i] = \frac{1}{n} \sum_{i=1}^{n} E[x_i] = \frac{1}{n} \sum_{i=1}^{n} \lambda = \lambda
+\end{equation}
+
+
+Gamma distribution is given by 
+\begin{equation}
+    Gamma(\alpha, \beta) = \frac{\beta^\alpha}{\Gamma(\alpha)} \lambda^{\alpha-1} e^{-\beta \lambda} \propto \lambda^{\alpha-1} e^{-\beta \lambda}                            
+\end{equation}
+
+and the posterior:
+
+\begin{equation}
+\begin{align}
+  &P(\lambda | \mathrm{D}, \alpha, \beta)\\ 
+  &\propto P(\mathrm{D} | \lambda) P(\lambda | \alpha, \beta)\\
+  &= e^{-n\lambda} \lambda^{\sum_{i=1}^{n} x_i}\lambda^{\alpha-1} e^{-\beta \lambda} \\
+  &= \lambda^{\alpha-1 + \sum_{i=1}^{n} x_i} e^{-(n + \beta) \lambda} 
+\end{align}
+\end{equation}
+
+therefore
+
+\begin{equation}
+  \frac{\partial}{\partial \lambda} log\left(P(\lambda | \mathrm{D}, \alpha, \beta)\right) \propto -n + \beta + \frac{1}{\lambda} \left( \alpha - 1 + \sum_{i=1}^{n} x_i \right) = 0
+\end{equation}
+
+finally
+
+\begin{equation}
+ \lambda_{MAP} = \frac{1}{n + \beta} \left( \alpha - 1 + \sum_{i=1}^{n} x_i \right)
+\end{equation}
+
+
+
+\end{document}
