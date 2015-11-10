@@ -42,12 +42,12 @@ order=-1
 
 [item:sop.tex]
 archive=true
-column=299
+column=14
 encoding=UTF-8
 highlight=LaTeX
-line=32
+line=31
 mode=LaTeX
-open=true
+open=false
 order=1
 
 [item:stanford.tex]
@@ -57,14 +57,14 @@ encoding=UTF-8
 highlight=LaTeX
 line=47
 mode=LaTeX
-open=true
+open=false
 order=0
 
 [view-settings,view=0,item:sop.tex]
-CursorColumn=299
-CursorLine=32
+CursorColumn=14
+CursorLine=31
 JumpList=
-ViMarks=.,32,298,[,32,286,],32,298
+ViMarks=.,30,302,[,30,294,],30,302
 
 [view-settings,view=0,item:stanford.tex]
 CursorColumn=47
