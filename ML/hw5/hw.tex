@@ -1,0 +1,86 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\topmargin}{-.3in}
+\setlength{\textheight}{9in}
+% \pagestyle{empty}
+\pagestyle{fancy}
+\begin{document}
+
+\begin{center}
+{\Large Machine Learnig Homework 5} \\[.3in]
+\end{center}
+\lhead{Adam Kosiorek}
+\rhead{IMAT: 03661883}
+\vspace*{.5in}
+
+
+\section*{Problem 1}
+
+There are four names in the hat: Martin, Alexi, Igor, and Valery. The name that is randomly drawn wins the lottery. We define three different events:
+\begin{description}
+ \item{$X_1$} Martin or Alexi wins.
+ \item {$X_2$} Alexi or Igor wins.
+ \item {$X_3$} Igor or Martin wins.
+\end{description}
+
+We have $P(X_1) = P(X_2) = P(X_3) = 0.5$ and $P(X_1, X_2) = P(X_1, X_3) = P(X_2, X_3) = 0.25$, so the events are pairwise independent. But P$(X_1, X_2, X_3) = 0$, not $0.125$, as it would if the events were all mutual independent.
+
+
+\section*{Problem 2}
+
+We use the following identities:\\
+\begin{equation}
+Var[X] = E[X^2] + E[X]^2\label{eq:eq1}
+\end{equation}
+\begin{equation}
+E[X+Y] = E[X]+E[Y]\label{eq:eq2}
+\end{equation}
+Thus we have\\
+\begin{align*}
+\begin{split}
+Var[X+Y] &\stackrel{\eqref{eq:eq1}}{=} E\left[(X+Y)^2\right]-E[X+Y]^2\\
+&\stackrel{\eqref{eq:eq2}}{=}E\left[X^2+2XY+Y^2\right] -\left(E[X]+E[Y]\right)^2\\
+&\stackrel{\eqref{eq:eq2}}{=}E\left[X^2\right] + 2E[XY] + E\left[Y^2\right] -E[X]^2-2E[X]E[Y]-E[Y]^2\\
+&=Var[X]+Var[Y] + 2\left(E[XY] - E[X]E[Y]\right) = Var[X]+Var[Y]+2Cov(X,Y).
+\end{split}
+\end{align*}
+
+\section*{Problem 3}
+
+\begin{equation}
+Var[X + Y] = E[(X+Y)^2]-(E[X] + E[Y])^2 = E[X^2] - E[X]^2 + E[Y]^2 - E[Y]^2 + 2E[XY] - 2E[X]E[Y]
+\end{equation}
+
+And hence, 
+
+\begin{equation}
+Var[X + Y ] = Var[X] + Var[Y ] + 2Cov[X,Y].
+\end{equation}
+
+
+\section*{Problem 4}
+
+$Z = \begin{pmatrix} X \\ Y \end{pmatrix} \sim \mathrm{N}(\mu_Z, \Sigma_Z)$, with $\mu_Z = \begin{pmatrix} \mu_X \\ \mu_Y \end{pmatrix}$ and $\Sigma_Z = \begin{pmatrix} \sigma_X^2 & Cov(X, Y) \\ Cov(X, Y) & \sigma_Y^2 \end{pmatrix}$. Since $\rho(X, Y) = 0$ also $Cov(X, Y) = 0$ and therefore $\Sigma_Z = \begin{pmatrix} \sigma_X^2 & 0 \\ 0 & \sigma_Y^2 \end{pmatrix}$ is diagonal. We can compute the conditional probabilities $p(X|Y) \sim \mathrm{N}(\mu_{X|Y}, \Sigma_{X|Y})$ and $p(Y|X) \sim \mathrm{N}(\mu_{Y|X}, \Sigma_{Y|X})$ using the formula (4.69) from Murphy p. 111. We get:
+
+\begin{equation}
+\begin{align}
+ \mu_{X|Y} = \mu_X + Cov(X, Y) \frac{1}{\sigma_y^2}(Y - \mu_Y) = \mu_X \\
+ \Sigma_{X|Y} = \sigma_X^2 - Cov(X, Y) \frac{1}{\sigma_Y^2} Cov(Y, X) = \sigma_X^2
+\end{align}
+\end{equation}
+
+thus $P(X|Y) = P(X)$, proves that $X$ and $Y$ are independent.
+
+\begin{equation}
+\end{equation}
+
+
+                           
+
+
+\end{document}
