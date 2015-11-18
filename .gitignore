@@ -12,3 +12,5 @@
 *.nav
 *-eps-converted-to.pdf
 *.m~ 
+*.bbl
+*.blg
