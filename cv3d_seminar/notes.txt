@@ -1,0 +1,153 @@
+- general purpose 3D semantic modeling syste,
+	* reconstruction from a single RGBD sensor
+	* interactive labeling of scenery by touching or circling; allows relabeling for error correction
+	* online learning of object classes and classification
+	* runs in real time
+
+- technical contributions:
+	* streaming random forsets with reservoir sampling to maintain fixed length unbiased samples of streaming data -> online learning, extremely fast and more accurate than other online RFs
+	* VOP - robust 3D rotation-invariant appearence and geometric features computed from volumetric data
+	* an efficient mean-field algorithm for inference in a dynamically changing volumetric random field
+
+4. Pipeline:
+	* data capture
+	* feature computation
+	* labeling
+	* segmentation
+	* learning
+	* filtering
+
+
+	a) 3d model acquisition engine - fuse RGB and D on GPU into 3D volume using TSDF (truncated signed distance function) with 6mm^3 voxel resolution
+	b) user interaction - touch based --- hand and feet to touch or encircle objects; voice based --- labels and train/test mode. Touch is recognized by detecting discrepancies in depth maps between raycasted model and the original image
+	c) Mean-field inference on CRF energy - per voxel approximate posterior distribution over the set of labels; uses user feedback and prediction from the SRF by unary likelihood functions on individual voxels. Pairwise terms in CRF ensure smooth segmentation. The CRF model changes between frames to account for new data and labels. GPU-implemented.
+	d) Streaming Random Forest Classifier - runs as a background task, predicts class likelihoods for each voxel. Uses VOPs. In test modes provide labels for every visible voxel; Provided segmentation is smoothed by the mean-field algo before displaying.
+
+5. Painting and Segmenting the World 
+- the volumetric segmentation algo depends on user-provided labels and on outputs of the learned classifiers; Smoothing applied before output.
+
+	a) Voxel information:
+		- TSDF - 32bit float
+		- Color in LAB - 24bit
+		- weight for averging distance vals - 8bits
+		additionally (by exploing sparse TSDF nature and hashing):
+		- user annotation class - 8
+		- forest prediction - 8
+		- mean-field inference before and aftrer classification - 2x8
+		- prob distr. from mean-field - 32bit float per class
+
+		In total: 108 bits = 16 bytes per voxel
+
+	b) dynamic pairwise CRF
+		- dynamic settings requires a special purpose inference routine
+		- the posterior factorizes into likelihood terms\fi_i for each voxel and for priors \fi_{ij} for pairs of voxel in a neighbour of each voxel, here a radius of 6cm (eq. 1, 2); neighboPrhood is large -> inference handled by a GPU implementation of a mean-field algo
+		- unary and pairwise terms change when new labels or new data is observed
+		- standard Potts model for the pairwise potentials: label disconuity cost between voxels i and j is \lambda_{ij} if labels differ, 0 o/w
+		
+		Initialization:
+		- \lambda_{ij} is a function of difference in location, color and normals with user specified weights <= inspired by 2D setting where it is chosen so as to preserve edges
+		- normals are computed from gradient of TSDF at zero crossing
+		- unary potentials initially: penalty for the non-background class, 0 o/w => background is encouraged
+		User Paint Interaction:
+		- the user reaches out and touches the subject -> label only some voxels
+		- semantic label specified by speech: existing or a new one
+		- new labels enlarges label space => everything has to be re-classified
+		- labels used to update unary potentials: all voxels in the object are updated with \infty cost in their label differs from the specified one
+		- repeated stroke labeling overwrites any existing one -> easy mistake correction
+
+		User Enclose Interaction:
+		- user draws an enclosing circle around an object
+		- useful for moving, small or delicate objects
+		- user annotation is projected into the input image
+		- GMM fitted to background and foreground colours; foreground is the interior of the convex hull of user annotation; rest is background. 
+		- probs of foreground given data P(fg|a_i) is computed for every voxel in some bounding volume with uniform prior 
+ 		- inference is used to update the unary potentials of every voxel; the new potential is log of probability of fg or bg
+		
+		Learned Class Predictions:
+		- forest outputs P_F(x_i = l | D) over l \in label\_space for all voxels
+		- distribution used to update unary potentials of every voxel which hasn't been affected by the mean-field label propagation or hand labeling
+
+	c) Efficient Mean-Field Inference
+		- beling propagated by inferring optimal one given pairwise energy
+		- online volumetric mean-field inference <- contribution <- approximate MAP of energy
+		- GPU implementation
+		- approximation due to the fact that the energy landscapes changes gradually between frames => amortize optimization costs over many frames => high fps and label propagation
+		
+		Q(x) - PDF approximating the original P(x) under KL-div- the posterior over labaling of voxels from the CRF. Chosen s.t. marginal of each RV is independent: Q(x) = \product Q_i(x_i)
+		- fixed-point solution of the KL-div
+		- final result x_i^\star = argmax Q_i(l); usually computed by iterative sampling and iteration until convergence; here, however, we start from the last frame and since it doesn't change too fast -> only one iteration. No formal proofs of convergence but works (usually distribution at each frame would be inited to uniform)
+
+		Integration of Forest Predictions:
+		- Instead of taking previous iteration i.e. Q^{t-1} we start in iteration t at \gamma Q^{t-1}_i + (1 - \gamma) P_F(x_i=l|D), \gamma \in [0, 1] and P_F is the streaming RF prediction
+
+
+	d) GPU impl
+		- a single GPU threads computes P_F(x_i|D) and initializes segmentation at time t, updates unitary and pairwise potentials and then computes the mean-field output \in O(num_classes * neighbourhood_size)
+		- if a probability for any class in a voxel is high -> don't update
+		- no updates for voxels far away from surface
+
+
+6. Learning Labels
+	- RF with reservoir sampling => fixed size unbiased sample of all traning data
+	- if incoming data were i.i.d => just store first K samples 
+	- non iid due to correlation between frames
+	- reservoir gathered over a huge time windows mitigates it
+	- first K samples are just put into the reservoir
+	- later random samples from the reservoir are exchanged with new samples; the exchange probability decreases over time; In the limit the probability of retaining any sample inside is uniform
+	- one reservoir at each possible parent (current leaf)
+	- training -> maximize information gain G(S, S^L, S^R) = H(S) - \sum_{d \in \{L, R \}} \frac{|S^d|}{|S|}H(S^d), H(S) - Shannon Entropy of the distribution of labels in S
+	
+	Streaming Random Forests:
+	K - reservoir capacity, a paramter
+	T - a list of at most K samples
+	R - reservoir
+	d \in {L, R} - child index, left or right
+	m - number of samples observed so far
+	(i, l) - new sampe: append to T if m < K
+		            exchange random element of T with prob K/m if m >= K
+	
+	f(i, \theta) - splitting function; splits T into T^L and T^R
+	|R^d| = m^d = |T^d| max(1, \frac{m}{K}) \
+	m^d samples are drawn with replacement from P(l|T^d) - the normalized histogram at the child node - and added in a standard way to R^d
+
+	Voxel-Oriented Patches VOPs
+	- computed from TSDF directly; 3D rot invariant
+	- let p_i be the position of voxel V_i and n_i its normal generated from TSDF
+	- (p - p_i) \cdot n_i = 0 defines a plane, from which a r \times r square patch with colors values from TSDF inn CIELab is chosen
+	- patch is rotated according to the dominant intensity gradient direction (as in SIFT)
+	- signed distance to the dominant horizontal surface
+	- r = 13 with 10mm per pixel
+	- finally: discriminative info about the local appearence around voxel
+	- empty voxels in the patch flagged with "invalid" colour val
+	- VOP computed for each voxel on GPU
+	- each VOP computed only once per SRF traversal
+
+	Split Functions
+	- VOP-based, surface orientation, world height
+	a) VOP-based
+	- takes raw value or an op between two values of a VOP and threshold: f(i, \theta) = V_i(x_1, y_1, c_1) op V_i(x_2, y_2, c_2) > \tau
+	- op \in {+, -}, c is the colur channel, \tau threshold, \theta = (VOP, op, x, y, c, \tau)
+	b) surface orientation
+	-thresholded dihedral angle between the sufrace normal and the world up vector -> separate wall or table classes, flat w/o texture
+	c) world heigh
+	- thresholded, deal with easy classes such as floor
+
+	- type and \theta chosen during learning
+	- the easiest choice is made => might result in mistake and require re-labelling by the user
+
+	Efficient test time classification
+	- 17 milion voxel classifications per second; 3-10 milion voxels visible at any one time
+	- batch visible voxels randomly and process 1 batch per frame
+	- voxel has flag whether is was classified or not
+	- repeat after processing all voxels
+
+
+
+
+
+
+
+
+
+
+TODO: more papers from the group
