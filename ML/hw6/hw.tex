@@ -1,0 +1,37 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\topmargin}{-.3in}
+\setlength{\textheight}{9in}
+% \pagestyle{empty}
+\pagestyle{fancy}
+\begin{document}
+
+\begin{center}
+{\Large Machine Learnig Homework 6} \\[.3in]
+\end{center}
+\lhead{Adam Kosiorek}
+\rhead{IMAT: 03661883}
+\vspace*{.5in}
+
+
+\section*{Problem 1}
+
+Let $\hat{\Phi} = \begin{pmatrix} \Phi \\ \sqrt{\lambda}I_{p \times M} \end{pmatrix} \in \mathrm{R}^{(N+p) \times M}$ be the augmented design matrix and $\hat{\mathbf{z}} = \begin{pmatrix} \mathbf{z} \\ \mathbf{0}_p \end{pmatrix} \in \mathrm{R}^{N+p}$ the augmented target vector. Maximum likelihood estimation of parameters $ \mathbf{w}$ for linear regression is equivalent to minimizing energy given by $E(\mathbf{w}) = (\mathbf{z} - \Phi^T\mathbf{w})^T(\mathbf{z} - \Phi^T\mathbf{w})$. The minimizer $\mathbf{w}_{MLE} = (\Phi^T\Phi)^{-1}\Phi^T\mathbf{z}$ is agnostic of the form and contents of $\mathbf{w}$, $\mathbf{z}$ or $\Phi$. Therefore, we can write the minimizer of the energy resulting from the augmented design matrix and target vector as 
+
+\begin{equation}
+\begin{align}
+ \hat{\mathbf{w}}_{MLE} &= (\hat{\Phi}^T\hat{\Phi})^{-1}\hat{\Phi}^T\hat{\mathbf{z}} \\
+	       &= \left( \begin{pmatrix} \Phi^T & \sqrt{\lambda}I_{p \times M}^T \end{pmatrix} \begin{pmatrix} \Phi \\ \sqrt{\lambda}I_{p \times M} \end{pmatrix} \right)^{-1} \begin{pmatrix} \Phi^T & \sqrt{\lambda}I_{p \times M}^T \end{pmatrix} \begin{pmatrix} \mathbf{z} \\ \mathbf{0}_p \end{pmatrix} \\
+	       &= \left( \lambda I_{M \times M} + \Phi^T\Phi \right)^{-1} \Phi^T \mathbf{z} \\
+	       &= \mathbf{w}_{MLE}^{ridge}
+\end{align}
+\end{equation}             
+
+
+
+\end{document}
