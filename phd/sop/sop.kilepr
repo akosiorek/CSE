@@ -44,7 +44,7 @@ encoding=UTF-8
 highlight=BibTeX
 line=14
 mode=BibTeX
-open=true
+open=false
 order=1
 
 [item:sop.kilepr]
@@ -59,12 +59,12 @@ order=-1
 
 [item:sop.tex]
 archive=true
-column=2
+column=231
 encoding=UTF-8
 highlight=LaTeX
-line=78
+line=33
 mode=LaTeX
-open=true
+open=false
 order=0
 
 [item:stanford.tex]
@@ -84,10 +84,10 @@ JumpList=
 ViMarks=.,12,14,[,12,14,],12,14
 
 [view-settings,view=0,item:sop.tex]
-CursorColumn=2
-CursorLine=78
+CursorColumn=231
+CursorLine=33
 JumpList=
-ViMarks=.,28,414,[,28,414,],28,423
+ViMarks=.,33,230,[,33,230,],33,230
 
 [view-settings,view=0,item:stanford.tex]
 CursorColumn=47
