@@ -30,7 +30,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=14
 mode=LaTeX
-open=true
+open=false
 order=0
 
 [item:hw4.kilepr]
