@@ -1,0 +1,46 @@
+This paper is about:
+  - acquisition and reconstruction
+  - segmentation based on colour and gemoetry: CRF with mean-field inference
+  - machine learning: Streaming Random Forest 
+  - voxel representation and features: Voxel Oriented Patches, TSDF
+  - user experience: interaction
+  - capturing datasets
+
+
+It is not about:
+  - great detail in reconstruction: digitized heritage and world-class stuff is fun, but not relevant here
+  - point clouds, meshes, replacing objects
+
+
+Very relevant:
+1. 3) Methods for real-time dense reconstructions, even over large physical scales, with only a single commodity depth or RGB camera have been demonstrated [Rusinkiewicz et al. 2002; Newcombe et al. 2011; Izadi et al. 2011; Newcombe et al. 2011; Chen et al. 2013; Nießner et al. 2013; Pradeep et al. 2013]. Applications such as: live 3D scanning, physically-plausible augmented reality, autonomous robot or vehicle guidance, and 3D fabrication.
+
+
+2.     9) dense segmentation of reconstructed scenes [Lin et al. 2013; Sengupta et al. 2013; Ladick`y et al. 2012; Valentin et al. 2013], even in an online manner [Herbstet al. 2014] 
+
+2.    12) capturing large and compelling datasets which have moved from traditional 2D object images to RGB-D and full 3D scenes [Xiao et al. 2010; Xiao et al. 2013; Geiger et al. 2012].
+
+3.     5) online SLAM system that can recognize objects and update the model live [Salas-Moreno et al. 2013] the model database is still captured and generated offline. Only a single object class (chair) is recognized and it is unclear how the system can support larger surfaces such as floors, walls and ceilings. However, this system demonstrates the power of semantic recognition alongside the reconstruction process, improving relocalization, memory efficiency, and loop closure.
+
+
+4. None of these systems operate in a real-time or in an online manner.
+4.   2) Dense semantic 3D reconstruction with labeling performed on the images and projectred to the final model, which limits the use of full 3D geometry in their inference [Sengupta et al. 2013].
+
+4.     3) Joint volumetric dense reconstruction and semantic segmentation using computationally complex global optimization [H ̈ane et al. 2013].
+
+5.     1) using RGB-D sensors [Silberman and Fergus 2011; Silberman et al. 2012; Couprie et al. 2013; Ren et al. 2012; K ̈ahler and Reid 2013]. Classification or recognition is performed in image-space, along with 3D priors to aid segmentation. Again these systems fail to exploit full 3D geometry and are the counterpart of image-based segmentation but for RGB-D frames. 
+
+5.   2) [Valentin et al. 2013] exploits 3D meshes and geometric and appearance features for improved inference in outdoor and indoor scenes.
+
+5.     3) [Kim et al. 2013] use a voxel-based conditional random field (CRF) for segmentation and occupancy-grid based reconstruction.
+
+	Use a Voxel-based CRF for simultaneous segmentation and reconstruction. Each voxel contains information about visibility and occlusion as well as group membership. The first two are used to to improve reconstruction by mitigating depth-map noise. The visibility values are constrained by that each ray from the camera can hit only one visible vortex. The group membership information encodes priors given by bounding boxes of detected objects. It uses a graph-cut algorithm for inference, which is performed globally.   
+
+
+
+
+
+
+CRF: a conditional probabilistic model, which relates probabilities between pixels in a given neighourhood and some features
+
+

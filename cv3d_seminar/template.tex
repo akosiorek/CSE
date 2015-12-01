@@ -1,0 +1,204 @@
+% \documentclass[journal, a4paper]{IEEEtran}
+\documentclass{llncs}
+\usepackage{llncsdoc}
+
+% \usepackage{graphicx}   
+% \usepackage{url}
+% \usepackage{amsmath}
+
+\begin{document}
+
+	\title{SemanticPaint}
+	\author{Adam Kosiorek
+	\thanks{Advisor: M.Eng.~Keisuke Tateno, Chair for Computer Aided Medical Procedures \& Augmented Reality, TUM, WS 2015/16.}}
+	\markboth{Master Seminar: Recent Trends in 3D Computer Vision}{}
+	\institute{}
+	\maketitle
+
+\begin{abstract}
+	The short abstract (50-80 words) is intended to give the reader an overview of the work.
+\end{abstract}
+
+\section{Introduction}
+  
+  
+  Capturing your own enviornment has never been easier. SemanticPaint can register your surroundings which, after undergoing a low-level 3D reconstruction, can be semanticly segmented in an interactive way. Not only it works in real time but also requires no pretraining. Adding new object categories on the fly is facilitated by online model updates. The user is provided with instantenous feedback and can re-label any object to correct errors. SemanticPaint makes capturing customized enviornment models with object classes particular to the user's interest easy and efficient.  
+  
+  The pipeline starts with capturing the enviornment as a stream of noisy RGBD images and combining them into a updated 3D model in an online fashion. The user can choose which objects to label and can do so by ``touching'' a small part of an object or encircling one with his hand and uttering the label. It is recognized by a standard speech recognition system. The label and the information about the affected data points are further passed to a Streaming Random Forest classifier which constantly learns and labels all visible voxels. To further improve classification results a spatially dense labeling is produced by an efficient mean-field inference algorithm. One of the biggest strength of SemanticPaint is the efficiency of each part of the pipeline, which translates to real time performance. Algorithms used in the pipeline were adapted to work on volumentric data in the TSDF format directly in order to avoding the costly conversions to mesh or point-cloud formats. To allow this, the Voxel Oriented Patch features --- a new type of a descriminative feature describing the voxel space --- has been designed. 
+  The contributions can be summarized as follows: 3D semantic modeling system, Streaming Random Forest, efficient Mean-Field inference, Voxel Oriented Patch features.
+  
+  Numerous applications are possible: (1) building large scale datasets of 3D objects or whole scenes for use in large-scale computer vision systems (2) using the dense semantic labeling of 3D enviornments in robot navigation or to aid people with impaird sight and (3) map enviornments for use in augmanted reality scenerios or games. 
+  
+  The rest of the paper is organised as follows: Section 2. describes the related work, section 3 details internal data handling, section 4 describes the efficient mean-field inference algorithm, section 5 outlint the Streaming Random Forest classifiers.....
+
+
+\section{Related Work}
+
+
+  \cite{VCRF} uses a Voxel-based CRF for simultaneous segmentation and reconstruction. Each voxel contains information about visibility and occlusion as well as group membership. The first two are used to to improve reconstruction by mitigating depth-map noise. The visibility values are constrained by that each ray from the camera can hit only one visible vortex. The group membership information encodes priors given by bounding boxes of detected objects. A graph-cut algorithm is used for inference, which is performed globally. No computational performance was reported.   
+  
+%   Outline:
+%   1) what has generally been done and use cases
+    
+    Capturing the geometry of the surrounding world has been a long standing problem. We have managed to reconstruct digital heritage and construct world-scale 3D models with remarkable quality using offline processing from multiple images. Since low-cost RGBD sensors and powerful GPUs have become available, whch enabled online 3D scanning, augmented reality or using 3D enviornment models for navigation purposes.
+  
+%   2) scene understanding
+    
+      There are a number of approaches to scene understanding. Some of them work on 2D RGB images, other reconstruct geometry from multiple RGB images but still use only 2D data for classification purposes and back-project the results into the 3D model. Yet other approaches focus on geometric data exclusively. Since RGBD sensors are available there has been a growing interest in working with RGBD data, point clouds or voxel representations. There has been some work on segmenting 3D scenes and meshes, detect objects in small scenes or replace them with synthetic models. 
+      
+      There has been some work on semantic segmentation of 3D meshes; These methods consider mostly noise-free meshes, do not work in real time and use geometric features only. Some work has been done on matching scan data with databases of synthetic 3D models. It would allow to replace noisy point clouds with detailed models to improve reconstruction quality and decrease memory requirements by exploiting repetetiveness. Usually a model is split into parts individually matched against an offline-built database. It is too slow for real-time usage. 
+      
+      There exists an online SLAM system that recognizes objects and perform online model updatres, but it supports only a single object class and relatively small scenes. What's appealing is that it does semantic recognition and reconstruction.
+      
+      There are no approaches that can handle an outdoor setting. Most of the work focused on image classification. No system works in real-time nor does online model updates. They also do not use ful 3d information, or do so in a global optimization setting which is slow. 
+    
+    
+% Areas:
+%   1. Geometry Acquisition and 3D Reconstruction Techniques:
+%     1) digitized cultural heritage with remarkable quality [Levoy et al. 2000]
+%   
+%     2) world-scale, Internet-accessible, 3D maps reconstructed using street-side [Pollefeys et al. 2008], aerial [Hirschmuller 2008] and online photo collections [Snavely et al.2006; Shan et al. 2013]
+% 
+%     3) Methods for real-time dense reconstructions, even over large physical scales, with only a single commodity depth or RGB camera have been demonstrated [Rusinkiewicz et al. 2002; Newcombe et al. 2011; Izadi et al. 2011; Newcombe et al. 2011; Chen et al. 2013; Nießner et al. 2013; Pradeep et al. 2013]. Applications such as: live 3D scanning, physically-plausible augmented reality, autonomous robot or vehicle guidance, and 3D fabrication.
+%       
+%   2. Scene Understanding and Semantic Modeling - interpreting the content of captured 3D models:
+%   
+%     1) 2D: automatically partition RGB image into semantically meaningful regions [Shotton et al. 2006]
+%     
+%     2) geometric reasoning to extract 3D structure from single RGB images [Gupta et al. 2010] or exlicit object detection [Yao et al. 2012]).
+%     
+%     3) RGB + Depth [Silberman and Fergus 2011; Silberman et al. 2012; Couprie et al. 2013; Ren et al. 2012; K ̈ahler and Reid 2013]
+%     
+%     4) 3D point clouds [Brostow et al.2008; Koppula et al. 2011; Anand et al. 2013; St ̈uckler et al. 2013]
+%     
+%     5) meshes [Valentin et al. 2013]
+%     
+%     6) voxel representations [Kim et al. 2013; Karpathy et al. 2013; Salas-Moreno et al. 2013; H ̈ane et al.2013]. 
+%       
+%     7) semantic segmentation of meshes [Chen et al. 2009]
+%     
+%     9) dense segmentation of reconstructed scenes [Lin et al. 2013; Sengupta et al. 2013; Ladick`y et al. 2012; Valentin et al. 2013], even in an online manner [Herbstet al. 2014]
+%     
+%     10) localize objects in small scenes [Abdelrahman et al.2013; Bonde et al. 2013; Karpathy et al. 2013; Lin et al. 2013]
+%     
+%     11) replace objects with synthetic models [Salas-Moreno et al. 2013; Kim et al. 2012; Shao et al. 2012; Nan et al. 2012; Wang et al. 2014].
+%       
+%     12) capturing large and compelling datasets which have moved from traditional 2D object images to RGB-D and full 3D scenes [Xiao et al. 2010; Xiao et al. 2013; Geiger et al. 2012].
+%     
+%     
+%   3. Computer Graphics
+%   
+%     1) automatically segmenting 3D meshes into semantic parts [Chen et al. 2009; Kalogerakis et al. 2010; Shapira et al. 2010; Kim et al. 2013], including incremental depth camera-based methods [Shen et al. 2012]. Most of these methods consider only connected noise-free meshes, and geometric properties, ignoring the appearance. Furthermore, these techniques operate only on single objects, and do not operate in real-time.
+%     
+%     2) matching scan data to synthetic 3D model databases [Kim et al. 2012; Nan et al. 2012; Shao et al. 2012], with the aim to replace  noisy point clouds with detailed CAD models. These approaches are compelling in that they increase final reconstruction fidelity and exploit repetition of objects to minimize the memory footprint. These systems first perform automatic or interactive segmentation of the scene into constituent parts which are then individually matched to the model database. However, these techniques require a model database to be built and learned offline, and the test-time matching techniques can take seconds to minutes to perform.
+%     
+%     5) online SLAM system that can recognize objects and update the model live [Salas-Moreno et al. 2013] the model database is still captured and generated offline. Only a single object class (chair) is recognized and it is unclear how the system can support larger surfaces such as floors, walls and ceilings. However, this system demonstrates the power of semantic recognition alongside the reconstruction process, improving relocalization, memory efficiency, and loop closure.
+%     
+%     6) This type of semantic information has also been explored in the context of bundle adjustment [Fioraio and Di Stefano 2013], and extended to sparse map representations [Ramos et al. 2008; Castle et al. 2007].
+%     
+%   4. Outdoor Scene Labeling:
+%   
+%     1) classification of images [Brostow et al. 2008; Posner et al. 2009; Ladick`y et al. 2012]. 
+%     
+%     2) Dense semantic 3D reconstruction with labeling performed on the images and projectred to the final model, which limits the use of full 3D geometry in their inference [Sengupta et al. 2013].
+%     
+%     3) Joint volumetric dense reconstruction and semantic segmentation using computationally complex global optimization [H ̈ane et al. 2013].
+%     
+%     4) Decomposition of outdoor scenes into semantic part; employs 3D model matching techniques similar to [Kim et al. 2012; Nan et al. 2012; Shao et al. 2012] to create reconstructions from LiDAR data [Lin et al. 2013]. None of these systems operate in a real-time or in an online manner.    
+%     
+%   5. Indoor Scene Recognition:
+%   
+%     1) using RGB-D sensors [Silberman and Fergus 2011; Silberman et al. 2012; Couprie et al. 2013; Ren et al. 2012; K ̈ahler and Reid 2013]. Classification or recognition is performed in image-space, along with 3D priors to aid segmentation. Again these systems fail to exploit full 3D geometry and are the counterpart of image-based segmentation but for RGB-D frames. 
+%     
+%     2) [Valentin et al. 2013] exploits 3D meshes and geometric and appearance features for improved inference in outdoor and indoor scenes.
+%     
+%     3) [Kim et al. 2013] use a voxel-based conditional random field (CRF) for segmentation and occupancy-grid based reconstruction.
+%     
+%     However, these techniques are not efficient enough to be used in an online system, and operate only on coarse reconstructions.
+%     
+%     
+% Our approach differs from these systems in several compelling
+% ways. Firstly our system runs entirely online and interactively, in-
+% cluding data capture, feature computation, labeling, segmentation,
+% learning and filtering. Second, our pipeline leads to robust and dense
+% object labels directly on the acquired 3D model. Finally, in our
+% system, the user is ‘in the loop’ during the labeling and training
+% process, allowing the system to evolve to new object classes in an
+% online fashion, and allowing the user to label a minimal amount and
+% correct any mistakes interactively. This allows the user to rapidly
+% build up models personalized to their spaces and goals
+   
+
+
+  
+\section{Pipeline}
+\section{Mean-Field Inference}
+\section{Streaming Random Forest}
+\section{Voxel-Oriented Patch Features}
+\section{Qualitative Results}
+\section{Quantitative Results}
+\section{Discussion}
+\section{Concolusions}
+
+% 	\begin{table}[!hbt]
+% 		% Center the table
+% 		\begin{center}
+% 		% Title of the table
+% 		\caption{Simulation Parameters}
+% 		\label{tab:simParameters}
+% 		% Table itself: here we have two columns which are centered and have lines to the left, right and in the middle: |c|c|
+% 		\begin{tabular}{|c|c|}
+% 			% To create a horizontal line, type \hline
+% 			\hline
+% 			% To end a column type &
+% 			% For a linebreak type \\
+% 			Information message length & $k=16000$ bit \\
+% 			\hline
+% 			Radio segment size & $b=160$ bit \\
+% 			\hline
+% 			Rate of component codes & $R_{cc}=1/3$\\
+% 			\hline
+% 			Polynomial of component encoders & $[1 , 33/37 , 25/37]_8$\\
+% 			\hline
+% 		\end{tabular}% 		\end{center}
+% 	\end{table}
+% 
+% 	\begin{figure}[!hbt]
+% 		% Center the figure.
+% 		\begin{center}
+% 		% Include the eps file, scale it such that it's width equals the column width. You can also put width=8cm for example...
+% 		\includegraphics[width=\columnwidth]{plot_tf}
+% 		% Create a subtitle for the figure.
+% 		\caption{Simulation results on the AWGN channel. Average throughput $k/n$ vs $E_s/N_0$.}
+% 		Define the label of the figure. It's good to use 'fig:title', so you know that the label belongs to a figure.
+% 		\label{fig:tf_plot}
+% 		\end{center}
+% 	\end{figure}
+
+
+\bibliographystyle{splncs}
+\begin{thebibliography}{1}
+
+	%Each item starts with a \bibitem{reference} command and the details thereafter.
+	\bibitem{HOP96} % Transaction paper
+	J.~Hagenauer, E.~Offer, and L.~Papke. Iterative decoding of binary block
+	and convolutional codes. {\em IEEE Trans. Inform. Theory},
+	vol.~42, no.~2, pp.~429–-445, Mar. 1996.
+	\bibitem{MJH06} % Conference paper
+	T.~Mayer, H.~Jenkac, and J.~Hagenauer. Turbo base-station cooperation for intercell interference cancellation. {\em IEEE Int. Conf. Commun. (ICC)}, Istanbul, Turkey, pp.~356--361, June 2006.
+
+	\bibitem{Proakis} % Book
+	J.~G.~Proakis. {\em Digital Communications}. McGraw-Hill Book Co.,
+	New York, USA, 3rd edition, 1995.
+
+	\bibitem{talk} % Web document
+	F.~R.~Kschischang. Giving a talk: Guidelines for the Preparation and Presentation of Technical Seminars.
+	\url{http://www.comm.toronto.edu/frank/guide/guide.pdf}.
+
+	\bibitem{VCRF}
+	KIM , B.-S., KOHLI , P., AND SAVARESE , S. 2013. 3D scene understanding by voxel-CRF. In Proc. ICCV.
+	
+\end{thebibliography}
+
+% Your document ends here!
+\end{document}
