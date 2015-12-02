@@ -1,4 +1,5 @@
-\documentstyle[12pt]{article}
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
 \setlength{\oddsidemargin}{0in}
 \setlength{\evensidemargin}{0in}
 \setlength{\textwidth}{6.5in}
@@ -6,68 +7,34 @@
 \setlength{\textheight}{9in}
 \pagestyle{empty}
 
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+
 \begin{document}
 
 \begin{center}
 {\Large Statement of Purpose} \\[.3in]
-{\large Robert S. French}
+{\large Adam Kosiorek}
 \end{center}
 
-\vspace*{.5in}
+% \vspace*{.5in}
 
-My primary interests in computer science are computer architecture and
-compiler technology.  I have participated in several projects during
-my undergraduate career at MIT that have provided me with experience
-in these areas, and I have recently specialized in parallel processing
-systems.
+%The Statement of Purpose should describe succinctly your reasons for applying to the proposed %program at Stanford, your preparation for this field of study, research interests, future career %plans, and other aspects of your background and interests which may aid the admissions committee %in evaluating your aptitude and motivation for graduate study. The Statement of Purpose should not %exceed two pages.
 
-My interest in computer architecture was first kindled during the
-design contest for the MIT course ``Computation Structures.''  The
-contest consists of redesigning an 8-bit microcoded processor to
-improve its performance.  Our two-person team constructed a 16-bit
-design for the processor and achieved at speedup of over 750 times.
-As part of the design, I implemented a microcode assembler, a
-microcode simulator, various levels of logic simulators, and over 80
-pages of microcode.  The contest taught me a great deal about
-low-level system design and the tradeoffs involved in designing fast
-systems.
+Artificial Intelligence has always tantalized me. Long before understanding what computer science stands for I wondered why AI has not been achieved yet. To explore it further, I enrolled in BSc in Robotics at the best technical university in my country. I studied maths, physics and mechanics, material science and manufacturing technologies; programming and software-oriented courses were my favourite, however. Paired with my passion for vision and perception, which I have developed as a photojournalist, it steered me towards my first computer vision course. I immediately knew that this intersection of image processing and machine learning was the area I wanted to focus on. It became apparent that pursuing a PhD was one of the few ways that could get me closer to solving the AI challange.
 
-My next architecture project was for the course ``Digital Systems
-Laboratory,'' in which my partner and I implemented a hardware
-simulator for a highly-parallel, fine-grained optical computer.  The
-system was based on recent research by Alan Huang at Bell Laboratories
-in ``computational origami,'' a simple method of simulating an
-arbitrarily large number of processors using a small set of processing
-elements with long delay lines.  As part of the project I designed a
-compiler and a placement and routing system for allocating processors.
-I presented a paper on the algorithm at the MIT-ACM Undergraduate
-Computer Science Conference in April, 1989, and was invited to present
-my findings at Bell Labs.
+To learn from the best, I joined Computer Vision Lab at Samsung R\&D in Warsaw for an internship. My project was to design and implement a Bag of Words-based pipeline for object classification. Consequently, I learned about the state-of-the-art in keypoint detection and feature description, which later helped me to appreciate the importance of automatically learned low level features in convolutional neural networks. I focused my research primarily on the visual codebook generation within Bag of Words. The final step was to optimize it and then port it to the Android platform. In my bachelor thesis I investigated how spatial information affects classification performance by implementing a similar system for Kinect-gathered point cloud classification. Afterwards, I continued my work at Samsung, where I turned to deep learning techniques for object classification and image duplicate detection.
 
-I designed and implemented part of {\em Zephyr\/}, a distributed
-multicast message system, as an employee of MIT's Project Athena.
-Project Athena is an eight year experiment in the use of computers in
-education, and consists of approximately 1,000 workstations connected
-by a campus-wide network.  This setup provides a unique environment in
-which to develop scalable distributed software.  I investigated
-various communications methods, and was the primary architect of the
-protocol and the authentication system used by {\em Zephyr\/}.  Our
-development team published a paper on {\em Zephyr\/} in the Winter
-1988 Usenix Conference Proceedings.
+My observation was that deep learning, although often superior to older approaches, required huge computational resources and datasets. To mitigate this problem I went to study computational science at the Technical University of Munich. With cutting-edge computer vision research groups it seemed a great choice. Numerical linear algebra and scientific computing, comprising the majority of the coursework, help enormously with optimization and implementation of algorithms. Currently, I am working with Caner Hazirbas and Rudolph Triebel of the Computer Vision group headed by Prof. Cremers. In our recent project we investigate the introspective capacity of neural networks. It is understood as the ability of a classifier to assess uncertainty of its prediction given the data \cite{introspective}. It is a paramount problem in mobile robotics and medicine where wrong classification might lead to loss of life. While high classification accuracy is desired, it is impossible to assess whether a given prediction is accurate in a test setting, where no labels are available. It is, therefore, vital to assess the uncertainty of predictions. Our intermediate results show that neural networks, augmented with additional layers and a novel cost function, can be jointly trained for classification and uncertainty estimation. The topic might expand into my master thesis.
 
-My current research is for my undergraduate thesis, in which I am
-investigating the use of fractals to measure communication locality in
-distributed systems.  I hope to extend this research and develop new
-algorithms for efficient processor allocation.
+This summer I did an internship at Bloomberg in London, where I worked on fraud detection in financial transactions. The problem can be cast as unsupervised anomaly detection with further verification in a supervised setting. I learned how difficult it can be to introduce an innovative approach in a corporate environment. This, together with my earlier industrial experience, convinced me that I do want to pursue a PhD. I love solving scientific problems, which do not have ``the best'' solution or a reference specification, by going into the deepest details.
 
-I plan to continue my study of architecture and compiler technology in
-graduate school, and I feel that Stanford is the ideal place to study
-these fields.  Stanford offers an excellent selection of courses and
-supports a vigorous research program in my areas of interest.  I enjoy
-developing theories and building hardware systems on which to test
-them, and hope to be involved in applied research at Stanford.
+In my doctoral research project I would like to focus on recurrent neural networks for computer vision. RNNs are well suited to sequential information processing and, while often used for NLP tasks, they have been somehwat underutilized in computer vision. If beliefs about content could be introduced in a form of priors inferred from previous elements of a sequence, it might be possible to increase object classification accuracy in videos and to shrink the network size. Another interesting problem is an end-to-end RNN for optical flow computation. The only end-to-end neural network, while efficient and accurate, does not use temporal information. It computes optical flow for any two possibly unrelated images \cite{flownet}. I would like to investigate RNN designs capable of computing optical flow while presented with a single image at a time. Solving both problems might thus lead to smaller networks and reduced amounts of computation, possibly increasing energy efficiency of such systems. 
 
-After receiving a Ph.D., I plan to pursue an academic career in
-computer science research.
+I believe that the CS PhD programme at Stanford is perfect for me due to the following reasons. Firstly, the courses taught by world renown scientists e.g. Prof. Fei-Fei's ``High-Level Vision Behaviors, Neurons and Computational Models'' provide an extraordinary introduction to research in deep learning I would like to conduct. Secondly, research of the Stanford Visian Lab is multimodal in that it successfuly merges natural language processing with computer vision \cite{imageannot}. I find it very relevant, for it might lead to the improvement of living standard for people with impaired sight. Finally, Stanford is \emph{the} most exciting area for any computer scientist to live in. The diversity and the amount of talent there bolster personal development like no other place in the world.
 
+My passion for solving technical problems coupled with my demonstrated skills show that I am ready and extremely motivated to pursue a PhD programme at the Stanford University. I am confident that I will be able to contribute significantly to and benefit immensely from my stay at Stanford. Thank you for considering my application.
+
+\bibliographystyle{ieeetr}
+\bibliography{bibliography}
 \end{document}

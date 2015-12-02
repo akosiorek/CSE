@@ -59,10 +59,10 @@ order=-1
 
 [item:sop.tex]
 archive=true
-column=231
+column=29
 encoding=UTF-8
 highlight=LaTeX
-line=33
+line=21
 mode=LaTeX
 open=false
 order=0
@@ -84,8 +84,8 @@ JumpList=
 ViMarks=.,12,14,[,12,14,],12,14
 
 [view-settings,view=0,item:sop.tex]
-CursorColumn=231
-CursorLine=33
+CursorColumn=29
+CursorLine=21
 JumpList=
 ViMarks=.,33,230,[,33,230,],33,230
 
