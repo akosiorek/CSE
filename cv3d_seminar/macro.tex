@@ -1,0 +1,653 @@
+\usepackage{bm}
+\usepackage{xspace}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{euscript}
+
+\newcommand{\bba}{{\bf a}}
+\newcommand{\bbb}{{\bf b}}
+\newcommand{\bbc}{{\bf c}}
+\newcommand{\bbd}{{\bf d}}
+\newcommand{\bbe}{{\bf e}}
+\newcommand{\bbf}{{\bf f}}
+\newcommand{\bbg}{{\bf g}}
+\newcommand{\bbh}{{\bf h}}
+\newcommand{\bbi}{{\bf i}}
+\newcommand{\bbj}{{\bf j}}
+\newcommand{\bbk}{{\bf k}}
+\newcommand{\bbl}{{\bf l}}
+\newcommand{\bbm}{{\bf m}}
+\newcommand{\bbn}{{\bf n}}
+\newcommand{\bbo}{{\bf o}}
+\newcommand{\bbp}{{\bf p}}
+\newcommand{\bbq}{{\bf q}}
+\newcommand{\bbr}{{\bf r}}
+\newcommand{\bbs}{{\bf s}}
+\newcommand{\bbt}{{\bf t}}
+\newcommand{\bbu}{{\bf u}}
+\newcommand{\bbv}{{\bf v}}
+\newcommand{\bbx}{{\bf x}}
+\newcommand{\bby}{{\bf y}}
+\newcommand{\bbz}{{\bf z}}
+\newcommand{\bbw}{{\bf w}}
+
+\newcommand{\bbA}{{\bf A}}
+\newcommand{\bbB}{{\bf B}}
+\newcommand{\bbC}{{\bf C}}
+\newcommand{\bbD}{{\bf D}}
+\newcommand{\bbE}{{\bf E}}
+\newcommand{\bbF}{{\bf F}}
+\newcommand{\bbG}{{\bf G}}
+\newcommand{\bbH}{{\bf H}}
+\newcommand{\bbI}{{\bf I}}
+\newcommand{\bbJ}{{\bf J}}
+\newcommand{\bbK}{{\bf K}}
+\newcommand{\bbL}{{\bf L}}
+\newcommand{\bbM}{{\bf M}}
+\newcommand{\bbN}{{\bf N}}
+\newcommand{\bbO}{{\bf O}}
+\newcommand{\bbP}{{\bf P}}
+\newcommand{\bbQ}{{\bf Q}}
+\newcommand{\bbR}{{\bf R}}
+\newcommand{\bbS}{{\bf S}}
+\newcommand{\bbT}{{\bf T}}
+\newcommand{\bbU}{{\bf U}}
+\newcommand{\bbV}{{\bf V}}
+\newcommand{\bbX}{{\bf X}}
+\newcommand{\bbZ}{{\bf Z}}
+\newcommand{\bbY}{{\bf Y}}
+\newcommand{\bbW}{{\bf W}}
+
+\newcommand{\cca}{{\cal a}}
+\newcommand{\ccb}{{\cal b}}
+\newcommand{\ccc}{{\cal c}}
+\newcommand{\ccd}{{\cal d}}
+\newcommand{\cce}{{\cal e}}
+\newcommand{\ccf}{{\cal f}}
+\newcommand{\ccg}{{\cal g}}
+\newcommand{\cch}{{\cal h}}
+\newcommand{\cci}{{\cal i}}
+\newcommand{\ccj}{{\cal j}}
+\newcommand{\cck}{{\cal k}}
+\newcommand{\ccl}{{\cal l}}
+\newcommand{\ccm}{{\cal m}}
+\newcommand{\ccn}{{\cal n}}
+\newcommand{\cco}{{\cal o}}
+\newcommand{\ccp}{{\cal p}}
+\newcommand{\ccq}{{\cal q}}
+\newcommand{\ccr}{{\cal r}}
+\newcommand{\ccs}{{\cal s}}
+\newcommand{\cct}{{\cal t}}
+\newcommand{\ccu}{{\cal u}}
+\newcommand{\ccv}{{\cal v}}
+\newcommand{\ccx}{{\cal x}}
+\newcommand{\ccy}{{\cal y}}
+\newcommand{\ccz}{{\cal z}}
+\newcommand{\ccw}{{\cal w}}
+
+\newcommand{\ccA}{{\cal A}}
+\newcommand{\ccB}{{\cal B}}
+\newcommand{\ccC}{{\cal C}}
+\newcommand{\ccD}{{\cal D}}
+\newcommand{\ccE}{{\cal E}}
+\newcommand{\ccF}{{\cal F}}
+\newcommand{\ccG}{{\cal G}}
+\newcommand{\ccH}{{\cal H}}
+\newcommand{\ccI}{{\cal I}}
+\newcommand{\ccJ}{{\cal J}}
+\newcommand{\ccK}{{\cal K}}
+\newcommand{\ccL}{{\cal L}}
+\newcommand{\ccM}{{\cal M}}
+\newcommand{\ccN}{{\cal N}}
+\newcommand{\ccO}{{\cal O}}
+\newcommand{\ccP}{{\cal P}}
+\newcommand{\ccQ}{{\cal Q}}
+\newcommand{\ccR}{{\cal R}}
+\newcommand{\ccS}{{\cal S}}
+\newcommand{\ccT}{{\cal T}}
+\newcommand{\ccU}{{\cal U}}
+\newcommand{\ccV}{{\cal V}}
+\newcommand{\ccX}{{\cal X}}
+\newcommand{\ccZ}{{\cal Z}}
+\newcommand{\ccY}{{\cal Y}}
+\newcommand{\ccW}{{\cal W}}
+
+\newcommand{\bbwth}{\widetilde{\bf{h}}}
+\newcommand{\bbwtx}{\widetilde{\bf{x}}}
+\newcommand{\bbwtA}{\widetilde{\bf{A}}}
+\newcommand{\bbwtH}{\widetilde{\bf{H}}}
+\newcommand{\bbwtU}{\widetilde{\bf{U}}}
+\newcommand{\bbwtS}{\widetilde{\bf{S}}}
+\newcommand{\bbwtV}{\widetilde{\bf{V}}}
+
+\newcommand{\BJ}{{\bf J}}
+\newcommand{\mP}{{\mathcal P}}
+\newcommand{\mU}{{\mathcal U}}
+\newcommand{\mV}{{\mathcal V}}
+\newcommand{\mX}{{\mathcal X}}
+\newcommand{\rank}{{\mbox{rank}}}
+\newcommand{\diag}{{\mbox{diag}}}
+\newcommand{\kernel}{{\mbox{Ker}}}
+\newcommand{\image}{{\mbox{Img}}}
+
+\newcommand{\inv}{{-1}}
+
+\newcommand{\bgamma}{\hbox{\boldmath $\gamma$}}
+\newcommand{\bGamma}{\hbox{\boldmath $\Gamma$}}
+
+\newcommand{\bnabla}{\hbox{\boldmath $\nabla$}}
+%\newcommand{\bNabla}{\hbox{\boldmath $\Nabla$}}
+
+\newcommand{\bups}{\hbox{\boldmath $\upsilon$}}
+\newcommand{\bUps}{\hbox{\boldmath $\Upsilon$}}
+
+\newcommand{\bomega}{\hbox{\boldmath $\omega$}}
+\newcommand{\bOmega}{\hbox{\boldmath $\Omega$}}
+
+\newcommand{\bpi}{\hbox{\boldmath $\pi$}}
+\newcommand{\bPi}{\hbox{\boldmath $\Pi$}}
+
+\newcommand{\bnu}{\hbox{\boldmath $\nu$}}
+\newcommand{\bmu}{\hbox{\boldmath $\mu$}}
+
+\newcommand{\sinc}{\mbox{sinc}}
+\newcommand{\mbbZ}{{\mathbb Z}}
+\newcommand{\mbbR}{{\mathbb R}}
+\newcommand{\mbbP}{{\mathbb P}}
+
+\newcommand{\bcX}{\hbox{\boldmath $\cal X$}}
+
+\newcommand{\bzeta}{\hbox{\boldmath $\zeta$}}
+
+\newcommand{\bxi}{\hbox{\boldmath $\xi$}}
+\newcommand{\bchi}{\hbox{\boldmath $\chi$}}
+
+\newcommand{\brho}{\hbox{\boldmath $\rho$}}
+
+\newcommand{\blambda}{\hbox{\boldmath $\lambda$}}
+
+\newcommand{\bveps}{\hbox{\boldmath $\varepsilon$}}
+
+\newcommand{\bphi}{\hbox{\boldmath $\phi$}}
+\newcommand{\bPhi}{\hbox{\boldmath $\Phi$}}
+
+\newcommand{\bdelta}{\hbox{\boldmath $\delta$}}
+\newcommand{\bDelta}{\hbox{\boldmath $\Delta$}}
+
+\newcommand{\bPsi}{\hbox{\boldmath $\Psi$}}
+
+
+\newcommand{\bvphi}{\hbox{\boldmath $\varphi$}}
+\newcommand{\btau}{\hbox{\boldmath $\tau$}}
+\newcommand{\bsigma}{\hbox{\boldmath $\sigma$}}
+\newcommand{\bbeta}{\hbox{\boldmath $\beta$}}
+
+%\renewcommand{\subfigcapskip}{1pt}
+%\renewcommand{\subfigbottomskip}{1pt}
+
+\newtheorem{Proposition}{\bf Proposition}
+%\newtheorem{Theorem}{Theorem}
+%\newtheorem{lemma}{Lemma}
+%\newtheorem{theorproof}{Proof}
+
+\newtheorem{propopreuve}{{\bf Preuve de la proposition}}
+%\theoremstyle{break} 
+\newtheorem{theoreme}{{\bf Théorème}}
+\newtheorem{theorpreuve}{{\bf Preuve du théorème}}
+\newtheorem{lemme}{{\bf Lemme}}
+\newtheorem{lemmepreuve}{{\bf Preuve du lemme}}
+
+\def\QED{\mbox{\rule[0pt]{1.5ex}{1.5ex}}}
+\def\proof{\noindent\hspace{2em}{\it Proof: }}
+%\def\endproof{\hspace*{\fill}~\QED\par\endtrivlist\unskip}
+\def\endproof{\par}
+
+
+
+\newcommand{\wha}{{\widehat a}}
+\newcommand{\whb}{{\widehat b}}
+\newcommand{\whc}{{\widehat c}}
+\newcommand{\whd}{{\widehat d}}
+\newcommand{\whe}{{\widehat e}}
+\newcommand{\whf}{{\widehat f}}
+\newcommand{\whg}{{\widehat g}}
+\newcommand{\whh}{{\widehat h}}
+\newcommand{\whi}{{\widehat i}}
+\newcommand{\whj}{{\widehat j}}
+\newcommand{\whk}{{\widehat k}}
+\newcommand{\whl}{{\widehat l}}
+\newcommand{\whm}{{\widehat m}}
+\newcommand{\whn}{{\widehat n}}
+\newcommand{\who}{{\widehat o}}
+\newcommand{\whp}{{\widehat p}}
+\newcommand{\whq}{{\widehat q}}
+\newcommand{\whr}{{\widehat r}}
+\newcommand{\whs}{{\widehat s}}
+\newcommand{\wht}{{\widehat t}}
+\newcommand{\whu}{{\widehat u}}
+\newcommand{\whv}{{\widehat v}}
+\newcommand{\whx}{{\widehat x}}
+\newcommand{\why}{{\widehat y}}
+\newcommand{\whz}{{\widehat z}}
+\newcommand{\whw}{{\widehat w}}
+
+\newcommand{\whA}{{\widehat A}}
+\newcommand{\whB}{{\widehat B}}
+\newcommand{\whC}{{\widehat C}}
+\newcommand{\whD}{{\widehat D}}
+\newcommand{\whE}{{\widehat E}}
+\newcommand{\whF}{{\widehat F}}
+\newcommand{\whG}{{\widehat G}}
+\newcommand{\whH}{{\widehat H}}
+\newcommand{\whI}{{\widehat I}}
+\newcommand{\whJ}{{\widehat J}}
+\newcommand{\whK}{{\widehat K}}
+\newcommand{\whL}{{\widehat L}}
+\newcommand{\whM}{{\widehat M}}
+\newcommand{\whN}{{\widehat N}}
+\newcommand{\whO}{{\widehat O}}
+\newcommand{\whP}{{\widehat P}}
+\newcommand{\whQ}{{\widehat Q}}
+\newcommand{\whR}{{\widehat R}}
+\newcommand{\whS}{{\widehat S}}
+\newcommand{\whT}{{\widehat T}}
+\newcommand{\whU}{{\widehat U}}
+\newcommand{\whV}{{\widehat V}}
+\newcommand{\whZ}{{\widehat X}}
+\newcommand{\whY}{{\widehat Y}}
+\newcommand{\whW}{{\widehat W}}
+
+\newcommand{\whba}{{\widehat {\bf a}}}
+\newcommand{\whbb}{{\widehat {\bf b}}}
+\newcommand{\whbc}{{\widehat {\bf c}}}
+\newcommand{\whbd}{{\widehat {\bf d}}}
+\newcommand{\whbe}{{\widehat {\bf e}}}
+\newcommand{\whbf}{{\widehat {\bf f}}}
+\newcommand{\whbg}{{\widehat {\bf g}}}
+\newcommand{\whbh}{{\widehat {\bf h}}}
+\newcommand{\whbi}{{\widehat {\bf i}}}
+\newcommand{\whbj}{{\widehat {\bf j}}}
+\newcommand{\whbk}{{\widehat {\bf k}}}
+\newcommand{\whbl}{{\widehat {\bf l}}}
+\newcommand{\whbm}{{\widehat {\bf m}}}
+\newcommand{\whbn}{{\widehat {\bf n}}}
+\newcommand{\whbo}{{\widehat {\bf o}}}
+\newcommand{\whbp}{{\widehat {\bf p}}}
+\newcommand{\whbq}{{\widehat {\bf q}}}
+\newcommand{\whbr}{{\widehat {\bf r}}}
+\newcommand{\whbs}{{\widehat {\bf s}}}
+\newcommand{\whbt}{{\widehat {\bf t}}}
+\newcommand{\whbu}{{\widehat {\bf u}}}
+\newcommand{\whbv}{{\widehat {\bf v}}}
+\newcommand{\whbx}{{\widehat {\bf x}}}
+\newcommand{\whby}{{\widehat {\bf y}}}
+\newcommand{\whbz}{{\widehat {\bf z}}}
+\newcommand{\whbw}{{\widehat {\bf w}}}
+
+\newcommand{\whbA}{{\widehat {\bf A}}}
+\newcommand{\whbB}{{\widehat {\bf B}}}
+\newcommand{\whbC}{{\widehat {\bf C}}}
+\newcommand{\whbD}{{\widehat {\bf D}}}
+\newcommand{\whbE}{{\widehat {\bf E}}}
+\newcommand{\whbF}{{\widehat {\bf F}}}
+\newcommand{\whbG}{{\widehat {\bf G}}}
+\newcommand{\whbH}{{\widehat {\bf H}}}
+\newcommand{\whbI}{{\widehat {\bf I}}}
+\newcommand{\whbJ}{{\widehat {\bf J}}}
+\newcommand{\whbK}{{\widehat {\bf K}}}
+\newcommand{\whbL}{{\widehat {\bf L}}}
+\newcommand{\whbM}{{\widehat {\bf M}}}
+\newcommand{\whbN}{{\widehat {\bf N}}}
+\newcommand{\whbO}{{\widehat {\bf O}}}
+\newcommand{\whbP}{{\widehat {\bf P}}}
+\newcommand{\whbQ}{{\widehat {\bf Q}}}
+\newcommand{\whbR}{{\widehat {\bf R}}}
+\newcommand{\whbS}{{\widehat {\bf S}}}
+\newcommand{\whbT}{{\widehat {\bf T}}}
+\newcommand{\whbU}{{\widehat {\bf U}}}
+\newcommand{\whbV}{{\widehat {\bf V}}}
+\newcommand{\whbZ}{{\widehat {\bf X}}}
+\newcommand{\whbY}{{\widehat {\bf Y}}}
+\newcommand{\whbW}{{\widehat {\bf W}}}
+
+\newcommand{\wta}{{\widetilde a}}
+\newcommand{\wtb}{{\widetilde b}}
+\newcommand{\wtc}{{\widetilde c}}
+\newcommand{\wtd}{{\widetilde d}}
+\newcommand{\wte}{{\widetilde e}}
+\newcommand{\wtf}{{\widetilde f}}
+\newcommand{\wtg}{{\widetilde g}}
+\newcommand{\wth}{{\widetilde h}}
+\newcommand{\wti}{{\widetilde i}}
+\newcommand{\wtj}{{\widetilde j}}
+\newcommand{\wtk}{{\widetilde k}}
+\newcommand{\wtl}{{\widetilde l}}
+\newcommand{\wtm}{{\widetilde m}}
+\newcommand{\wtn}{{\widetilde n}}
+\newcommand{\wto}{{\widetilde o}}
+\newcommand{\wtp}{{\widetilde p}}
+\newcommand{\wtq}{{\widetilde q}}
+\newcommand{\wtr}{{\widetilde r}}
+\newcommand{\wts}{{\widetilde s}}
+\newcommand{\wtt}{{\widetilde t}}
+\newcommand{\wtu}{{\widetilde u}}
+\newcommand{\wtv}{{\widetilde v}}
+\newcommand{\wtx}{{\widetilde x}}
+\newcommand{\wty}{{\widetilde y}}
+\newcommand{\wtz}{{\widetilde z}}
+\newcommand{\wtw}{{\widetilde w}}
+
+\newcommand{\wtA}{{\widetilde A}}
+\newcommand{\wtB}{{\widetilde B}}
+\newcommand{\wtC}{{\widetilde C}}
+\newcommand{\wtD}{{\widetilde D}}
+\newcommand{\wtE}{{\widetilde E}}
+\newcommand{\wtF}{{\widetilde F}}
+\newcommand{\wtG}{{\widetilde G}}
+\newcommand{\wtH}{{\widetilde H}}
+\newcommand{\wtI}{{\widetilde I}}
+\newcommand{\wtJ}{{\widetilde J}}
+\newcommand{\wtK}{{\widetilde K}}
+\newcommand{\wtL}{{\widetilde L}}
+\newcommand{\wtM}{{\widetilde M}}
+\newcommand{\wtN}{{\widetilde N}}
+\newcommand{\wtO}{{\widetilde O}}
+\newcommand{\wtP}{{\widetilde P}}
+\newcommand{\wtQ}{{\widetilde Q}}
+\newcommand{\wtR}{{\widetilde R}}
+\newcommand{\wtS}{{\widetilde S}}
+\newcommand{\wtT}{{\widetilde T}}
+\newcommand{\wtU}{{\widetilde U}}
+\newcommand{\wtV}{{\widetilde V}}
+\newcommand{\wtZ}{{\widetilde X}}
+\newcommand{\wtY}{{\widetilde Y}}
+\newcommand{\wtW}{{\widetilde W}}
+
+\newcommand{\wtba}{{\widetilde {\bf a}}}
+\newcommand{\wtbb}{{\widetilde {\bf b}}}
+\newcommand{\wtbc}{{\widetilde {\bf c}}}
+\newcommand{\wtbd}{{\widetilde {\bf d}}}
+\newcommand{\wtbe}{{\widetilde {\bf e}}}
+\newcommand{\wtbf}{{\widetilde {\bf f}}}
+\newcommand{\wtbg}{{\widetilde {\bf g}}}
+\newcommand{\wtbh}{{\widetilde {\bf h}}}
+\newcommand{\wtbi}{{\widetilde {\bf i}}}
+\newcommand{\wtbj}{{\widetilde {\bf j}}}
+\newcommand{\wtbk}{{\widetilde {\bf k}}}
+\newcommand{\wtbl}{{\widetilde {\bf l}}}
+\newcommand{\wtbm}{{\widetilde {\bf m}}}
+\newcommand{\wtbn}{{\widetilde {\bf n}}}
+\newcommand{\wtbo}{{\widetilde {\bf o}}}
+\newcommand{\wtbp}{{\widetilde {\bf p}}}
+\newcommand{\wtbq}{{\widetilde {\bf q}}}
+\newcommand{\wtbr}{{\widetilde {\bf r}}}
+\newcommand{\wtbs}{{\widetilde {\bf s}}}
+\newcommand{\wtbt}{{\widetilde {\bf t}}}
+\newcommand{\wtbu}{{\widetilde {\bf u}}}
+\newcommand{\wtbv}{{\widetilde {\bf v}}}
+\newcommand{\wtbx}{{\widetilde {\bf x}}}
+\newcommand{\wtby}{{\widetilde {\bf y}}}
+\newcommand{\wtbz}{{\widetilde {\bf z}}}
+\newcommand{\wtbw}{{\widetilde {\bf w}}}
+
+\newcommand{\wtbA}{{\widetilde {\bf A}}}
+\newcommand{\wtbB}{{\widetilde {\bf B}}}
+\newcommand{\wtbC}{{\widetilde {\bf C}}}
+\newcommand{\wtbD}{{\widetilde {\bf D}}}
+\newcommand{\wtbE}{{\widetilde {\bf E}}}
+\newcommand{\wtbF}{{\widetilde {\bf F}}}
+\newcommand{\wtbG}{{\widetilde {\bf G}}}
+\newcommand{\wtbH}{{\widetilde {\bf H}}}
+\newcommand{\wtbI}{{\widetilde {\bf I}}}
+\newcommand{\wtbJ}{{\widetilde {\bf J}}}
+\newcommand{\wtbK}{{\widetilde {\bf K}}}
+\newcommand{\wtbL}{{\widetilde {\bf L}}}
+\newcommand{\wtbM}{{\widetilde {\bf M}}}
+\newcommand{\wtbN}{{\widetilde {\bf N}}}
+\newcommand{\wtbO}{{\widetilde {\bf O}}}
+\newcommand{\wtbP}{{\widetilde {\bf P}}}
+\newcommand{\wtbQ}{{\widetilde {\bf Q}}}
+\newcommand{\wtbR}{{\widetilde {\bf R}}}
+\newcommand{\wtbS}{{\widetilde {\bf S}}}
+\newcommand{\wtbT}{{\widetilde {\bf T}}}
+\newcommand{\wtbU}{{\widetilde {\bf U}}}
+\newcommand{\wtbV}{{\widetilde {\bf V}}}
+\newcommand{\wtbX}{{\widetilde {\bf X}}}
+\newcommand{\wtbY}{{\widetilde {\bf Y}}}
+\newcommand{\wtbW}{{\widetilde {\bf W}}}
+\newcommand{\wtbcX}{{\widetilde {\boldmath $\cal X$}}}
+\newcommand{\hx}{\hat{x}}
+\newcommand{\hy}{\hat{y}}
+\newcommand{\hw}{\hat{w}}
+
+
+\def\olba {\ensuremath{{\overline {\bf a}}\xspace}}
+\def\olbb {\ensuremath{{\overline {\bf b}}\xspace}}
+\def\olbc {\ensuremath{{\overline {\bf c}}\xspace}}
+\def\olbd {\ensuremath{{\overline {\bf d}}\xspace}}
+\def\olbe {\ensuremath{{\overline {\bf e}}\xspace}}
+\def\olbf {\ensuremath{{\overline {\bf f}}\xspace}}
+\def\olbg {\ensuremath{{\overline {\bf g}}\xspace}}
+\def\olbh {\ensuremath{{\overline {\bf h}}\xspace}}
+\def\olbi {\ensuremath{{\overline {\bf i}}\xspace}}
+\def\olbj {\ensuremath{{\overline {\bf j}}\xspace}}
+\def\olbk {\ensuremath{{\overline {\bf k}}\xspace}}
+\def\olbl {\ensuremath{{\overline {\bf l}}\xspace}}
+\def\olbm {\ensuremath{{\overline {\bf m}}\xspace}}
+\def\olbn {\ensuremath{{\overline {\bf n}}\xspace}}
+\def\olbo {\ensuremath{{\overline {\bf o}}\xspace}}
+\def\olbp {\ensuremath{{\overline {\bf p}}\xspace}}
+\def\olbq {\ensuremath{{\overline {\bf q}}\xspace}}
+\def\olbr {\ensuremath{{\overline {\bf r}}\xspace}}
+\def\olbs {\ensuremath{{\overline {\bf s}}\xspace}}
+\def\olbt {\ensuremath{{\overline {\bf t}}\xspace}}
+\def\olbu {\ensuremath{{\overline {\bf u}}\xspace}}
+\def\olbv {\ensuremath{{\overline {\bf v}}\xspace}}
+\def\olbx {\ensuremath{{\overline {\bf x}}\xspace}}
+\def\olby {\ensuremath{{\overline {\bf y}}\xspace}}
+\def\olbz {\ensuremath{{\overline {\bf z}}\xspace}}
+\def\olbw {\ensuremath{{\overline {\bf w}}\xspace}}
+
+\def\olbA {\ensuremath{{\overline {\bf A}}\xspace}}
+\def\olbB {\ensuremath{{\overline {\bf B}}\xspace}}
+\def\olbC {\ensuremath{{\overline {\bf C}}\xspace}}
+\def\olbD {\ensuremath{{\overline {\bf D}}\xspace}}
+\def\olbE {\ensuremath{{\overline {\bf E}}\xspace}}
+\def\olbF {\ensuremath{{\overline {\bf F}}\xspace}}
+\def\olbG {\ensuremath{{\overline {\bf G}}\xspace}}
+\def\olbH {\ensuremath{{\overline {\bf H}}\xspace}}
+\def\olbI {\ensuremath{{\overline {\bf I}}\xspace}}
+\def\olbJ {\ensuremath{{\overline {\bf J}}\xspace}}
+\def\olbK {\ensuremath{{\overline {\bf K}}\xspace}}
+\def\olbL {\ensuremath{{\overline {\bf L}}\xspace}}
+\def\olbM {\ensuremath{{\overline {\bf M}}\xspace}}
+\def\olbN {\ensuremath{{\overline {\bf N}}\xspace}}
+\def\olbO {\ensuremath{{\overline {\bf O}}\xspace}}
+\def\olbP {\ensuremath{{\overline {\bf P}}\xspace}}
+\def\olbQ {\ensuremath{{\overline {\bf Q}}\xspace}}
+\def\olbR {\ensuremath{{\overline {\bf R}}\xspace}}
+\def\olbS {\ensuremath{{\overline {\bf S}}\xspace}}
+\def\olbT {\ensuremath{{\overline {\bf T}}\xspace}}
+\def\olbU {\ensuremath{{\overline {\bf U}}\xspace}}
+\def\olbV {\ensuremath{{\overline {\bf V}}\xspace}}
+\def\olbZ {\ensuremath{{\overline {\bf X}}\xspace}}
+\def\olbY {\ensuremath{{\overline {\bf Y}}\xspace}}
+\def\olbW {\ensuremath{{\overline {\bf W}}\xspace}}
+
+
+\def\ola {\ensuremath{{\overline {a}}\xspace}}
+\def\olb {\ensuremath{{\overline {b}}\xspace}}
+\def\olc {\ensuremath{{\overline {c}}\xspace}}
+\def\old {\ensuremath{{\overline {d}}\xspace}}
+\def\ole {\ensuremath{{\overline {e}}\xspace}}
+\def\olf {\ensuremath{{\overline {f}}\xspace}}
+\def\olg {\ensuremath{{\overline {g}}\xspace}}
+\def\olh {\ensuremath{{\overline {h}}\xspace}}
+\def\oli {\ensuremath{{\overline {i}}\xspace}}
+\def\olj {\ensuremath{{\overline {j}}\xspace}}
+\def\olk {\ensuremath{{\overline {k}}\xspace}}
+\def\oll {\ensuremath{{\overline {l}}\xspace}}
+\def\olm {\ensuremath{{\overline {m}}\xspace}}
+\def\oln {\ensuremath{{\overline {n}}\xspace}}
+\def\olo {\ensuremath{{\overline {o}}\xspace}}
+\def\olp {\ensuremath{{\overline {p}}\xspace}}
+\def\olq {\ensuremath{{\overline {q}}\xspace}}
+\def\olr {\ensuremath{{\overline {r}}\xspace}}
+\def\ols {\ensuremath{{\overline {s}}\xspace}}
+\def\olt {\ensuremath{{\overline {t}}\xspace}}
+\def\olu {\ensuremath{{\overline {u}}\xspace}}
+\def\olv {\ensuremath{{\overline {v}}\xspace}}
+\def\olw {\ensuremath{{\overline {w}}\xspace}}
+\def\olx {\ensuremath{{\overline {x}}\xspace}}
+\def\oly {\ensuremath{{\overline {y}}\xspace}}
+\def\olz {\ensuremath{{\overline {z}}\xspace}}
+
+
+\def\wta {\ensuremath{{\widetilde a}\xspace}}
+\def\wtb {\ensuremath{{\widetilde b}\xspace}}
+\def\wtc {\ensuremath{{\widetilde c}\xspace}}
+\def\wtd {\ensuremath{{\widetilde d}\xspace}}
+\def\wte {\ensuremath{{\widetilde e}\xspace}}
+\def\wtf {\ensuremath{{\widetilde f}\xspace}}
+\def\wtg {\ensuremath{{\widetilde g}\xspace}}
+\def\wth {\ensuremath{{\widetilde h}\xspace}}
+\def\wti {\ensuremath{{\widetilde i}\xspace}}
+\def\wtj {\ensuremath{{\widetilde j}\xspace}}
+\def\wtk {\ensuremath{{\widetilde k}\xspace}}
+\def\wtl {\ensuremath{{\widetilde l}\xspace}}
+\def\wtm {\ensuremath{{\widetilde m}\xspace}}
+\def\wtn {\ensuremath{{\widetilde n}\xspace}}
+\def\wto {\ensuremath{{\widetilde o}\xspace}}
+\def\wtp {\ensuremath{{\widetilde p}\xspace}}
+\def\wtq {\ensuremath{{\widetilde q}\xspace}}
+\def\wtr {\ensuremath{{\widetilde r}\xspace}}
+\def\wts {\ensuremath{{\widetilde s}\xspace}}
+\def\wtt {\ensuremath{{\widetilde t}\xspace}}
+\def\wtu {\ensuremath{{\widetilde u}\xspace}}
+\def\wtv {\ensuremath{{\widetilde v}\xspace}}
+\def\wtx {\ensuremath{{\widetilde x}\xspace}}
+\def\wty {\ensuremath{{\widetilde y}\xspace}}
+\def\wtz {\ensuremath{{\widetilde z}\xspace}}
+\def\wtw {\ensuremath{{\widetilde w}\xspace}}
+
+\def\wtA {\ensuremath{{\widetilde A}\xspace}}
+\def\wtB {\ensuremath{{\widetilde B}\xspace}}
+\def\wtC {\ensuremath{{\widetilde C}\xspace}}
+\def\wtD {\ensuremath{{\widetilde D}\xspace}}
+\def\wtE {\ensuremath{{\widetilde E}\xspace}}
+\def\wtF {\ensuremath{{\widetilde F}\xspace}}
+\def\wtG {\ensuremath{{\widetilde G}\xspace}}
+\def\wtH {\ensuremath{{\widetilde H}\xspace}}
+\def\wtI {\ensuremath{{\widetilde I}\xspace}}
+\def\wtJ {\ensuremath{{\widetilde J}\xspace}}
+\def\wtK {\ensuremath{{\widetilde K}\xspace}}
+\def\wtL {\ensuremath{{\widetilde L}\xspace}}
+\def\wtM {\ensuremath{{\widetilde M}\xspace}}
+\def\wtN {\ensuremath{{\widetilde N}\xspace}}
+\def\wtO {\ensuremath{{\widetilde O}\xspace}}
+\def\wtP {\ensuremath{{\widetilde P}\xspace}}
+\def\wtQ {\ensuremath{{\widetilde Q}\xspace}}
+\def\wtR {\ensuremath{{\widetilde R}\xspace}}
+\def\wtS {\ensuremath{{\widetilde S}\xspace}}
+\def\wtT {\ensuremath{{\widetilde T}\xspace}}
+\def\wtU {\ensuremath{{\widetilde U}\xspace}}
+\def\wtV {\ensuremath{{\widetilde V}\xspace}}
+\def\wtZ {\ensuremath{{\widetilde X}\xspace}}
+\def\wtY {\ensuremath{{\widetilde Y}\xspace}}
+\def\wtW {\ensuremath{{\widetilde W}\xspace}}
+
+\def\wtba {\ensuremath{{\widetilde {\bf a}}\xspace}}
+\def\wtbb {\ensuremath{{\widetilde {\bf b}}\xspace}}
+\def\wtbc {\ensuremath{{\widetilde {\bf c}}\xspace}}
+\def\wtbd {\ensuremath{{\widetilde {\bf d}}\xspace}}
+\def\wtbe {\ensuremath{{\widetilde {\bf e}}\xspace}}
+\def\wtbf {\ensuremath{{\widetilde {\bf f}}\xspace}}
+\def\wtbg {\ensuremath{{\widetilde {\bf g}}\xspace}}
+\def\wtbh {\ensuremath{{\widetilde {\bf h}}\xspace}}
+\def\wtbi {\ensuremath{{\widetilde {\bf i}}\xspace}}
+\def\wtbj {\ensuremath{{\widetilde {\bf j}}\xspace}}
+\def\wtbk {\ensuremath{{\widetilde {\bf k}}\xspace}}
+\def\wtbl {\ensuremath{{\widetilde {\bf l}}\xspace}}
+\def\wtbm {\ensuremath{{\widetilde {\bf m}}\xspace}}
+\def\wtbn {\ensuremath{{\widetilde {\bf n}}\xspace}}
+\def\wtbo {\ensuremath{{\widetilde {\bf o}}\xspace}}
+\def\wtbp {\ensuremath{{\widetilde {\bf p}}\xspace}}
+\def\wtbq {\ensuremath{{\widetilde {\bf q}}\xspace}}
+\def\wtbr {\ensuremath{{\widetilde {\bf r}}\xspace}}
+\def\wtbs {\ensuremath{{\widetilde {\bf s}}\xspace}}
+\def\wtbt {\ensuremath{{\widetilde {\bf t}}\xspace}}
+\def\wtbu {\ensuremath{{\widetilde {\bf u}}\xspace}}
+\def\wtbv {\ensuremath{{\widetilde {\bf v}}\xspace}}
+\def\wtbx {\ensuremath{{\widetilde {\bf x}}\xspace}}
+\def\wtby {\ensuremath{{\widetilde {\bf y}}\xspace}}
+\def\wtbz {\ensuremath{{\widetilde {\bf z}}\xspace}}
+\def\wtbw {\ensuremath{{\widetilde {\bf w}}\xspace}}
+
+\def\wtbA {\ensuremath{{\widetilde {\bf A}}\xspace}}
+\def\wtbB {\ensuremath{{\widetilde {\bf B}}\xspace}}
+\def\wtbC {\ensuremath{{\widetilde {\bf C}}\xspace}}
+\def\wtbD {\ensuremath{{\widetilde {\bf D}}\xspace}}
+\def\wtbE {\ensuremath{{\widetilde {\bf E}}\xspace}}
+\def\wtbF {\ensuremath{{\widetilde {\bf F}}\xspace}}
+\def\wtbG {\ensuremath{{\widetilde {\bf G}}\xspace}}
+\def\wtbH {\ensuremath{{\widetilde {\bf H}}\xspace}}
+\def\wtbI {\ensuremath{{\widetilde {\bf I}}\xspace}}
+\def\wtbJ {\ensuremath{{\widetilde {\bf J}}\xspace}}
+\def\wtbK {\ensuremath{{\widetilde {\bf K}}\xspace}}
+\def\wtbL {\ensuremath{{\widetilde {\bf L}}\xspace}}
+\def\wtbM {\ensuremath{{\widetilde {\bf M}}\xspace}}
+\def\wtbN {\ensuremath{{\widetilde {\bf N}}\xspace}}
+\def\wtbO {\ensuremath{{\widetilde {\bf O}}\xspace}}
+\def\wtbP {\ensuremath{{\widetilde {\bf P}}\xspace}}
+\def\wtbQ {\ensuremath{{\widetilde {\bf Q}}\xspace}}
+\def\wtbR {\ensuremath{{\widetilde {\bf R}}\xspace}}
+\def\wtbS {\ensuremath{{\widetilde {\bf S}}\xspace}}
+\def\wtbT {\ensuremath{{\widetilde {\bf T}}\xspace}}
+\def\wtbU {\ensuremath{{\widetilde {\bf U}}\xspace}}
+\def\wtbV {\ensuremath{{\widetilde {\bf V}}\xspace}}
+\def\wtbZ {\ensuremath{{\widetilde {\bf X}}\xspace}}
+\def\wtbY {\ensuremath{{\widetilde {\bf Y}}\xspace}}
+\def\wtbW {\ensuremath{{\widetilde {\bf W}}\xspace}}
+
+\newcommand{\N}{\mbox{I\hspace{-.15em}N}}
+%\newcommand{\R}{\mbox{I\hspace{-.15em}R}}
+\newcommand{\C}{\mbox{l\hspace{-.47em}C}}
+\newcommand{\G}{\mbox{l\hspace{-.47em}G}}
+%\newcommand{\PP}{\mbox{I\hspace{-.15em}P}}
+
+\def \smooth {{\cal C}^{\infty}}
+
+\def \mbC {{\mathbb C}}
+\def \mbE {{\mathbb E}}
+\def \mbG {{\mathbb G}}
+\def \mbL {{\mathbb L}}
+\def \mbN {{\mathbb N}}
+\def \mbO {{\mathbb O}}
+\def \mbP {{\mathbb P}}
+\def \mbQ {{\mathbb Q}}
+\def \mbR {{\mathbb R}}
+\def \mbS {{\mathbb S}}
+\def \mbT {{\mathbb T}}
+\def \mbZ {{\mathbb Z}} 
+
+\def \mfg {{\mathfrak g}}
+\def \mfs {{\mathfrak s}}
+\def \mfl {{\mathfrak l}}
+
+\def \got#1{\mathfrak{#1}}
+\def \mbb#1{\mathbb{#1}}
+\def\registered{{\ooalign {\hfil\raise .05ex\hbox{\scriptsize
+R}\hfil\crcr\mathhexbox20D}}}
+
+
+\def\REgistered{{\ooalign
+{\hfil\raise.09ex\hbox{\tiny \sf R}\hfil\crcr\mathhexbox20D}}}
+
+\newcommand{\norm}[2][\relax]{
+\ifx#1\relax \ensuremath{\left\Vert#2\right\Vert}
+\else \ensuremath{\left\Vert#2\right\Vert_{#1}}
+\fi}
+
+\newcommand{\D}[2]{\frac{\partial #1}{\partial #2}}
+

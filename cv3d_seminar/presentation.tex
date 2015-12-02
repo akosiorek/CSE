@@ -1,0 +1,100 @@
+\documentclass[mathserif]{beamer}
+\input{macro}
+
+\mode<presentation>
+{
+
+  	\usetheme{Pittsburgh}
+
+  	%\usetheme[numbers,
+	 %pageofpages=of,% String used between the current page and the total page count.
+         % bullet=circle,% Use circles instead of squares for bullets.
+          %titleline=true,% Show a line below the frame title.
+          %]{Singapore}
+            
+%  \setbeamertemplate{footline}[frame number]
+%  \usefonttheme[onlysmall]{structurebold}
+%  \setbeamercovered{dynamic}
+% \setbeamercovered{transparent}
+
+\usebackgroundtemplate{\includegraphics[height=\paperheight]{template}}
+
+\setbeamertemplate{frametitle}{
+	\vskip30pt
+ 	\usebeamercolor[blue!60!green]{frametitle}
+  	\centering
+  	\insertframetitle
+	\vskip5pt
+	\color{blue!60!green}{\hrule}
+	}
+}
+
+\setbeamercolor{math text}{fg=orange!80!black}
+\newcommand{\hl}[1]{\textcolor{red!80!black}{\underline{#1}}}
+
+
+\title[short title]{SemanticPaint}
+\author[short presentator]{Adam Kosiorek}
+\institute[CAMP]{Computer Aided Medical Procedures \\
+Technische Universit\"at M\"unchen}
+\date[]{10.12.2015}
+
+
+\begin{document}
+
+%---------------------------------------------------------------------------------------
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+%---------------------------------------------------------------------------------------
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+
+%---------------------------------------------------------------------------------------
+\section{Introduction}
+\begin{frame}
+\frametitle{Introduction}
+
+\end{frame}
+
+%---------------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Two columns}
+\begin{columns}[t]
+\begin{column}{0.45\linewidth}
+Left
+\end{column}
+\begin{column}{0.45\linewidth}
+Right
+\end{column}
+\end{columns}
+\end{frame}
+
+
+%---------------------------------------------------------------------------------------
+\section{State of the art}
+
+\begin{frame}
+\frametitle{Another section}
+\end{frame}
+
+%---------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{How to include an image}
+\begin{center}
+\includegraphics[width=0.3\linewidth]{template}
+\end{center}
+\end{frame}
+
+
+%---------------------------------------------------------------------------------------
+\end{document}
+
+
+

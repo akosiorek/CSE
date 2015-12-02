@@ -33,9 +33,6 @@
 
 
 \section{Related Work}
-
-
-  \cite{VCRF} uses a Voxel-based CRF for simultaneous segmentation and reconstruction. Each voxel contains information about visibility and occlusion as well as group membership. The first two are used to to improve reconstruction by mitigating depth-map noise. The visibility values are constrained by that each ray from the camera can hit only one visible vortex. The group membership information encodes priors given by bounding boxes of detected objects. A graph-cut algorithm is used for inference, which is performed globally. No computational performance was reported.   
   
 %   Outline:
 %   1) what has generally been done and use cases
@@ -51,6 +48,15 @@
       There exists an online SLAM system that recognizes objects and perform online model updatres, but it supports only a single object class and relatively small scenes. What's appealing is that it does semantic recognition and reconstruction.
       
       There are no approaches that can handle an outdoor setting. Most of the work focused on image classification. No system works in real-time nor does online model updates. They also do not use ful 3d information, or do so in a global optimization setting which is slow. 
+      
+      
+  \cite{Monofusion} enables 3D reconstruction of small since using a single off-the-shelf RGB camera. It uses a sparse tracking method to first estimate the camera's pose and then select key frames and relative to them secondary frames from which 3D stereo reconstruction is perfomed. Results achieved are similar to KinectFusion with the only limitation being low precision of reconstruction of textureless surfaces. 
+      
+  \cite{ChangeDetection} is a first step towards online simultaneous registration and segmentation. Using RGBD images, the framework constructs a model of the enviornment and updates it each time a new frame comes in. When a significant change in the model is detected, the resulting model is split into a static and a dynamic part, where the latter is assumed to have moved in space. The movement is detected by comparing the expected and observed intensity values at each voxel. The system is online, but is far from real time with 0.7 to 2s processing time per frame.
+  
+  \cite{mesh}
+      
+  \cite{VCRF} uses a Voxel-based CRF for simultaneous segmentation and reconstruction. Each voxel contains information about visibility and occlusion as well as group membership. The first two are used to to improve reconstruction by mitigating depth-map noise. The visibility values are constrained by that each ray from the camera can hit only one visible vortex. The group membership information encodes priors given by bounding boxes of detected objects. A graph-cut algorithm is used for inference, which is performed globally. No computational performance was reported.   
     
     
 % Areas:
@@ -197,6 +203,15 @@
 
 	\bibitem{VCRF}
 	KIM , B.-S., KOHLI , P., AND SAVARESE , S. 2013. 3D scene understanding by voxel-CRF. In Proc. ICCV.
+	
+	\bibitem{Monofusion}
+	PRADEEP , V., RHEMANN , C., IZADI , S., ZACH , C., BLEYER , M., AND BATHICHE , S. 2013. Monofusion: Real-time 3D reconstruction of small scenes with a single web camera. In Proc. ISMAR.
+	
+	\bibitem{ChangeDetection}
+	HERBST , E., HENRY , P., AND FOX , D. 2014. Toward online 3-d object segmentation and mapping. In IEEE International Conference on Robotics and Automation (ICRA).
+	
+	\bibitem{mesh}
+	VALENTIN , J. P., SENGUPTA , S., WARRELL , J., SHAHROKNI , A., AND TORR , P. H. 2013. Mesh based semantic modelling for indoor and outdoor scenes. In Proc. CVPR.
 	
 \end{thebibliography}
 

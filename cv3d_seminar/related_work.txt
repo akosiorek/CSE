@@ -23,7 +23,7 @@ Very relevant:
 3.     5) online SLAM system that can recognize objects and update the model live [Salas-Moreno et al. 2013] the model database is still captured and generated offline. Only a single object class (chair) is recognized and it is unclear how the system can support larger surfaces such as floors, walls and ceilings. However, this system demonstrates the power of semantic recognition alongside the reconstruction process, improving relocalization, memory efficiency, and loop closure.
 
 
-4. None of these systems operate in a real-time or in an online manner.
+4. None of these systems operate in real-time or in an online manner.
 4.   2) Dense semantic 3D reconstruction with labeling performed on the images and projectred to the final model, which limits the use of full 3D geometry in their inference [Sengupta et al. 2013].
 
 4.     3) Joint volumetric dense reconstruction and semantic segmentation using computationally complex global optimization [H ̈ane et al. 2013].
@@ -34,7 +34,7 @@ Very relevant:
 
 5.     3) [Kim et al. 2013] use a voxel-based conditional random field (CRF) for segmentation and occupancy-grid based reconstruction.
 
-	Use a Voxel-based CRF for simultaneous segmentation and reconstruction. Each voxel contains information about visibility and occlusion as well as group membership. The first two are used to to improve reconstruction by mitigating depth-map noise. The visibility values are constrained by that each ray from the camera can hit only one visible vortex. The group membership information encodes priors given by bounding boxes of detected objects. It uses a graph-cut algorithm for inference, which is performed globally.   
+	
 
 
 
