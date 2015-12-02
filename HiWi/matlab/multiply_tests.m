@@ -1,16 +1,15 @@
 function multiply_tests()
     clc, clear all
     
-    sizeA1 = 4;
+    sizeA1 = 3;
     sizeA2 = 3;
-    sizeB1 = 5;
+    sizeB2 = 4;
     
     A = createA(sizeA1, sizeA2)
-    B = createB(sizeB1, sizeA1)
-    C = createC(sizeB1, sizeA2)
+    B = createB(sizeA2, sizeB2)
+    C = createC(sizeA1, sizeB2)
     
-    BtimesA = B*A
-    CplusBtimesA = C + BtimesA
+    AtimesB = A * B
     
     
 end

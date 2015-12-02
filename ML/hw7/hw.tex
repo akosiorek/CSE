@@ -22,7 +22,29 @@
 \rhead{IMAT: 03661883}
 \vspace*{.5in}
 
+\section*{Problem 1}
+If the data set is linearly separable, any decision boundary separating the two classes will have the property
+\begin{equation}
+w^T\phi(x^n) = \begin{cases} \geq 0 & \mbox{if } z^n = 1, \\ < 0 & otherwise. \\ \end{cases}
+\label{eq:}
+\end{equation}
 
+Moreover, the log-likelihood 
+\begin{align}
+L(w) &= \log p(\{z^i\}|w,\{\phi(x^i)\})\\
+&= \sum^{N}_{n = 1}\left[z^n\log \sigma(w^T\phi(x^n)) + (1-z^n)(\log(1-\sigma(w^T\phi(x^n))))\right]
+\end{align}
+
+will be maximized when $y^n = \sigma(w^T\phi(x^n)) = z^n \hspace{0.3cm}\forall n$. This will be the case when the sigmoid function is saturated, which occurs when its argument, $w^T\phi$, goes to $\pm \inf$, i.e., when the magnitude of $w$ goes to infinity. 
+
+
+\section*{Problem 2}
+The basis function 
+\begin{equation}
+\phi(x_1,x_2) = x_1x_2
+\end{equation}
+
+enables us to linearly seperate the crosses from the circles. The hyperplane would go through the origin of the coordinate system.
 
 \section*{Problem 5}
 

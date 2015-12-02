@@ -19,19 +19,141 @@
 \vspace*{.5in}
 
 
+
 \section*{Problem 1}
 
 Let $\hat{\Phi} = \begin{pmatrix} \Phi \\ \sqrt{\lambda}I_{p \times M} \end{pmatrix} \in \mathrm{R}^{(N+p) \times M}$ be the augmented design matrix and $\hat{\mathbf{z}} = \begin{pmatrix} \mathbf{z} \\ \mathbf{0}_p \end{pmatrix} \in \mathrm{R}^{N+p}$ the augmented target vector. Maximum likelihood estimation of parameters $ \mathbf{w}$ for linear regression is equivalent to minimizing energy given by $E(\mathbf{w}) = (\mathbf{z} - \Phi^T\mathbf{w})^T(\mathbf{z} - \Phi^T\mathbf{w})$. The minimizer $\mathbf{w}_{MLE} = (\Phi^T\Phi)^{-1}\Phi^T\mathbf{z}$ is agnostic of the form and contents of $\mathbf{w}$, $\mathbf{z}$ or $\Phi$. Therefore, we can write the minimizer of the energy resulting from the augmented design matrix and target vector as 
 
-\begin{equation}
+%\begin{equation}
 \begin{align}
  \hat{\mathbf{w}}_{MLE} &= (\hat{\Phi}^T\hat{\Phi})^{-1}\hat{\Phi}^T\hat{\mathbf{z}} \\
 	       &= \left( \begin{pmatrix} \Phi^T & \sqrt{\lambda}I_{p \times M}^T \end{pmatrix} \begin{pmatrix} \Phi \\ \sqrt{\lambda}I_{p \times M} \end{pmatrix} \right)^{-1} \begin{pmatrix} \Phi^T & \sqrt{\lambda}I_{p \times M}^T \end{pmatrix} \begin{pmatrix} \mathbf{z} \\ \mathbf{0}_p \end{pmatrix} \\
 	       &= \left( \lambda I_{M \times M} + \Phi^T\Phi \right)^{-1} \Phi^T \mathbf{z} \\
 	       &= \mathbf{w}_{MLE}^{ridge}
 \end{align}
-\end{equation}             
+%\end{equation}
 
+
+\section*{Problem 2}
+
+We want to prove the following identity:
+
+\[ (M + vv^T)^{-1} = M^{-1} - \frac{(M^{-1} v) (v^T M^{-1})  }{1 + v^T M^{-1} v} \]
+
+To prove the identity we will use the fact that for any matrix M:
+
+\[
+M M^{-1} = I
+\]
+
+where I is the identity matrix. So we multiply both sides by the inverse of the left-hand side
+
+\[
+M + vv^T
+\]
+
+which results in
+
+\begin{equation}
+I = I + M^{-1}vv^T - \frac{M^{-1} v v^T + M^{-1} v v^T M^{-1} v v^T}{1 + v^T M^{-1} v}
+\end{equation}
+
+$ v^T M^{-1} v $ is a scalar, so:
+
+\[
+M^{-1} v v^T + M^{-1} v v^T M^{-1} v v^T = ( 1 + v^T M^{-1} v ) M^{-1} v v^T
+\]
+
+(5) then simplifies to:
+
+\[
+I = I + M^{-1}vv^T - M^{-1}vv^T = I
+\]
+
+so the identity is verified.
+
+Using the identity above, we need to prove the following inequality:
+
+\begin{equation}
+\sigma^2_{N+1} (x) \leq \sigma^2_{N} (x)
+\end{equation}
+
+We use the definition of $\sigma^2_{N}$ and the definition of $S_N$ (here $ \Phi_N $ is the design matrix with the first N observations).
+
+\[
+\sigma^2_{N} (x) = \frac{1}{\beta} + \phi(x)^T S_N \phi(x)
+\]
+
+\[
+S^{-1}_{N} = \alpha I + \beta (\Phi^T_{N}) \Phi_N
+\]
+
+We now use the following identity:
+
+\[
+(\Phi^T_{N}) \Phi_N = \sum_{k=1}^N \phi(x_k) \phi(x_k)^T
+\]
+
+so we can write
+
+\[
+(\phi^T_{N+1}) \phi_{N+1} =(\phi^T_{N}) \phi_N + \phi(x_{N+1}) \phi(x_{N+1})^T
+\]
+
+and hence 
+
+\[
+S^{-1}_{N+1} = \alpha I + \beta (\Phi^T_{N+1}) \Phi_{N+1} = \alpha I + \beta ((\Phi^T_{N}) \Phi_N + \phi(x_{N+1}) \phi(x_{N+1})^T) = S^{-1}_{N} + \phi(x_{N+1}) \phi(x_{N+1})^T
+\]
+
+Substituting this into $ \sigma^2_{N+1} (x) $ and using the above matrix identity we get:
+
+\[
+\sigma^2_{N+1} (x) = \frac{1}{\beta} + \phi(x)^T S_{N+1} \phi(x)
+\]
+
+\[
+ = \frac{1}{\beta} + \phi(x)^T ({S^{-1}_{N} + \phi(x_{N+1}) \phi(x_{N+1})^T })^{-1} \phi(x)
+\]
+
+\[
+ = \frac{1}{\beta} + \phi(x)^T (S_{N} - \frac{S_{N} \phi(x_{N+1}) \phi(x_{N+1})^T S_{N}} {1 + \phi(x_{N+1})^T S_{N} \phi(x_{N+1})}) \phi(x) \]
+
+\begin{equation}
+ = \frac{1}{\beta} + \phi(x)^T S_{N} \phi(x) - \frac{ \phi(x)^T S_{N} \phi(x_{N+1}) \phi(x_{N+1})^T S_{N} \phi(x)} {1 + \phi(x_{N+1})^T S_{N} \phi(x_{N+1})}
+\end{equation}
+
+The nominator of the last fraction is greather than zero. Now note that the $S^{-1}_N$ is positive semi-definite since $\beta$ is greater than zero, $\alpha$ is greater than zero, and:
+
+\[
+x^T S^{-1}_{N} x = x^T (\alpha I + \beta \Phi^{T}_{N} \Phi_N  ) x = x^T \alpha I x + x^T \beta \Phi^{T}_{N} \Phi_N x = \alpha x^T I x + \beta (\Phi_N x)^T \Phi_N x
+\]
+
+A matrix A has an eigenvalue if and only if $A^{-1}$ has eigenvalue $\frac{1}{\lambda}$, as
+
+\[
+Av = \lambda v \Leftrightarrow A^{-1} A v = \lambda A^{-1} v \Leftrightarrow \frac{1}{\lambda} v = A^{-1} v 
+\]
+
+With that and the fact that the eigenvalues of positive semi-definite matrices are nonnegative we have shown
+that $S_N$ also is positive semi-definite. Therefore
+
+\[
+\phi(x_{N+1})^T S_{N} \phi(x_{N+1}) \geq 0
+\]
+
+and so the denominator of the last fraction in eq. (7) is positive. We thus have proven the inequality. 
+
+\section*{Problem 3}
+Since we spent no money, the model boils down to $y = 10 + \mathcal{N}(0,4)$. The Gaussian is centered on zero and, therefore, we can say that the probability to get more than 10 likes is $0.5$.
+
+\section*{Problem 4}
+
+Spending 1 EUR on advertisements our model gives us 
+\begin{equation}
+y = 15 + \mathcal{N}(0,4) \hspace{0.5cm} \Rightarrow \hspace{0.5cm} \operatorname{E}[y] = 15
+\end{equation}
+with \hspace{0.5cm} $\operatorname{E}[\mathcal{N}(0,4)] = 0$. Hence, we expect 15 likes.
 
 
 \end{document}

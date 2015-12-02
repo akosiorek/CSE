@@ -28,9 +28,9 @@ archive=true
 column=0
 encoding=UTF-8
 highlight=LaTeX
-line=20
+line=156
 mode=LaTeX
-open=false
+open=true
 order=0
 
 [item:hw4.kilepr]
@@ -45,6 +45,6 @@ order=-1
 
 [view-settings,view=0,item:hw.tex]
 CursorColumn=0
-CursorLine=20
+CursorLine=156
 JumpList=
-ViMarks=.,62,14,[,62,14,],62,14
+ViMarks=.,155,88,[,22,0,],-1,-1
