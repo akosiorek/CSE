@@ -150,7 +150,7 @@
 
 \section{Dynamic Conditional Random Field}
 
- Conditional Random Fields are often used for segmentation \cite{related_work}, but they usually assume availability of all data. Here, a pairwise CRF \cite{crf} with a time dependent underlying model is used. It requires a novel inference alogorithm that can handle updates of the geometry and user specified labes. The class of each voxel is modeled by a random variable $x_i$. The label distribution over the volume $\mathcal{V}$ factorizes into likelihood terms $\psi_i(x_i)$ and prior terms $\psi_{ij}(x_i, x_j)$. Let $\mathcal{E}_i$ be a neighbourhood of $v_i$, $\mathbf{D}_t $ volumetric data at time $t$ and $\mathbf{x}$ a vector of all $x_i$. The posterior distribution is given by
+ Conditional Random Fields are often used for segmentation \cite{VCRF}, but they usually assume availability of all data. Here, a pairwise CRF \cite{crf} with a time dependent underlying model is used. It requires a novel inference alogorithm that can handle updates of the geometry and user specified labes. The class of each voxel is modeled by a random variable $x_i$. The label distribution over the volume $\mathcal{V}$ factorizes into likelihood terms $\psi_i(x_i)$ and prior terms $\psi_{ij}(x_i, x_j)$. Let $\mathcal{E}_i$ be a neighbourhood of $v_i$, $\mathbf{D}_t $ volumetric data at time $t$ and $\mathbf{x}$ a vector of all $x_i$. The posterior distribution is given by
  
   \begin{equation} \label{eq:posterior}
   P(\mathbf{x}|\mathbf{D}) = \prod_{i \in \mathcal{V}} \left( \psi_i(x_i) \prod_{j \in \mathcal{E}_i} \psi_{ij}(x_i, x_j) \right) 
@@ -201,15 +201,15 @@ with $Z_i$ a normalizing factor and final class chosen as the minizer of $Q_i^T$
  \widetilde{Q}_i^t(x_i) = \gamma Q_i^{t-1}(x_i) + (1 - \gamma) P_F^{t-1}(x_i = l | \mathbf{D}) \text{, } \gamma \in [0, 1]
 \end{equation}
 
-\section{Putting it All Together}
-
-    The user comes into a room and touches a table uttering a label at the same time. Then, he touches a chair giving another label. He switches into test mode and goes into another room. All tables and chair are marked by the system accordingly. It works by feeding Voxel Oriented Patches associated with each pixel to the Streaming Random Forest, which learn to predict voxel categories in an online fashion. User interactions are facilitated by a Conditial Random Field that models the label distribution. An efficient mean-field algorithm, which amortizes classification of the whole scene among several frames, is used on top of it to smooth predicted labels.
+% \section{Putting it All Together}
+% 
+%   The user comes into a room and touches a table uttering a label at the same time. Then, he touches a chair giving another label. He switches into test mode and goes into another room. All tables and chair are marked by the system accordingly. It works by feeding Voxel Oriented Patches associated with each pixel to the Streaming Random Forest, which learn to predict voxel categories in an online fashion. User interactions are facilitated by a Conditial Random Field that models the label distribution. An efficient mean-field algorithm, which amortizes classification of the whole scene among several frames, is used on top of it to smooth predicted labels.
 
 \section{Results}
-  Each part of the pipeline is evaluated separately. Several video sequences were recorded to evaluate segmentation and VOP features. A set of keyframe covering the whole scene from each sequence was hand-labeled to create groudtruth data. They were further projected into the 3D volume, resulting in 4176, 12346, 7583, 8916 frames for \emph{LivingRoom}, \emph{Kitchen}, \emph{Bedroom}, \emph{Desk} sequences respectively, of wich around a third was used for testing. Table \ref{fig:segm_results} summarises segmantation results. User interaction gives very accurate labeling, but it is pertinent to single object instances only. SRF prediction works quite well and is improved by the inference algorithm. Table \ref{fig:vop_results} compares VOPs against other features. The numbers reflect the percentage of correctly classified pixels with SRF using different features. VOP clearly outperforms all other features. $\Delta$ RGB mean stands for the mean difference of two randomly selected patches. 
+  Each part of the pipeline is evaluated separately. Several video sequences were recorded to evaluate segmentation and VOP features. A set of keyframe covering the whole scene from each sequence was hand-labeled to create groudtruth data. They were further projected into the 3D volume, resulting in 4176, 12346, 7583, 8916 frames for \emph{LivingRoom}, \emph{Kitchen}, \emph{Bedroom} and \emph{Desk} sequences respectively, of wich around a third was used for testing. Table \ref{fig:segm_results} summarises segmantation results. User interaction gives very accurate labeling, but it affects a single object instance only. SRF prediction works well and is improved by further inference. Table \ref{fig:vop_results} compares VOPs against other features. The numbers reflect the percentage of correctly classified pixels with SRF using different features. VOP clearly outperforms all other features. $\Delta$ RGB mean stands for the mean difference of two randomly selected patches. 
   
   
-\begin{table}[!ht]	\label{fig:segm_results}
+\begin{table}[!ht]	
  \center
  \caption{Segmentation Results.}
  \begin{tabular}{c|c|c|c|c|c}
@@ -218,10 +218,11 @@ with $Z_i$ a normalizing factor and final class chosen as the minizer of $Q_i^T$
   Forest Prediction & 94.57\% & 88.31\% & 82.58\% & 90.29\% & 88.94\% \\
   Final Inference & 96.26\% & 95.19\% & 90.69\% & 95.55\% & 94.42\%
  \end{tabular}
+ \label{fig:segm_results}
 \end{table}
 
 
-\begin{table}[!ht]	\label{fig:vop_results}
+\begin{table}[!ht]	
  \center
  \caption{Comparison of VOP against other features.}
  \begin{tabular}{c|c|c|c|c|c}
@@ -233,44 +234,34 @@ with $Z_i$ a normalizing factor and final class chosen as the minizer of $Q_i^T$
   SURF & 43.74\% & 67.12\% & 57\% & 58.13\% & 56.5\% \\
   SPIN & 58.77\% & 43.22\% & 48.41\% & 36.1\% & 46.63\% \\
  \end{tabular}
+ \label{fig:vop_results}
 \end{table}
-  
+
   SRF was compared against Online Random Forests (ORF) \cite{online_forest} and Hoeffding trees (HT) \cite{htree}. In order to simulate non-IID data, a dataset of 300 objects of 51 categories \cite{dataset} was used. One revolution of each object was recorded with an RGBD camera from three different viewpoints. Online setting was created by sequentially adding new categories. Two thirds of each viewpoint of each object is used for training. Results are summarized by figure \ref{fig:srf_results}. SRF clearly outperforms its competitors.
 
-\begin{figure}[!ht]	 \label{fig:srf_results}
+\begin{figure}[!ht]
  \center
  \includegraphics[width=0.75\textwidth]{figures/srf_results}
  \caption{Comparison of Streaming Random Forest against Online Random Forest and Hoeffding Trees.}
+ \label{fig:srf_results}
 \end{figure}
-
-
-
 
 \section{Discussion}
 
-  This paper contributes an interactive system that enables users to create customized models of 3D enviornments. It can be used to gather groundtruth for large-scale visual recognition systems, robot navigation and to aid partially sighted people. There are some limitations, however. Use of the system is now restricted to simple, indoor scenes. Computational load increases with the size of the scene while prediction accuracy drops with the number of object categories. There are also some failure cases as shwon in figure \ref{fig:failures}. 
+  This paper contributes an interactive system that enables users to create customized models of 3D enviornments. It can be used to gather groundtruth for large-scale visual recognition systems, robot navigation and to aid partially sighted people. There are some limitations, however. Use of the system is now restricted to simple indoor scenes. Computational load increases with the size of the scene while prediction accuracy drops with the number of object categories.
   
-   Numerous applications are possible: (1) building large scale datasets of 3D objects or whole scenes for use in large-scale computer vision systems (2) using the dense semantic labeling of 3D environments in robot navigation or to aid people with impaired sight and (3) map environments for use in augmented reality scenarios or games. 
-  
-\begin{figure}[!ht]	 \label{fig:failures}
+\begin{figure}[!ht]	 
  \center
  \includegraphics[width=0.75\textwidth]{figures/failures}
  \caption{Failure cases.}
+ \label{fig:failures}
 \end{figure}
-
-Combing colour and depth data requires careful sensor calibration. Lack thereof results in misclassification at object boundaries. Also strong changes of lighting conditions impair classification ability at certain viewpoints. What is more, no global context is used for classification, which could be improved if some prior knowledge were introduced. There are two disjoint modes: training and testing, which limits possible use cases.
-
-\section{Summary}
-
+  
+  The system has also some limitations. Combing colour and depth data requires careful sensor calibration. Combing colour and depth data requires careful sensor calibration. Lack thereof results in misclassification at object boundaries. Additionaly, strong changes of lighting conditions impair classification ability at certain viewpoints. These failures are shwon in figure \ref{fig:failures}. Moreover, computational performance drops with the increasing size of the scene and classification accuracy decreases with the number of classes. What is more, no global context is used for classification. 
 
 \section{Future Work}
-
-  - introducing prior
-  - improving user interaction system (verbal priors)
-  - improving scalability
-  - using pure geometrical features
-  - moving to outdoor settings
-  - better scaling
+  
+  There is big room for improrvement. Introducting priors associated with the type of enviornment or with an object class (\emph{e.g.} vertical walls) could greatly improve classification accuracy. Failure cases from Fig. \ref{fig:failures} could be avoided if pure geometric features were used. Some research is required on scaling the system to bigger scenes and moving to outdoor enviornments. 
 
 \bibliographystyle{splncs}
 \begin{thebibliography}{1}
@@ -300,10 +291,10 @@ Combing colour and depth data requires careful sensor calibration. Lack thereof 
   CURLESS , B. AND LEVOY , M. 1996. A volumetric method for building complex models from range images. In Proceedings of the 23rd annual conference on Computer graphics and interactive techniques. ACM, 303–312.
   
   \bibitem{hashed_voxel}
-  NIESSNER , M., Z OLLH OFER , M., IZADI , S., AND STAMMINGER , M. 2013. Real-time 3D reconstruction at scale using voxel hashing. ACM TOG 32, 6
+  NIESSNER , M., ZOLLHOFER , M., IZADI , S., AND STAMMINGER , M. 2013. Real-time 3D reconstruction at scale using voxel hashing. ACM TOG 32, 6
   
   \bibitem{online_forest}
-  SAFFARI , A., LEISTNER , C., SANTNER , J., G ODEC , M., AND BISCHOF , H. 2009. On-line random forests. In IEEE ICCV Workshop.
+  SAFFARI , A., LEISTNER , C., SANTNER , J., GODEC , M., AND BISCHOF , H. 2009. On-line random forests. In IEEE ICCV Workshop.
   
   \bibitem{reservoir}
   VITTER , J. S. 1985. Random sampling with a reservoir. ACM TOMS 11, 1.
@@ -312,13 +303,20 @@ Combing colour and depth data requires careful sensor calibration. Lack thereof 
   LOWE , D. G. 1999. Object recognition from local scale-invariant features. In Proc. ICCV.
   
   \bibitem{crf}
-  LAFFERTY , J., M C C ALLUM , A., AND PEREIRA , F. C. 2001. Conditional random fields: Probabilistic models for segmenting and labeling sequence data.
+  LAFFERTY , J., McCALLUM , A., AND PEREIRA , F. C. 2001. Conditional random fields: Probabilistic models for segmenting and labeling sequence data.
   
   \bibitem{inference}
-  [Kr ̈ahenb ̈uhl and Koltun 2011]
+  KRAHENBÜHL, P. AND KOLTUN , V. 2011. Efficient inference in fully connected CRFs with Gaussian edge potentials. In NIPS.
 
   \bibitem{kl}
-  [Koller and Friedman 2009]
+  KOLLER , D. AND FRIEDMAN , N. 2009. Probabilistic Graphical Models: Principles and Techniques. MIT Press
+  
+  \bibitem{htree}
+  DOMINGOS , P. AND HULTEN , G. 2000. Mining high-speed data streams. In Proc. SIGKDD.
 	
+  \bibitem{dataset}
+  LAI , K., BO , L., REN , X., , AND FOX , D. 2011. A large-scale hierarchical multi-view rgb-d object dataset. In Proc. ICRA.
+
+
 \end{thebibliography}
 \end{document}
