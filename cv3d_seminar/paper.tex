@@ -112,7 +112,7 @@
 
 \section{Space Representation}
    
-  The space is represented by a 3D volume constructed from the sequence of RGBD images using Truncated Signed Distance Function (TSDF) \cite{TSDF}. Large-scale scene handling is facilitated by the hashed volumetric representation of \cite{hashed_voxel} with a 6mm$^{3}$ voxel. Each voxel contains: TSDF distance, colour information in the LAB space, a weight for averaging distance values, a user annotation class, a predictied class, an outcome of the mean-field inference from before and after classification and the probability of each class as inferred by the mean-field algorithm, for each class. The total number of bits per voxel is $96 + \textrm{[number of classes]} \cdot 16$.
+  The space is represented by a 3D volume constructed from the sequence of RGBD images using Truncated Signed Distance Function (TSDF) \cite{TSDF}. Large-scale scene handling is facilitated by the hashed volumetric representation of \cite{hashed_voxel} with a 6mm$^{3}$ voxel. Each voxel contains: TSDF distance, colour information in the LAB space, a weight for averaging distance values, a user annotation class, a predicted class, an outcome of the mean-field inference from before and after classification and the probability of each class as inferred by the mean-field algorithm, for each class. The total number of bits per voxel is $96 + \textrm{[number of classes]} \cdot 16$.
 
 \section{Voxel Oriented Patches}
 
@@ -123,11 +123,11 @@
  \label{fig:vop}
 \end{figure}
 
-  This work relies heavily on classification and since even the most powerful classifier is useless if inappropriate features are supplied this paper contributes Voxel Oriented Patch (VOP) features. They are efficiently computed from the TSDF volume representation (cf. figure \ref{fig:vop}). Let $V_i$ be a VOP and $\mathbf{n}^i$ the normal of voxel i. An image patch of dimensions $r \times r$  is centered on voxel $i$ from the plane $(\mathbf{p} - \mathbf{p}_i) \cdot \mathbf(n)_i = 0$. The patch containes colour values stored in the TSDF on the plane in CIELab to mitigate illumination effects. Additionaly, $V_i$ stores distance to the nearest dominant horizontal surface. $r = 13$ with a resolution of $10\frac{mm}{pixel}$ is used. Rotation invariance is achieved exactly as in \cite{sift}. The patch is rotated according to the dominant gradient direction. It is computed by creating a histogram of gradient directions with 36 bins, where the directions are weighted by gradient magnitudes and a gaussian window centered at the voxel. Furthermore, a quadratic polynomial is fit to the three biggest values of the histogram, whose maximum is the final directiion. 
+  This work relies heavily on classification and since even the most powerful classifier is useless if inappropriate features are supplied this paper contributes Voxel Oriented Patch (VOP) features. They are efficiently computed from the TSDF volume representation (cf. figure \ref{fig:vop}). Let $V_i$ be a VOP and $\mathbf{n}^i$ the normal of voxel i. An image patch of dimensions $r \times r$  is centered on voxel $i$ from the plane $(\mathbf{p} - \mathbf{p}_i) \cdot \mathbf(n)_i = 0$. The patch contains colour values stored in the TSDF on the plane in CIELab to mitigate illumination effects. Additionally, $V_i$ stores distance to the nearest dominant horizontal surface. $r = 13$ with a resolution of $10\frac{mm}{pixel}$ is used. Rotation invariance is achieved exactly as in \cite{sift}. The patch is rotated according to the dominant gradient direction. It is computed by creating a histogram of gradient directions with 36 bins, where the directions are weighted by gradient magnitudes and a gaussian window centered at the voxel. Furthermore, a quadratic polynomial is fit to the three biggest values of the histogram, whose maximum is the final direction. 
 
 \section{Streaming Random Forests}
   
-  A random forest is an ensamble of classification or regression trees, whose outputs are combined to produce a result with lower variance \cite{online_forest}. Each tree is typically trained only on a subset of the training data $S$ comprised of pairs $(i, l)$ where $i$ is a sample and $l$ its label.  Let $f(i; \theta) \in \{L, R\}$ denote the binary split function with learned parameters $\theta$, which specify a feature this node uses. The tree's output amounts to the probability distribution $P_F(x_i = l | \mathbf{D})$ stored at each node. Trees learn in a greedy way: for each node a split function is chosen from a distribution $\Theta$ of candidate split functions to maximize the information gain. 
+  A random forest is an ensemble of classification or regression trees, whose outputs are combined to produce a result with lower variance \cite{online_forest}. Each tree is typically trained only on a subset of the training data $S$ comprised of pairs $(i, l)$ where $i$ is a sample and $l$ its label.  Let $f(i; \theta) \in \{L, R\}$ denote the binary split function with learned parameters $\theta$, which specify a feature this node uses. The tree's output amounts to the probability distribution $P_F(x_i = l | \mathbf{D})$ stored at each node. Trees learn in a greedy way: for each node a split function is chosen from a distribution $\Theta$ of candidate split functions to maximize the information gain. 
   
   \begin{equation} \label{eq:infogain}
    G(S, S^L, S^R) = H(S) - \sum_{d \in \{L, R\}} \frac{|S^d|}{|S|}H(S^d)
@@ -135,7 +135,7 @@
   
   Where $H(S) = - \sum_{(l, i) \in S} p(c_i = l) \log{p(c_i = l)}$ is Shannon Entropy. Training set is then split into subsets $S^d(\theta)$, $d \in \{L, R\}$ used to train child nodes. This procedure requires that all training data is available.
   
-  Online Random Forest \cite{online_forest} allow runtime model updates and they differ in that for a new node $n$ they generate a distribution of split function $\Theta_n$ and maintain a set of label statistics for each of them, updated when a new sample comes to the node. Label statistics are sufficient to compute information gain and thus the node $n$ is further split if it has seen a predefined number of samples or if the minimal value of the information gain is low enough. Storing and udpdating statistics in leaf nodes is computationally expensive which limits runtime performanc
+  Online Random Forest \cite{online_forest} allow runtime model updates and they differ in that for a new node $n$ they generate a distribution of split function $\Theta_n$ and maintain a set of label statistics for each of them, updated when a new sample comes to the node. Label statistics are sufficient to compute information gain and thus the node $n$ is further split if it has seen a predefined number of samples or if the minimal value of the information gain is low enough. Storing and updating statistics in leaf nodes is computationally expensive which limits runtime performance
   
 \begin{figure}[!ht]
   \center
@@ -150,7 +150,7 @@
 
 \section{Dynamic Conditional Random Field}
 
- Conditional Random Fields are often used for segmentation \cite{VCRF}, but they usually assume availability of all data. Here, a pairwise CRF \cite{crf} with a time dependent underlying model is used. It requires a novel inference alogorithm that can handle updates of the geometry and user specified labes. The class of each voxel is modeled by a random variable $x_i$. The label distribution over the volume $\mathcal{V}$ factorizes into likelihood terms $\psi_i(x_i)$ and prior terms $\psi_{ij}(x_i, x_j)$. Let $\mathcal{E}_i$ be a neighbourhood of $v_i$, $\mathbf{D}_t $ volumetric data at time $t$ and $\mathbf{x}$ a vector of all $x_i$. The posterior distribution is given by
+ Conditional Random Fields are often used for segmentation \cite{VCRF}, but they usually assume availability of all data. Here, a pairwise CRF \cite{crf} with a time dependent underlying model is used. It requires a novel inference algorithm that can handle updates of the geometry and user specified labels. The class of each voxel is modeled by a random variable $x_i$. The label distribution over the volume $\mathcal{V}$ factorizes into likelihood terms $\psi_i(x_i)$ and prior terms $\psi_{ij}(x_i, x_j)$. Let $\mathcal{E}_i$ be a neighbourhood of $v_i$, $\mathbf{D}_t $ volumetric data at time $t$ and $\mathbf{x}$ a vector of all $x_i$. The posterior distribution is given by
  
   \begin{equation} \label{eq:posterior}
   P(\mathbf{x}|\mathbf{D}) = \prod_{i \in \mathcal{V}} \left( \psi_i(x_i) \prod_{j \in \mathcal{E}_i} \psi_{ij}(x_i, x_j) \right) 
@@ -162,11 +162,11 @@
   E_t(\mathbf{x}) = \sum_{i \in \mathcal{V}} \left( \phi_i(x_i) + \sum_{j \in \mathcal{E}_i} \phi_{ij} (x_i, x_j) \right) + K
   \end{equation}
 
-  Unary and pairwise potentials $\phi_i(x_i)$ and $\phi_{ij}(x_i, x_j)$ encode the cost of assigning a label to $v_i$ and a cost of assuming different labels by voxels in a neighbourhood, respectively. These costs are constatly changing due to the chainging predictions of the random forest and user interaction. 
+  Unary and pairwise potentials $\phi_i(x_i)$ and $\phi_{ij}(x_i, x_j)$ encode the cost of assigning a label to $v_i$ and a cost of assuming different labels by voxels in a neighbourhood, respectively. These costs are constantly changing due to the changing predictions of the random forest and user interaction. 
 
   Initially, all voxels are encouraged to take a background label by setting $\phi_i(l) = 0$ for background class and grater than zero otherwise. When the user touches an object, a set of touched voxels $\mathcal{H}_S$ is registered and their unary potentials set to $\phi_i(l) = \infty$ if their labels are different then the specified one, and zero if they are the same, thus imposing the labeling. If user labels a region more than once, the old labels are simply overwritten. 
    
-  To process the encircling action, the labeling is projected into the current frame. Next, a GMM is fit with the foreground class taken as a convex hull of the encirvled region and background as the rest of the image. For every pixel in a bounding box around the user annotation the unary potentials are updated as 
+  To process the encircling action, the labeling is projected into the current frame. Next, a GMM is fit with the foreground class taken as a convex hull of the encircled region and background as the rest of the image. For every pixel in a bounding box around the user annotation the unary potentials are updated as 
 
   \begin{equation}
   \phi_i(l) =
@@ -182,11 +182,11 @@
     P_E(\text{fg}|\mathbf{a}_i) = \frac{P(\mathbf{a}_i|\text{fg}) }{P(\mathbf{a}_i|\text{fg}) + P(\mathbf{a}_i|\text{bg})}
   \end{equation}
 
-  For all voxels that haven't been explicitly labaled by the user unitary potentials are updated with the predicted values as $\phi_i(l) = -\log P_F(x_i = l | \mathbf{D})$. Finally, smoothness is achieved by the standard Potts model by assigning a disconuity cost $\phi_{ij}(x_i, x_j) = \lambda_{ij}$ if voxels have different labels and zero otherwise, with $\lambda_{ij}$ a function of difference in position, intensity and normal directions.
+  For all voxels that haven't been explicitly labeled by the user unitary potentials are updated with the predicted values as $\phi_i(l) = -\log P_F(x_i = l | \mathbf{D})$. Finally, smoothness is achieved by the standard Potts model by assigning a discontinuity cost $\phi_{ij}(x_i, x_j) = \lambda_{ij}$ if voxels have different labels and zero otherwise, with $\lambda_{ij}$ a function of difference in position, intensity and normal directions.
 
 \section{Efficient Mean-Field Inference}
 
-The mean-field inference algorithm is adapted from \cite{inference} to handle the constantly changing energy landscape and implemented on GPU. First, the original prbability distribution $P(\mathbf{x})$ is approximated by $Q(\mathbf{x})$ under KL-divergence $KL(Q||P)$.  $Q(\mathbf{x})$ is chosen such that the marginal of each random variable is independent, that is $Q(\mathbf{x}) = \prod_i Q_i(\mathbf{x)_i})$. Iterative updates yield:
+The mean-field inference algorithm is adapted from \cite{inference} to handle the constantly changing energy landscape and implemented on GPU. First, the original probability distribution $P(\mathbf{x})$ is approximated by $Q(\mathbf{x})$ under KL-divergence $KL(Q||P)$.  $Q(\mathbf{x})$ is chosen such that the marginal of each random variable is independent, that is $Q(\mathbf{x}) = \prod_i Q_i(\mathbf{x)_i})$. Iterative updates yield:
 
 \begin{equation}
  Q_i^t(l) = \frac{1}{Z_i}e^{M_i(l)} \text{, } t = 1, \ldots, T
@@ -195,7 +195,7 @@ The mean-field inference algorithm is adapted from \cite{inference} to handle th
  M_i(l) = \phi_i(l) + \sum_{l' \in \mathcal{L}} \sum_{j \in \mathcal{N}(i)} Q_j^{t-1}(l')\phi_{ij}(l, l')
 \end{equation}
 
-with $Z_i$ a normalizing factor and final class chosen as the minizer of $Q_i^T$. Energy distribution is assumed to change only gradualy. Moreover, SRF classification results would impact the final segmentation after several frames due to their effect on unitary potentials. To speed up the process the initial energy value at a new frame is set to a weighted sum of the previous frame's state and the SRF prediction. It works well in practice and allows visually pleasing label propagation effect.
+with $Z_i$ a normalizing factor and final class chosen as the minimizer of $Q_i^T$. Energy distribution is assumed to change only gradually. Moreover, SRF classification results would impact the final segmentation after several frames due to their effect on unitary potentials. To speed up the process the initial energy value at a new frame is set to a weighted sum of the previous frame's state and the SRF prediction. It works well in practice and allows visually pleasing label propagation effect.
 
 \begin{equation}
  \widetilde{Q}_i^t(x_i) = \gamma Q_i^{t-1}(x_i) + (1 - \gamma) P_F^{t-1}(x_i = l | \mathbf{D}) \text{, } \gamma \in [0, 1]
@@ -206,7 +206,7 @@ with $Z_i$ a normalizing factor and final class chosen as the minizer of $Q_i^T$
 %   The user comes into a room and touches a table uttering a label at the same time. Then, he touches a chair giving another label. He switches into test mode and goes into another room. All tables and chair are marked by the system accordingly. It works by feeding Voxel Oriented Patches associated with each pixel to the Streaming Random Forest, which learn to predict voxel categories in an online fashion. User interactions are facilitated by a Conditial Random Field that models the label distribution. An efficient mean-field algorithm, which amortizes classification of the whole scene among several frames, is used on top of it to smooth predicted labels.
 
 \section{Results}
-  Each part of the pipeline is evaluated separately. Several video sequences were recorded to evaluate segmentation and VOP features. A set of keyframe covering the whole scene from each sequence was hand-labeled to create groudtruth data. They were further projected into the 3D volume, resulting in 4176, 12346, 7583, 8916 frames for \emph{LivingRoom}, \emph{Kitchen}, \emph{Bedroom} and \emph{Desk} sequences respectively, of wich around a third was used for testing. Table \ref{fig:segm_results} summarises segmantation results. User interaction gives very accurate labeling, but it affects a single object instance only. SRF prediction works well and is improved by further inference. Table \ref{fig:vop_results} compares VOPs against other features. The numbers reflect the percentage of correctly classified pixels with SRF using different features. VOP clearly outperforms all other features. $\Delta$ RGB mean stands for the mean difference of two randomly selected patches. 
+  Each part of the pipeline is evaluated separately. Several video sequences were recorded to evaluate segmentation and VOP features. A set of key frames covering the whole scene from each sequence was hand-labeled to create groundtruth data. They were further projected into the 3D volume, resulting in 4176, 12346, 7583, 8916 frames for \emph{LivingRoom}, \emph{Kitchen}, \emph{Bedroom} and \emph{Desk} sequences respectively, of which around a third was used for testing. Table \ref{fig:segm_results} summarizes segmentation results. User interaction gives very accurate labeling, but it affects a single object instance only. SRF prediction works well and is improved by further inference. Table \ref{fig:vop_results} compares VOPs against other features. The numbers reflect the percentage of correctly classified pixels with SRF using different features. VOP clearly outperforms all other features. $\Delta$ RGB mean stands for the mean difference of two randomly selected patches. 
   
   
 \begin{table}[!ht]	
@@ -248,7 +248,7 @@ with $Z_i$ a normalizing factor and final class chosen as the minizer of $Q_i^T$
 
 \section{Discussion}
 
-  This paper contributes an interactive system that enables users to create customized models of 3D enviornments. It can be used to gather groundtruth for large-scale visual recognition systems, robot navigation and to aid partially sighted people. There are some limitations, however. Use of the system is now restricted to simple indoor scenes. Computational load increases with the size of the scene while prediction accuracy drops with the number of object categories.
+  This paper contributes an interactive system that enables users to create customized models of 3D environments. It can be used to gather groundtruth for large-scale visual recognition systems, robot navigation and to aid partially sighted people. There are some limitations, however. Use of the system is now restricted to simple indoor scenes. Computational load increases with the size of the scene while prediction accuracy drops with the number of object categories.
   
 \begin{figure}[!ht]	 
  \center
@@ -257,11 +257,11 @@ with $Z_i$ a normalizing factor and final class chosen as the minizer of $Q_i^T$
  \label{fig:failures}
 \end{figure}
   
-  The system has also some limitations. Combing colour and depth data requires careful sensor calibration. Combing colour and depth data requires careful sensor calibration. Lack thereof results in misclassification at object boundaries. Additionaly, strong changes of lighting conditions impair classification ability at certain viewpoints. These failures are shwon in figure \ref{fig:failures}. Moreover, computational performance drops with the increasing size of the scene and classification accuracy decreases with the number of classes. What is more, no global context is used for classification. 
+  The system has also some limitations. Combing colour and depth data requires careful sensor calibration. Combing colour and depth data requires careful sensor calibration. Lack thereof results in misclassification at object boundaries. Additionally, strong changes of lighting conditions impair classification ability at certain viewpoints. These failures are shown in figure \ref{fig:failures}. Moreover, computational performance drops with the increasing size of the scene and classification accuracy decreases with the number of classes. What is more, no global context is used for classification. 
 
 \section{Future Work}
   
-  There is big room for improrvement. Introducting priors associated with the type of enviornment or with an object class (\emph{e.g.} vertical walls) could greatly improve classification accuracy. Failure cases from Fig. \ref{fig:failures} could be avoided if pure geometric features were used. Some research is required on scaling the system to bigger scenes and moving to outdoor enviornments. 
+  There is big room for improvement. Introducing priors associated with the type of environment or with an object class (\emph{e.g.} vertical walls) could greatly improve classification accuracy. Failure cases from Fig. \ref{fig:failures} could be avoided if pure geometric features were used. Some research is required on scaling the system to bigger scenes and moving to outdoor environments. 
 
 \bibliographystyle{splncs}
 \begin{thebibliography}{1}
