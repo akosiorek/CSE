@@ -14,12 +14,12 @@
 	\maketitle
 
 \begin{abstract}
-	The short abstract (50-80 words) is intended to give the reader an overview of the work.
+  We describe SemanticPaint \cite{SemanticPaint} --- a system for capturing and  interactive segmentation of 3D enviornments. It allows adding new object categories at runtime, updates the model with and infers labels of newly seen data in an online fashion. 
 \end{abstract}
 
 \section{Introduction}
   
-  Capturing your own environment has never been easier. SemanticPaint can register your surroundings which, after 3D reconstruction, can be semantically segmented in an interactive way. Not only it works in real time but also requires no pretraining. Adding new object categories on the fly is facilitated by online model updates. The user is provided with instantaneous feedback and can re-label any object to correct errors. SemanticPaint makes capturing customized environment models with object classes particular to the user's interest easy and efficient.  
+  Capturing your own environment has never been easier. SemanticPaint \cite{SemanticPaint} register your surroundings which, after 3D reconstruction, can be semantically segmented in an interactive way. Not only it works in real time but also requires no pretraining. Adding new object categories on the fly is facilitated by online model updates. The user is provided with instantaneous feedback and can re-label any object to correct errors. SemanticPaint makes capturing customized environment models with object classes particular to the user's interest easy and efficient.  
   
   The pipeline starts with capturing the environment as a stream of noisy RGBD images and combining them into a  3D model updated in an online fashion. The user can choose which objects to label and can do so by ``touching'' a small part of an object or encircling it with his hand and uttering the label. The label and the affected data points are further passed to a Streaming Random Forest (SRF) classifier which constantly learns and labels all visible voxels. To further improve classification results a spatially dense labeling is produced by an efficient mean-field inference algorithm. One of the biggest strengths of SemanticPaint is the efficiency of each part of the pipeline, which translates to real time performance. Algorithms used in the pipeline were adapted to work on volumetric data in the TSDF format directly in order to avoiding costly conversions to mesh or point-cloud formats. To allow this, the Voxel Oriented Patch features --- a new type of a discriminative feature describing the voxel space --- has been designed. 
  
@@ -312,11 +312,13 @@ with $Z_i$ a normalizing factor and final class chosen as the minimizer of $Q_i^
   KOLLER , D. AND FRIEDMAN , N. 2009. Probabilistic Graphical Models: Principles and Techniques. MIT Press
   
   \bibitem{htree}
-  DOMINGOS , P. AND HULTEN , G. 2000. Mining high-speed data streams. In Proc. SIGKDD.
+  DOMINGOS, P. AND HULTEN , G. 2000. Mining high-speed data streams. In Proc. SIGKDD.
 	
   \bibitem{dataset}
   LAI , K., BO , L., REN , X., , AND FOX , D. 2011. A large-scale hierarchical multi-view rgb-d object dataset. In Proc. ICRA.
-
+  
+  \bibitem{SemanticPaint}
+  VALENTIN, J., VINEET, V., CHENG, M.-M., KIM, D., SHOTTON, J., KOHLI, P., NIESSNER, M., CRIMINISI, A., IZADI, S., TORR, P. 2015. SemanticPaint: Interactive 3D Labeling and Learning at your Fingertips. SIGGRAPH.
 
 \end{thebibliography}
 \end{document}
