@@ -35,6 +35,17 @@
 \setbeamercolor{math text}{fg=orange!80!black}
 \newcommand{\hl}[1]{\textcolor{red!80!black}{\underline{#1}}}
 
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
 
 \title[short title]{SemanticPaint}
 \author[short presentator]{Adam Kosiorek}
