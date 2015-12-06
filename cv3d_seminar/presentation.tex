@@ -1,4 +1,4 @@
-\documentclass[mathserif, 8pt]{beamer}
+\documentclass[mathserif, 10pt]{beamer}
 \input{macro}
 
 % \usepackage[font=footnotesize,labelfont=bf]{caption}
@@ -31,7 +31,7 @@
 	\color{blue!60!green}{\hrule}
 	}
 }
-
+\setbeamertemplate{footline}[frame number]
 \setbeamercolor{math text}{fg=orange!80!black}
 \newcommand{\hl}[1]{\textcolor{red!80!black}{\underline{#1}}}
 
@@ -112,14 +112,122 @@ Technische Universit\"at M\"unchen}
 %---------------------------------------------------------------------------------------
 \section{State of the Art}
 \begin{frame}
-\frametitle{Introduction}
+\frametitle{Acquisition and Reconstruction}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Scene Understanding}
 
 \end{frame}
 
 %---------------------------------------------------------------------------------------
 \section{Pipeline}
 \begin{frame}
-\frametitle{Introduction}
+\frametitle{Voxel Oriented Patch features}
+
+\begin{columns}
+ \begin{column}{0.5\textwidth}
+  \begin{figure}
+  \center
+  \includegraphics[width=\textwidth]{figures/vop}
+  \caption{Colours shown in RGB for illustration purposes.}
+  \label{fig:vop}
+\end{figure}
+ \end{column}
+ \begin{column}{0.5\textwidth}
+    $(\mathbf{p} - \mathbf{p}_i) \cdot \mathbf(n)_i = 0$ \\
+    $r \times r$, $r = 13px$ with $10\frac{mm}{pixel}$\\
+    CIELab\\
+    Rotated to dominant gradient direction
+
+  
+ \end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{Streaming Random Forest}
+\end{frame}
+
+\begin{frame}
+\frametitle{SRF - Reservoir Splitting}
+
+\begin{figure}[!ht]
+  \center
+  \includegraphics[width=\textwidth]{figures/forest}
+%   \caption{Splitting reservoirs in Streaming Random Forest.}
+  \label{fig:forest}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Dynamic Conditional Random Field}
+
+  \begin{equation} \label{eq:posterior}
+  P(\mathbf{x}|\mathbf{D}) = \prod_{i \in \mathcal{V}} \left( \psi_i(x_i) \prod_{j \in \mathcal{E}_i} \psi_{ij}(x_i, x_j) \right) 
+  \end{equation}
+
+  \begin{equation} \label{eq:energy}
+  E_t(\mathbf{x}) = \sum_{i \in \mathcal{V}} \left( \phi_i(x_i) + \sum_{j \in \mathcal{E}_i} \phi_{ij} (x_i, x_j) \right) + K
+  \end{equation}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{CRF - User Interactions}
+
+  Touching:
+  \begin{equation}
+  \phi_i(l) =
+    \begin{cases}
+      0      & \quad \text{if } l = l_S\\
+      \infty  & \quad \text{otherwise}\\
+    \end{cases}
+  \end{equation}
+
+  Encircling:
+  \begin{equation}
+  \phi_i(l) =
+    \begin{cases}
+      \log P_E(fg|\mathbf{a}_i)       & \quad \text{if } l = \text{fg}\\
+      \log (1 - P_E(fg|\mathbf{a}_i))  & \quad \text{if } l = \text{bg}\\
+    \end{cases}
+  \end{equation}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{CRF - Predictions and Smoothnes}
+
+  Predictions:
+  \begin{equation}
+  \phi_i(l) = -\log P_F(x_i = l | \mathbf{D})
+  \end{equation}
+
+  Smoothnes:
+  \begin{equation}
+      \phi_{ij}(x_i, x_j)  = \theta_p e^{-||\mathbf{p}_i - \mathbf{p}_j||}  + \theta_a e^{-||\mathbf{a}_i - \mathbf{a}_j||} + \theta_n e^{-||\mathbf{n}_i - \mathbf{n}_j||}
+  \end{equation}
+\end{frame}
+
+\begin{frame}
+\frametitle{Mean-Field Inference}
+$P(\mathbf{x})$ approximated by $Q(\mathbf{x})$ under $KL(Q||P)$:
+\begin{equation}
+ Q_i^t(l) = \frac{1}{Z_i}e^{M_i(l)} \text{, } t = 1, \ldots, T
+\end{equation}
+\begin{equation}
+ M_i(l) = \phi_i(l) + \sum_{l' \in \mathcal{L}} \sum_{j \in \mathcal{N}(i)} Q_j^{t-1}(l')\phi_{ij}(l, l')
+\end{equation}
+
+
+Frame at time $t$ initialized with:
+\begin{equation}
+ \widetilde{Q}_i^t(x_i) = \gamma Q_i^{t-1}(x_i) + (1 - \gamma) P_F^{t-1}(x_i = l | \mathbf{D}) \text{, } \gamma \in [0, 1]
+\end{equation}
 
 \end{frame}
 
@@ -202,9 +310,6 @@ Technische Universit\"at M\"unchen}
   HT - Hoeffding Tree \\
  \end{column}
 \end{columns}
-
-
-
 \end{frame}
 
 
@@ -212,41 +317,49 @@ Technische Universit\"at M\"unchen}
 \section{Discussion and Outlook}
 \begin{frame}
 \frametitle{Summary}
+\begin{itemize}
+ \item customized models of 3D enviornments
+ \item fully interactive
+ \item online and real time
+ \item no pretraining
+\end{itemize}
 
 \end{frame}
 
 \begin{frame}
 \frametitle{Failures}
+\begin{columns}
+ \begin{column}{0.5\textwidth}
+  \begin{figure}[!ht]	 
+  \center
+  \includegraphics[width=\textwidth]{figures/failures}
+  \caption{Failure cases.}
+  \label{fig:failures}
+  \end{figure}
+ \end{column}
+ 
+ \begin{column}{0.5\textwidth}
+  \begin{itemize}
+   \item bleeding
+   \item illumination change
+   \item viewpoint change
+  \end{itemize}
+ \end{column}
+\end{columns}
 
 \end{frame}
 
 \begin{frame}
 \frametitle{Future Work}
-
-\end{frame}
-
-
-%---------------------------------------------------------------------------------------
-
-\begin{frame}
-\frametitle{Two columns}
-\begin{columns}[t]
-\begin{column}{0.45\linewidth}
-Left
-\end{column}
-\begin{column}{0.45\linewidth}
-Right
-\end{column}
-\end{columns}
-\end{frame}
+\begin{itemize}
+ \item class priors for different enviornments
+ \item priors for class properties (vertical walls)
+ \item discriminative geometrical features
+ \item outdoor enviornments
+ \item better scalability
+\end{itemize}
 
 
-%---------------------------------------------------------------------------------------
-\begin{frame}
-\frametitle{How to include an image}
-\begin{center}
-\includegraphics[width=0.3\linewidth]{template}
-\end{center}
 \end{frame}
 
 
