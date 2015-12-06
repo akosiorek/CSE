@@ -1,5 +1,8 @@
-\documentclass[mathserif]{beamer}
+\documentclass[mathserif, 8pt]{beamer}
 \input{macro}
+
+% \usepackage[font=footnotesize,labelfont=bf]{caption}
+% \setbeamerfont{caption}{size=\scriptsize}
 
 \mode<presentation>
 {
@@ -114,15 +117,82 @@ Technische Universit\"at M\"unchen}
 \begin{frame}
 \frametitle{Segmentation}
 
+\begin{table}[!ht]
+  \fontsize{10pt}{7.2}\selectfont
+ \center
+ \caption{Segmentation Results}
+\noindent\makebox[\linewidth]{
+  \begin{tabular}{c|c|c|c|c|c}
+    \textbf{Component} & \textbf{LivingRoom} & \textbf{Bedroom} & \textbf{Kitchen} & \textbf{Desk} & \textbf{Average} \\ \hline
+    User Interaction & 99.35\% & 97.61\% & 96.09\% & 97.73\% & 97.7\% \\ 
+    Forest Prediction & 94.57\% & 88.31\% & 82.58\% & 90.29\% & 88.94\% \\
+    Final Inference & 96.26\% & 95.19\% & 90.69\% & 95.55\% & 94.42\%
+  \end{tabular}
+ }
+ \label{fig:segm_results}
+\end{table}
+
 \end{frame}
 
 \begin{frame}
 \frametitle{Features}
 
+\begin{table}[!ht]
+ \fontsize{10pt}{7.2}\selectfont
+ \center
+ \caption{Feature Comparison}
+ \noindent\makebox[\linewidth]{
+  \begin{tabular}{c|c|c|c|c|c}
+  \textbf{Feature} & \textbf{LivingRoom} & \textbf{Bedroom} & \textbf{Kitchen} & \textbf{Desk} & \textbf{Average} \\ \hline
+  VOP & \textbf{94.57\%} & \textbf{88.31\%} & 82.58\% & \textbf{90.29\%} & \textbf{88.94\%} \\
+  $\Delta$ RGB mean & 80\% & 71.84\% & 76.29\% & 73.42\% & 75.39\% \\
+  Depth Probe& 77.54\% & 61.79\% & \textbf{84.9\%} & 68.9\% & 73.06\% \\
+  Color Probe& 56.39\% & 65.68\% & 60.77\% & 60.74\% & 60.9\% \\
+  SURF & 43.74\% & 67.12\% & 57\% & 58.13\% & 56.5\% \\
+  SPIN & 58.77\% & 43.22\% & 48.41\% & 36.1\% & 46.63\% \\
+ \end{tabular}
+ }
+ \label{fig:vop_results}
+\end{table}
+
 \end{frame}
 
 \begin{frame}
 \frametitle{Streaming Random Forest}
+
+\begin{columns}
+ \begin{column}{0.5\textwidth}
+  \begin{figure}[!ht]
+  \center
+  \includegraphics[width=\textwidth]{figures/srf_ap}
+  \vspace{-0.25cm}
+  \caption{Average Precision}
+  \label{fig:srf_ap}
+  \end{figure}
+  \vspace{-0.5cm}
+  \begin{figure}[!ht]
+  \center
+  \includegraphics[width=\textwidth]{figures/srf_iu}
+  \vspace{-0.25cm}
+  \caption{Intersection/Union}
+  \label{fig:srf_iu}
+  \end{figure}
+ \end{column}
+ 
+ \begin{column}{0.5\textwidth}
+  Data:\\
+  300 objects\\
+  51 classes\\
+  full revolution\\
+  3 points of view \\
+  \vspace{0.5cm}
+  SRF - Streaming Random Forest\\
+  ORF - Online Random Forest\\
+  HT - Hoeffding Tree \\
+ \end{column}
+\end{columns}
+
+
 
 \end{frame}
 
@@ -159,13 +229,6 @@ Right
 \end{columns}
 \end{frame}
 
-
-%---------------------------------------------------------------------------------------
-\section{State of the Art}
-
-\begin{frame}
-\frametitle{Another section}
-\end{frame}
 
 %---------------------------------------------------------------------------------------
 \begin{frame}
