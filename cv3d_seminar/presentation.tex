@@ -49,8 +49,7 @@
 
 \title[short title]{SemanticPaint}
 \author[short presentator]{Adam Kosiorek}
-\institute[CAMP]{Computer Aided Medical Procedures \\
-Technische Universit\"at M\"unchen}
+\institute[CAMP]{Advisor: M.Eng.~Keisuke Tateno}
 \date[]{10.12.2015}
 
 
@@ -114,10 +113,40 @@ Technische Universit\"at M\"unchen}
 \begin{frame}
 \frametitle{Acquisition and Reconstruction}
 
+\begin{table}
+\noindent\makebox[\linewidth]{
+ \begin{tabular}{c|c|c}
+  Who & What & How \\ \hline
+  Levoy et. al. 2000 & world-scale 3D models & offline, from online images\\ \hline
+  Newcombe et. al. 2011  & online 3D scanning & KinectFusion \\ \hline
+  Pradeep et.al. 2013 & 3D reconstructiona & sparse tracking and  \\
+    & with 1 RGB camera  & stereo reconstruction \\
+    && on par with KinectFusion
+ \end{tabular}
+}
+\end{table}
+
+
 \end{frame}
 
 \begin{frame}
 \frametitle{Scene Understanding}
+
+\begin{table}
+\noindent\makebox[\linewidth]{
+ \begin{tabular}{c|c|c}
+  Who & What & How \\ \hline
+  Kim et. al. 2013 & reconstruction & Voxel-based CRF \\ 
+    & segmentation   & with visibility contraints\\ \hline
+    
+  Herbst et. al. 2014  & registration & online \\
+     & segmentation & change detection\\ \hline
+     
+  Valentin et. al. 2013  & inference on & RGB and geom. features  \\
+    & mesh from TSDF  & CRF segmentation \\
+ \end{tabular}
+}
+\end{table}
 
 \end{frame}
 
@@ -148,7 +177,43 @@ Technische Universit\"at M\"unchen}
 \end{frame}
 
 \begin{frame}
+\frametitle{Random Forest}
+
+\begin{columns}
+ \begin{column}{0.5\textwidth}
+  \begin{figure}
+  \center
+  \includegraphics[width=\textwidth]{figures/rf}
+  \caption{Single tree}
+\end{figure}
+ \end{column}
+ \begin{column}{0.5\textwidth}
+    bagged trees\\
+    bootstraped data\\
+    
+    voting for final result\\
+    greedy training\\
+    off-line, all data at once\\
+    $(i, l) \in \mathcal{S}$ - (voxel, label) pairs\\
+    $f(i, \theta)$ - split functions\\
+    $\Theta$ - distribution of split functions\\
+    $P_F(x_i = l | \mathbf{D})$\\
+ \end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}
 \frametitle{Streaming Random Forest}
+
+  Information Gain:
+  \begin{equation} \label{eq:infogain}
+    G(S, S^L, S^R) = H(S) - \sum_{d \in \{L, R\}} \frac{|S^d|}{|S|}H(S^d)
+  \end{equation}
+  Shannon Entropy:
+  \begin{equation}
+   H(S) = - \sum_{(l, i) \in S} p(c_i = l) \log{p(c_i )}
+  \end{equation}
 \end{frame}
 
 \begin{frame}

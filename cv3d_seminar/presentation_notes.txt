@@ -1,0 +1,99 @@
+2. Introduction - 3 min
+ 4) Show movie
+	- a person enters the room and captures the enviornment
+	- a model is build on the fly and extended with new frames coming in
+	- we can easily paint floor with our leg and say the label
+	- label propagates through the floor
+	- we paint a chair and it is also labeled, again with the table
+	- if an object is small we can encircle it instead
+	- we switch to the test mode and all objects in the scene are labaled
+	- chairs of different color are misclassified; since the system is fully interactive we can just re-label them
+	- as you see, capturing your enviornment can be really easy and useful for interior design, augmented reality or gathering datasets for large scale computer vision challanges 
+
+
+2. State of the Art - 5 min
+  6) Acquisition and Reconstruction
+	- to date we've seen world-scale online models of the world heritage created from thousands of images found online, but created in an offline manner, where processing took many hours to complete
+	- KinectFusion introduced online 3D scanning of static enviornment; empowered by modern GPUs, it creates very detailed models with great performance
+	- Pradeep used sparse tracking with a single RGB camera to first estimate camera pose and than select key frames and relative to them secondary frames, on which stereo reconstruction is done to retrieve geometrical information; results on par with KinectFusion using an off-the-shelf camera. For now, it works only for small, indoor scenes and work is done on moving to outdoor enviornments
+
+  7) Scene Understading
+	- a lot of work has been done on scene labeling, object classification and detection and image segmentation on RGB, RGBD, point clouds, meshes and volumetric representations
+	- mostly off line, with CNNs for classification and detection, CRFs and global variational inference for segmentation
+	- Kim used voxel-based CRF to model reconstruction and segmentation; voxel cotain both visibility and occupany information, which the former constrained such that a voxel is visble iff any single ray from the camera can hit it; it is useful to mitigate noise in depth maps; fully off-line approach, since the CRF is global and allows no model updates
+	- Herbst et. al. makes an attempt on online registration and reconstruction and allows model updates. The authors employ change detection to detect changes in models after updating the model. Once a change is detected, the model is split in a static part (which hasn't changed) and a dynamic part (which has changed)
+	- The third work aggregates frames into volumetric TSDF representation, but creates a mesh out of it. RGB features are computed on images directly and projected onto the mesh, on which geometrical features are computed. This approach speeds the ineference and provides state of the art results on KITTI and NYU datasets
+
+3. Pipeline - 8 min
+  9) VOPs
+	- the whole pipeline depends on classification a lot and needs good, fast feature for that
+	- we take an r*r image perpencidular to the voxel's normal and centered at it; stored clolors from TSDF in CIELab and rotate according to the dominant gradient location computed exactly as in SIFT
+
+  10) RF
+	- a random forest is an ensemble of classification trees, whose outputs are combined to produce a low variance result; each subtree is typically trained on a bootstraped dataset in a greedy fashion - minimum of an objective function at each splitting node
+	- splitting function candidates are generated randomly at each node and then the best one is chosen
+	- when a sample hits a leaf, the normalized label distribution from that leaf is returned 
+
+  11) SRF
+	- SRFs can be trained on-line as opposed to normal RF; they work by storing a reservoir of at most K data samples
+	- first K samples are taken and then when a new samples come in, there is non zero but decreasing probability to exchange it with one of the samples in the reservoir.
+	- label distribution in the reservoir is enough to compute information gain, so samples can be immediately discarded
+	- when low enough information gain is achieved or if there are enough data samples a node is split
+
+  12) SRF - reservoir splitting
+	- Here's an example of reservoir splitting; 
+	- A parent level reservoir is split into two child reservoirs, with their sizes represented as parts of the parent reservoir and the number of seen examples m_n^d adjusted accordingly
+
+  13) Dynamic CRF
+	- A conditional random field with dynamic structure is used for segmentation; mostly for smoothing and incorporating user interactions
+	- label of each voxel is represented by a random variable x_i, which are stacked in the x vector
+	- taking a negative log likelihood we get an energy function, which we want to minimize
+	- there are priors, intially set to encourage background class, and pairwise potentials that penalise disconuities
+
+  14) User Interactions
+	- when a user touches an object, a penalty is imposed on touched voxels, with no penalty only if they belong to the class indicated by the user
+
+  15) Predictions and Smoothness
+	- encircling is projected on the current frame and classes are modeled by a GMM. The foreground class is taken as the class indicated by the user and inside a convex cull of the encircled region; all other voxels are a background class
+	- inference is done on GPU for every boxel in a bounding box encasing the selection
+ 	- unitary potentials are updated accordingly
+	- all other voxels have their unitary potentials updates with random forest predictions
+	- smoothnes is achieved by a function of different in voxel position, appearance and normal directions
+
+  16) Inference
+	- the original probability distriubution is modeled by Q(x), which factorizes into marginals over each voxel
+	- updates are derived from the fixed point of KL divergence; the resulting algorithm has some convergence guarantees
+	- here, it is assumed that the energy background does not change too much between frame and thus distributions are initialized by the values from previous frames instead of from a uniform distribution and only 1 update is done
+	- additionaly, to quicken effects of rf prediction, distribution is initialized with a weighted sum of last frame and RF prediction 
+
+4. Results - 2 min
+  18) Segmentation
+	- the authors captured 4 scenes, extracted key frames and back projected hand-generated groundtruth into the model
+	- results are pixelwise classification result
+	- user interaction gives very good results, but it is only for a single object
+	- random forest predictions are improved by the final inference
+
+  19) Features
+	- VOPs were compared against other features by on the same dataset by feeding different features to the SRF. VOPs clearly outperform all other features.
+	- I can discuss different features in the Q&A session
+
+  20) SRF
+	- they evaluated SRF against ORF and HT; classes were added incrementally to test online setting; SRF comfortably outperforms the other algorithms, is also way faster and requires less memory
+
+5. Discussion and Outlook - 2 min
+  22) Summary
+	- the authors created the first of its kind fully interactive system for capturing 3D enviornments
+	- possible use cases are numerous, with navigation and guidance of partially sighted people, through augmented reality to gathering datasets for large-scale computer vision challanges
+	- all code with thorough documentation has been outsourced
+
+  23) Failures
+	- there are a couple of failures; RGB provides a great deal of discriminative power toeven small errors in spatial and temporal camera alignment cause misslasification at object edges; 
+	- there are also some problems with classification after big viewpoint and illumnation changes if those weren't seen in training
+
+  24) Future Work
+	- classification performance could be further improved if global contex (priors) was introduced
+	- there are some scalability issues: number of classes and size of the scene
+	- active sensors aren't that good for outdoor environments and this aspect could be improved
+	- discriminative geometrical features would be useful to avoid bleeding
+
+6. Q&A? - 10 min
