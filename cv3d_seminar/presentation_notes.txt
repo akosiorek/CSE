@@ -1,49 +1,57 @@
 2. Introduction - 3 min
- 4) Show movie
-	- a person enters the room and captures the enviornment
-	- a model is build on the fly and extended with new frames coming in
-	- we can easily paint floor with our leg and say the label
-	- label propagates through the floor
-	- we paint a chair and it is also labeled, again with the table
-	- if an object is small we can encircle it instead
-	- we switch to the test mode and all objects in the scene are labaled
-	- chairs of different color are misclassified; since the system is fully interactive we can just re-label them
-	- as you see, capturing your enviornment can be really easy and useful for interior design, augmented reality or gathering datasets for large scale computer vision challanges 
+  3) Show movie
 
+  Imagine you enter a room and you start capturing your enviornment immediately. It is enough to swipe your leg and utter the label "floor" to learn the new class, which propages through all visible surface. Then you touch a chair and a new class is learned. Next comes the table. If an object is too small, you can encircle it. You add a cup class, too. 
+  When you switch into the test phase, every object in the scene is classified with what you've just learned. If some of the predictions are wrong, like here, where a chair of different colour appears in the scene - no problem, just touch the missclasified surface and relabel it.
+  As you can see, capturing your enviornment can be really easy and useful with applications in interior design, augmented reality or gathering datasets for large-scale computer vision challanges.
 
 2. State of the Art - 5 min
-  6) Acquisition and Reconstruction
-	- to date we've seen world-scale online models of the world heritage created from thousands of images found online, but created in an offline manner, where processing took many hours to complete
-	- KinectFusion introduced online 3D scanning of static enviornment; empowered by modern GPUs, it creates very detailed models with great performance
-	- Pradeep used sparse tracking with a single RGB camera to first estimate camera pose and than select key frames and relative to them secondary frames, on which stereo reconstruction is done to retrieve geometrical information; results on par with KinectFusion using an off-the-shelf camera. For now, it works only for small, indoor scenes and work is done on moving to outdoor enviornments
 
-  7) Scene Understading
-	- a lot of work has been done on scene labeling, object classification and detection and image segmentation on RGB, RGBD, point clouds, meshes and volumetric representations
-	- mostly off line, with CNNs for classification and detection, CRFs and global variational inference for segmentation
-	- Kim used voxel-based CRF to model reconstruction and segmentation; voxel cotain both visibility and occupany information, which the former constrained such that a voxel is visble iff any single ray from the camera can hit it; it is useful to mitigate noise in depth maps; fully off-line approach, since the CRF is global and allows no model updates
-	- Herbst et. al. makes an attempt on online registration and reconstruction and allows model updates. The authors employ change detection to detect changes in models after updating the model. Once a change is detected, the model is split in a static part (which hasn't changed) and a dynamic part (which has changed)
-	- The third work aggregates frames into volumetric TSDF representation, but creates a mesh out of it. RGB features are computed on images directly and projected onto the mesh, on which geometrical features are computed. This approach speeds the ineference and provides state of the art results on KITTI and NYU datasets
+  5) Scene Understading
 
+  A lot of research has been done on scene labeling, object classification and detection and image segmentation on colour images, RGBD data, point clouds, meshes and volumetric representations. Most approaches are offline and certainly not real time with with Convolutional Neural Networks for object classification and detection, Conditional Random Fields  and global variational inference for segmentation.
+
+  Valentin et. al. aggegates a sequence of depth data into volumetric TSDF representation, which is then triangulated and converted into a mesh. RGB features are computed from images and projected into the 3D model, while geometrical features are computed from the mesh directly. They achieve state of the art performance on KITTI and NYU datasets and claim that mesh speeds up and provides better results.
+
+  Kim uses voxel-based CRF to model reconstruction and segmentation at the same time. Voxels cotain both visibility and occupancy information. Visibility is constrained such that a voxel is visble only if a ray from the camera can hit it; it is useful to model and reduce  noise in depth maps. This approach is off-line, since there is global inference that would have to be restarted if model changed.
+
+  Herbst et. al. makes an attempt on online reconstruction and segmentation and allows model updates. The authors employ change detection to detect changes in models after updating them. Once a change is detected, the model is split in a static part (which hasn't changed) and a dynamic part (which has changed). It is online but not real-time with around 2s processing time per frame.
+
+
+  6) Model-based SLAM
+
+  SLAM is an important problem in robotics and one on which SemanticPaint realies heavily. A major contribution by Newcombe et. al., the KinectFusion, allows robust reconstruction of 3D enviornment from a single depth sensor. It uses model-based tracking to match an incoming depth frame against a reconstructed 3D model. Depth frames are fused into a global volume in the TSDF format. 
+
+  Salas-Moreno et. al. extends KinectFusion with object classification capabilities. It uses a database of objects, which is built off line, to detect objects in the scene and builds a object-pose graph, which is a very sparse and compact representation of the world. It is online, but requires the database.
+
+  Pradeep uses a single RGB camera to reconstruct 3D geometry. This works uses sparse tracking to estimate camera pose and then selects key frames and secondary frames from which stereo reconstruction is done. It works only for small scenes but for textured surfaces deliveres very good results, similar to KinectFusion.
+  
 3. Pipeline - 8 min
+
+  8) Pipeline Overview
+
+  So, how does it work? We take RGB and Depth data from Kinect and aggregate them into a TSDF volume. Then, we take user interactions - touch objects and labels and put that into Conditional Random Field, which puts priors on individual voxels. We also put that into a random forest classifier, which predicts classes of all objects that haven't been labeled. There's a feedback loop, since the forest is trained with voxel labels, which are then inferred by the mean-field inference algorithm using forest predictions. 
+
   9) VOPs
-	- the whole pipeline depends on classification a lot and needs good, fast feature for that
-	- we take an r*r image perpencidular to the voxel's normal and centered at it; stored clolors from TSDF in CIELab and rotate according to the dominant gradient location computed exactly as in SIFT
+
+  The whole pipeline heavily depends on classification, and for that yo need discriminative features that are fast to compute if you want to do real time.. . That's why there's the VOP - Voxel Oriented Patch. 
+
+  We take a square image patch centered at a voxel of interest and perpendicular to its normal. Here, we use a square of size 13 by 13 pixels and 10mm per pixel resolution. This patch stores colours from TSDF in CIELab format to handle illumination changes. Finally, we rotate the patch according to the dominant gradient direction for full 3D rotational invariance. Such feature, associated with every voxel, is used by the random forest classifiers. Speaking of which...
 
   10) RF
-	- a random forest is an ensemble of classification trees, whose outputs are combined to produce a low variance result; each subtree is typically trained on a bootstraped dataset in a greedy fashion - minimum of an objective function at each splitting node
-	- splitting function candidates are generated randomly at each node and then the best one is chosen
-	- when a sample hits a leaf, the normalized label distribution from that leaf is returned 
+
+  Random Forests are really bagged classification trees, training in a greedy way on bootsreaped data in an off-line fashion, such that all data is needed at once. Finally, there's voting among trees for the final result. 
 
   11) SRF
-	- SRFs can be trained on-line as opposed to normal RF; they work by storing a reservoir of at most K data samples
-	- first K samples are taken and then when a new samples come in, there is non zero but decreasing probability to exchange it with one of the samples in the reservoir.
-	- label distribution in the reservoir is enough to compute information gain, so samples can be immediately discarded
-	- when low enough information gain is achieved or if there are enough data samples a node is split
 
+  Streaming Random Forest are inherently on-line. Let's introduce some terminology. Let R_n be a reservoir at node n, initially there's only one at the roon note and let T_n be a list of samples stored in the reservoir. This list can hold at most K samples. When a new sample comes in, it is swapped with one of the samples in the reservoir, but the probability of such event decreases over time. The idea is that if we take samples over a huge time window, and that is what reservoir does, we'll have an unbiased sample of all data. 
+
+  A node and a reservoir is split if the number of samples seen in a node is higher than N. Information gain is computed from the normalized class distribution at a given node.
+  
   12) SRF - reservoir splitting
-	- Here's an example of reservoir splitting; 
-	- A parent level reservoir is split into two child reservoirs, with their sizes represented as parts of the parent reservoir and the number of seen examples m_n^d adjusted accordingly
 
+ When we create a node, we also create a distribution of split function. Now, when we want to split a node, we have to sweep through the reservoir for each split function, computing resulting class distributionand compute information gain. Now, rather than frow away statistics, we pass them to the child nodes which saves computation. 
+  
   13) Dynamic CRF
 	- A conditional random field with dynamic structure is used for segmentation; mostly for smoothing and incorporating user interactions
 	- label of each voxel is represented by a random variable x_i, which are stacked in the x vector
@@ -97,3 +105,24 @@
 	- discriminative geometrical features would be useful to avoid bleeding
 
 6. Q&A? - 10 min
+
+ Related Work:
+ - what sparse tracking does Pradeep use?
+ Pipeline
+ - what is SDF? -> sensor data fusion
+ - Why is CIELab used for VOPs? -> handle illumination changes, but why?
+ - How is the dominan gradient direction chosen? -> SIFT, details
+ - What are the colours? From TSDF, invalid colour value if empty voxel
+ SRF
+ - what kind of split functions is used? -> comparisons of random pixel itensities
+ - how do reservoirs guarantee unbiased data? - taking samples from frames far apart on the time scale means we have non-correlated samples
+ - why is data non-IID? -> subsequent frames are highly correlated
+ CRF
+ - how are smoothnes parameters chosen?
+
+ Results: 
+ - why is segmentation/results worse in the kitchen sequence?
+ - What are Depth and Color Probes?
+ - What is delta RGB mean?
+ - Why is Depth Probe better in Kitchen?
+ - How do ORF and HT differ from each other and from SRF?

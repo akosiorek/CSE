@@ -103,23 +103,49 @@
 
 %---------------------------------------------------------------------------------------
 \section{Introduction}
-\begin{frame}
-\frametitle{Introduction}
-
-\end{frame}
 
 %---------------------------------------------------------------------------------------
 \section{State of the Art}
+
 \begin{frame}
-\frametitle{Acquisition and Reconstruction}
+\frametitle{Scene Understanding}
 
 \begin{table}
 \noindent\makebox[\linewidth]{
  \begin{tabular}{c|c|c}
   Who & What & How \\ \hline
-  Levoy et. al. 2000 & world-scale 3D models & offline, from online images\\ \hline
-  Newcombe et. al. 2011  & online 3D scanning & KinectFusion \\ \hline
-  Pradeep et.al. 2013 & 3D reconstructiona & sparse tracking and  \\
+  
+  Valentin et. al. 2013  & inference on & RGB and geom. features  \\
+  & mesh from TSDF  & CRF segmentation \\ \hline
+    
+  Kim et. al. 2013 & reconstruction & Voxel-based CRF \\ 
+    & segmentation   & with visibility contraints\\ \hline
+    
+  Herbst et. al. 2014  & reconstruction & online model updates \\
+     & segmentation & change detection\\ \hline
+     
+
+ \end{tabular}
+}
+\end{table}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Model-based SLAM}
+
+\begin{table}
+\noindent\makebox[\linewidth]{
+ \begin{tabular}{c|c|c}
+  Who & What & How \\ \hline
+  Newcombe et. al. 2011  & online 3D SLAM & model-based tracking \\
+  && global TSDF volume \\ \hline
+  
+  Salas-Moreno et al. 2013 & object-level & offline object database \\
+  & SLAM & pose-object graph\\ \hline
+  
+  Pradeep et.al. 2013 & 3D reconstruction & sparse tracking and  \\
     & with 1 RGB camera  & stereo reconstruction \\
     && on par with KinectFusion
  \end{tabular}
@@ -129,29 +155,17 @@
 
 \end{frame}
 
-\begin{frame}
-\frametitle{Scene Understanding}
+%---------------------------------------------------------------------------------------
+\section{Pipeline}
 
-\begin{table}
-\noindent\makebox[\linewidth]{
- \begin{tabular}{c|c|c}
-  Who & What & How \\ \hline
-  Kim et. al. 2013 & reconstruction & Voxel-based CRF \\ 
-    & segmentation   & with visibility contraints\\ \hline
-    
-  Herbst et. al. 2014  & registration & online \\
-     & segmentation & change detection\\ \hline
-     
-  Valentin et. al. 2013  & inference on & RGB and geom. features  \\
-    & mesh from TSDF  & CRF segmentation \\
- \end{tabular}
-}
-\end{table}
+\begin{frame}
+\frametitle{Pipeline Overview}
+\begin{figure}
+ \includegraphics[width=\textwidth]{figures/pipeline}
+\end{figure}
 
 \end{frame}
 
-%---------------------------------------------------------------------------------------
-\section{Pipeline}
 \begin{frame}
 \frametitle{Voxel Oriented Patch features}
 
@@ -189,15 +203,15 @@
  \end{column}
  \begin{column}{0.5\textwidth}
     bagged trees\\
-    bootstraped data\\
-    
-    voting for final result\\
     greedy training\\
+    bootstraped data\\    
     off-line, all data at once\\
+    voting for final result\\    
+    
     $(i, l) \in \mathcal{S}$ - (voxel, label) pairs\\
     $f(i, \theta)$ - split functions\\
     $\Theta$ - distribution of split functions\\
-    $P_F(x_i = l | \mathbf{D})$\\
+    $P_F(x_i = l | \mathbf{D})$ - class conditional probability\\
  \end{column}
 
 \end{columns}
@@ -205,20 +219,33 @@
 
 \begin{frame}
 \frametitle{Streaming Random Forest}
+  \begin{itemize}
+   \item Node n: Reservoir $R_n$ with a list of samples $T_n$, $|T_n| \leq K$
+   \item First $K$ samples added
+   \item Current samples swapped with new ones with decreasing probability
+   \item Split node if: $|R_n| > N$
+  \end{itemize}
 
   Information Gain:
+  \vspace{-0.25cm}
   \begin{equation} \label{eq:infogain}
-    G(S, S^L, S^R) = H(S) - \sum_{d \in \{L, R\}} \frac{|S^d|}{|S|}H(S^d)
+    G(R_n, R_n^L, R_n^R) = H(R_n) - \sum_{d \in \{L, R\}} \frac{|R_n^d|}{|R_n|}H(R_n^d)
   \end{equation}
   Shannon Entropy:
+  \vspace{-0.25cm}
   \begin{equation}
-   H(S) = - \sum_{(l, i) \in S} p(c_i = l) \log{p(c_i )}
+   H(R_n) = - \sum_{(l, i) \in T_n} p(c_i = l) \log{p(c_i = l)}
   \end{equation}
+  
+  \vspace{-0.25cm}
+  $H(R_n)$ computed from a node's class distribution
 \end{frame}
 
 \begin{frame}
 \frametitle{SRF - Reservoir Splitting}
-
+$m_n$ - number of samples seen at node $n$\\
+$P(l | T_n)$ - normalized class distribution of $R_n$
+\vspace{-0.25cm}
 \begin{figure}[!ht]
   \center
   \includegraphics[width=\textwidth]{figures/forest}
@@ -231,36 +258,74 @@
 \begin{frame}
 \frametitle{Dynamic Conditional Random Field}
 
+Joint class probability distribution for the volume $\mathcal{V}$:
   \begin{equation} \label{eq:posterior}
   P(\mathbf{x}|\mathbf{D}) = \prod_{i \in \mathcal{V}} \left( \psi_i(x_i) \prod_{j \in \mathcal{E}_i} \psi_{ij}(x_i, x_j) \right) 
   \end{equation}
 
+\vspace{-0.5cm}
+Labeling Energy at time $t$:
   \begin{equation} \label{eq:energy}
   E_t(\mathbf{x}) = \sum_{i \in \mathcal{V}} \left( \phi_i(x_i) + \sum_{j \in \mathcal{E}_i} \phi_{ij} (x_i, x_j) \right) + K
   \end{equation}
+  
+\vspace{-0.5cm}  
+where:\\
+$\phi_i(x_i)$ - cost of assigning a label \\
+$\phi_{ij}(x_i, x_j)$ - cost of assuming different labels\\
+$\mathcal{E}_i$ - neighbourhood of voxel $i$
 
 \end{frame}
 
 \begin{frame}
 \frametitle{CRF - User Interactions}
-
+% \vspace{-1cm}
   Touching:
-  \begin{equation}
-  \phi_i(l) =
-    \begin{cases}
-      0      & \quad \text{if } l = l_S\\
-      \infty  & \quad \text{otherwise}\\
-    \end{cases}
-  \end{equation}
+  \begin{columns}
+   \begin{column}{0.25\textwidth}
+    \begin{figure}
+    \includegraphics[width=\textwidth]{figures/touch}
+    \end{figure}
+    \end{column}
+    \begin{column}{0.75\textwidth}
+      \begin{equation}
+	\phi_i(l) =
+	  \begin{cases}
+	    0      & \quad \text{if } l = l_T\\
+	    \infty  & \quad \text{otherwise}\\
+	  \end{cases}
+      \end{equation}
+      \center
+      $T$ --- touched pixels
+   \end{column}
 
+  \end{columns}
+  
+  \vspace{0.5cm}
   Encircling:
-  \begin{equation}
+  \vspace{-0.5cm}
+    \begin{columns}
+   \begin{column}{0.25\textwidth}
+    \begin{figure}
+    \includegraphics[width=\textwidth]{figures/circle}
+    \end{figure}
+   \end{column}
+    \begin{column}{0.75\textwidth}
+      \begin{equation}
   \phi_i(l) =
     \begin{cases}
       \log P_E(fg|\mathbf{a}_i)       & \quad \text{if } l = \text{fg}\\
       \log (1 - P_E(fg|\mathbf{a}_i))  & \quad \text{if } l = \text{bg}\\
     \end{cases}
   \end{equation}
+  
+  \center
+  $P_E$ from GMM\\
+  fg --- inside\\
+  bg --- outside
+   \end{column}
+
+  \end{columns}
 
 \end{frame}
 
@@ -271,11 +336,19 @@
   \begin{equation}
   \phi_i(l) = -\log P_F(x_i = l | \mathbf{D})
   \end{equation}
+  $P_F$ --- Streaming Random Forest prediction
 
+  \vspace{0.5cm}
   Smoothnes:
   \begin{equation}
       \phi_{ij}(x_i, x_j)  = \theta_p e^{-||\mathbf{p}_i - \mathbf{p}_j||}  + \theta_a e^{-||\mathbf{a}_i - \mathbf{a}_j||} + \theta_n e^{-||\mathbf{n}_i - \mathbf{n}_j||}
   \end{equation}
+  
+  $\theta_p$, $\theta_a$, $\theta_n$ --- paramters \\
+  $\mathbf{p}_i$ --- position\\
+  $\mathbf{a}_i$ --- appearance\\
+  $\mathbf{n}_i$ --- normal vector
+  
 \end{frame}
 
 \begin{frame}
@@ -285,7 +358,7 @@ $P(\mathbf{x})$ approximated by $Q(\mathbf{x})$ under $KL(Q||P)$:
  Q_i^t(l) = \frac{1}{Z_i}e^{M_i(l)} \text{, } t = 1, \ldots, T
 \end{equation}
 \begin{equation}
- M_i(l) = \phi_i(l) + \sum_{l' \in \mathcal{L}} \sum_{j \in \mathcal{N}(i)} Q_j^{t-1}(l')\phi_{ij}(l, l')
+ M_i(l) = \phi_i(l) + \sum_{l' \in \mathcal{L}} \sum_{j \in \mathcal{E}_i} Q_j^{t-1}(l')\phi_{ij}(l, l')
 \end{equation}
 
 
@@ -300,9 +373,17 @@ Frame at time $t$ initialized with:
 \section{Results}
 \begin{frame}
 \frametitle{Segmentation}
+  \begin{figure}
+   \includegraphics[width=\textwidth]{figures/results}
+  \end{figure}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Segmentation}
 
 \begin{table}[!ht]
-  \fontsize{10pt}{7.2}\selectfont
+ \fontsize{10pt}{7.2}\selectfont
  \center
  \caption{Segmentation Results}
 \noindent\makebox[\linewidth]{
@@ -316,6 +397,17 @@ Frame at time $t$ initialized with:
  \label{fig:segm_results}
 \end{table}
 
+\end{frame}
+
+\begin{frame}
+\frametitle{Features}
+\vspace{-0.25cm}
+ \begin{figure}[!ht]
+  \center
+  \includegraphics[width=\textwidth]{figures/results_vop}
+%   \caption{Average Precision}
+%   \label{fig:srf_ap}
+  \end{figure}
 \end{frame}
 
 \begin{frame}
@@ -443,7 +535,7 @@ Frame at time $t$ initialized with:
 
   \item Valentin, J. P. et. al. 2013. Mesh based semantic modelling for indoor and outdoor scenes. In Proc. CVPR.
 
-  \item Levoy , M. et. al. 2000. The digital Michelangelo project: 3D scanning of large statues. In Proc. SIGGRAPH. ACM.
+  \item Salas-Moreno, R. F. et. al. 2013. SLAM++: Simultaneous localisation and mapping at the level of objects. In Proc. CVPR.
 
   \item Newcombe , R. A. et. al. 2011. KinectFusion: Real-time dense surface mapping and tracking. In Proc. ISMAR.  
   
