@@ -53,56 +53,63 @@
  When we create a node, we also create a distribution of split function. Now, when we want to split a node, we have to sweep through the reservoir for each split function, computing resulting class distributionand compute information gain. Now, rather than frow away statistics, we pass them to the child nodes which saves computation. 
   
   13) Dynamic CRF
-	- A conditional random field with dynamic structure is used for segmentation; mostly for smoothing and incorporating user interactions
-	- label of each voxel is represented by a random variable x_i, which are stacked in the x vector
-	- taking a negative log likelihood we get an energy function, which we want to minimize
-	- there are priors, intially set to encourage background class, and pairwise potentials that penalise disconuities
+
+  Conditional Random Fields are a subclass of Probabilistic Graphical Models. They are used mostly for classification of sequences, because they can capture (even global) contex. In Computer Vision, they are quite popular for segmentation. Here, it's used to smooth out the segmentation and to facilitate user interactions. 
+
+  Each voxel's label is encoded as a random variable x_i, with likelihood psi_i and priors psi_ij. If we take negative log likelihood of the joint probability distribution, we get the labeling energy, which we'd like to minimize. Now, phi_i is a cost of assigning a label to a voxel and phi_ij are for smoothnes. Epsilon_i is a neighbourhood of the voxel i, here, a radius of 6 cm is used. 
 
   14) User Interactions
-	- when a user touches an object, a penalty is imposed on touched voxels, with no penalty only if they belong to the class indicated by the user
+
+  Note that the energy landscape is changing all the time, one reason being that the potentials are updated for user interactions. So if we touch an object and say a label, we effectively set potentials for the touched voxels, to 0 if their label is correct and to infiniy otherwise.
+
+ Encircling is a little more complicated. We take a convex hull of the selection as a foreground class and all the rest as the background class and fit a Gaussian Mixture Model. Then, we classify all voxels inside a bounding box around the selection and update the potentials. 
 
   15) Predictions and Smoothness
-	- encircling is projected on the current frame and classes are modeled by a GMM. The foreground class is taken as the class indicated by the user and inside a convex cull of the encircled region; all other voxels are a background class
-	- inference is done on GPU for every boxel in a bounding box encasing the selection
- 	- unitary potentials are updated accordingly
-	- all other voxels have their unitary potentials updates with random forest predictions
-	- smoothnes is achieved by a function of different in voxel position, appearance and normal directions
+
+  Next come forest predictions. We update potentials for all otherwise unaffected voxels with a negative log likelihood of a their current class. To model smoothness, we update the pairwise potentials as a function of difference of position, appearence and normal directions of the voxels, with a couple of parameters to set by hand.
 
   16) Inference
-	- the original probability distriubution is modeled by Q(x), which factorizes into marginals over each voxel
-	- updates are derived from the fixed point of KL divergence; the resulting algorithm has some convergence guarantees
-	- here, it is assumed that the energy background does not change too much between frame and thus distributions are initialized by the values from previous frames instead of from a uniform distribution and only 1 update is done
-	- additionaly, to quicken effects of rf prediction, distribution is initialized with a weighted sum of last frame and RF prediction 
+
+  Then comes the Mean-Field inference. We approximate the original probability distribution P(x)  under KL-divergence by Q(x). Then, we use an iterative algorithm to refine the approximation. Here, since the energy landscape changes only gradually, we do only a single update in each frame. To speed up impact of the forest prediction, we initialize  each frame by a weighted sum of the last frame's result and the forest predictions.
 
 4. Results - 2 min
   18) Segmentation
-	- the authors captured 4 scenes, extracted key frames and back projected hand-generated groundtruth into the model
-	- results are pixelwise classification result
-	- user interaction gives very good results, but it is only for a single object
-	- random forest predictions are improved by the final inference
 
-  19) Features
-	- VOPs were compared against other features by on the same dataset by feeding different features to the SRF. VOPs clearly outperform all other features.
-	- I can discuss different features in the Q&A session
+  Let's look at some segmentation results. Here, we have RGB volume, forest predictions and the inference result for two different scenes. We see that inference improves results quite a lot, for example here, and that we can also relabel some objects to correct mistakes.
+
+  19)
+
+  If we look at the percentage of correctly classified pixels, we see that user iteraction performs very well, but it affect only small regions. Forest predictions are also ok and they're significantly improved by the mean-field smoothing. 
+  
+
+  20) Features
+
+  Next, let's look at the features. They're compared indirectly by comparing forest classification results with different features used for training and testing< which tells us a lot about their discriminative power. Here are the best three results and Voxel Oriented Patch delievers the most consistent results.
+
+  21)
+
+  Again, if we look at percentage, VOP is the best. Only the Kitchen scene is done better by the Depth Probe. It's due to very harsh lighting conditions there, which make RGB features inconclusive.   
 
   20) SRF
-	- they evaluated SRF against ORF and HT; classes were added incrementally to test online setting; SRF comfortably outperforms the other algorithms, is also way faster and requires less memory
+
+  Finally, Streaming Random Forest is compared against two other tree-based online classifiers, namely Online Random Forest and Hoefding Tree. To simulate an online setting, new classes and point of views are fed into the classifiers sequentially. Streaming Random Forests outperforms the other ones  quite comfortably. It's also computationally more efficient. Quite a sad fact is that the performance drops with the number of classes and handling complicated scenes becomes rather tricky.  
+
 
 5. Discussion and Outlook - 2 min
   22) Summary
-	- the authors created the first of its kind fully interactive system for capturing 3D enviornments
-	- possible use cases are numerous, with navigation and guidance of partially sighted people, through augmented reality to gathering datasets for large-scale computer vision challanges
-	- all code with thorough documentation has been outsourced
+
+  To sum up, this work delivers a pipeline that lets you capture personalized 3D enviornments, exactly as you need them. It's fully interactive, requires no pre-training and works on-line. Possible applications include robot navigation, help to partially sighted people and capturing 3D datasets for large-scale computer vision challanges.
+
+  I should probably add that the whole implementation, together with a thorough documentation is open-sourced.
 
   23) Failures
-	- there are a couple of failures; RGB provides a great deal of discriminative power toeven small errors in spatial and temporal camera alignment cause misslasification at object edges; 
-	- there are also some problems with classification after big viewpoint and illumnation changes if those weren't seen in training
+
+  Unfortunately, there are some failure cases. Bleeding, or misclassification at object edges, is caused by errors in depth and colour sensor alignment. Also strong illumination and viewpoint changes can lead to classification errors. 
+
 
   24) Future Work
-	- classification performance could be further improved if global contex (priors) was introduced
-	- there are some scalability issues: number of classes and size of the scene
-	- active sensors aren't that good for outdoor environments and this aspect could be improved
-	- discriminative geometrical features would be useful to avoid bleeding
+
+  There is some future work to be done. Geometrical features could prevent bleeding and class priors (like walls are vertical) or priors for different enviornments could improve classification performance. There're also outdoor enviornment, that would require passive sensors. To handle bigger scenes with lots of classes, some research on better scalable algorithms is necessary.
 
 6. Q&A? - 10 min
 
