@@ -1,0 +1,117 @@
+[file]
+presentation.pdf
+[notes]
+### 1
+name
+framework for interactive capturing of 3D enviornments
+### 2
+Let's start by seeing the framework in action
+### 5
+research on: RFB, D, point cloud, mesh, volume
+most offline, not real time; CNN for class & detetect, CRF and variation for segm
+Valentin
+depth into volumetric TSDF, triangulated, mesh
+rgb on img, geo on mesh
+KITTI, NYU; mesh speed and accuracy
+
+Kim
+voxel <- visibility and occupancy, vis constrained
+model and reduce noise in depth maps
+offline, global inference
+
+Herbst
+detect change after model updates
+static unchanged, dynamic changed
+online but not real time, 2s per frame
+### 6
+SLAM important in robotics, SemanticPaint relies heavily
+major contribution by Newcombe, KinectFusion; 3D reconstruction from a single depth sensor
+model-based tracking to match frame against model
+global volume in TSDF
+
+extends KinectFusion -> object classification
+match objects from the scene against a database
+obj-pose graph, sparse, compact repr
+sparse, requires offline database
+
+3D from single RGB camera
+tracking, key and secondary frames, stereo reconsutrction
+small scenes, good performance for textured
+### 8
+depth + rgb = TSDF
+user interactions = touched obj into CRF => priors
+also into RF => predict labels for other objects
+feedback loop: CRF gives labels from SRF, RF is trained on CRF
+### 11
+SRF inherently online; some terminology
+the behind the reservoir: samples over huge time window -> unbiased sample of all data
+objective: Information Gain from normalized class distribution at each node
+### 12
+create node + distribution of split functions
+split node -> sweep through R for every split function and compute class distributions
+no explicit R computations are needed, just the splits
+pass the statistics to child nodes
+### 13
+CRFS subclass of PGMs; classification of sequences; global contex
+in CV: segmentation; here: smoot out segm and user inter
+
+psi - likelihood and prior
+distr -> NLL -> energy -> minimize
+phi -> cost of label, smoothnes
+eps -> neigbourhood, 6cm
+### 14
+Note -> changing energy landscape <- user interactions
+touch and say -> set potentials; 0 if correct or inf otherwise
+
+circle more complication -> convex hull of selection as fg, others bg
+fit GMM and infer in a boundix box around selection
+to update potentials
+### 15
+Next come forest predictions -> update pot of otherwise unaffected voxels -> NLL of current class
+smothness -> priors based on differences
+### 16
+Then comes mean-field inference
+approximate original P(x) under KL with Q(x)
+iterative algo to refine
+gradual change of energy landscape
+single update in each frame
+to speed up RF's impact -> initialization
+### 18
+Let's look at some segmentation results
+We have... for 2 different scenes
+inference improves results quite a lot
+we can relabel and correct mistakes
+### 19
+if we look at percentage
+iteraction very well
+RF ok
+mean-field smoothing improves
+### 20
+Next, let's look at features
+compared indirectly by comparing how RF behaves while using different features
+discriminative power
+here: 3 best results; VOP most consistent
+### 21
+Again, if we look at percentage, VOP the best
+Kitchen is worse -> harsh illumination
+makes RGB feature inconclusive
+### 22
+SRF against two other tree-based online classifiers ORF and HT
+simulate online setting: add new classes and PoVs sequentially
+SRF outperforms comfortably, more effiiicient
+Sad fact: accurayc drops with classes
+handling coplicated scenes tricky
+### 24
+To sum up: delivers pipeline that lets capture personalized 3D envs as you need
+fully interactive, req no pretrain and works online
+possible apps: robot navi, sighted people, datasets for large-scale CV
+### 25
+Unf, some failures
+Bleeding, or misclassif at object edges <- errors of depth and colour sensor alignm
+big illumination and viewpoint changes -> errors
+### 26
+Some future work to be done
+Geo features -> prevent bleeding
+class priors (vertical walls) and for diff envs -> better accuracy
+outdoor envs -> passive sensors
+bigger scenes and more classes -> scalable algos

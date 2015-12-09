@@ -1,6 +1,7 @@
 \documentclass[mathserif, 10pt]{beamer}
 \input{macro}
-
+\usepackage{pdfpcnotes}
+\usepackage{multimedia}
 % \usepackage[font=footnotesize,labelfont=bf]{caption}
 % \setbeamerfont{caption}{size=\scriptsize}
 
@@ -92,13 +93,18 @@
 
 \begin{frame}
 \titlepage
+\pnote{name}
+\pnote{framework for interactive capturing of 3D enviornments}
 \end{frame}
+
 
 %---------------------------------------------------------------------------------------
 
 \begin{frame}{Outline}
 \tableofcontents
+\pnote{Let's start by seeing the framework in action}
 \end{frame}
+
 
 
 %---------------------------------------------------------------------------------------
@@ -123,11 +129,26 @@
     
   Herbst et. al. 2014  & reconstruction & online model updates \\
      & segmentation & change detection\\ \hline
-     
-
  \end{tabular}
 }
 \end{table}
+
+\pnote{research on: RFB, D, point cloud, mesh, volume}
+\pnote{most offline, not real time; CNN for class & detetect, CRF and variation for segm}
+\pnote{Valentin}
+\pnote{depth into volumetric TSDF, triangulated, mesh}
+\pnote{rgb on img, geo on mesh}
+\pnote{KITTI, NYU; mesh speed and accuracy}
+\pnote{}
+\pnote{Kim}
+\pnote{voxel <- visibility and occupancy, vis constrained}
+\pnote{model and reduce noise in depth maps}
+\pnote{offline, global inference}
+\pnote{}
+\pnote{Herbst}
+\pnote{detect change after model updates}
+\pnote{static unchanged, dynamic changed}
+\pnote{online but not real time, 2s per frame}
 
 \end{frame}
 
@@ -151,8 +172,20 @@
  \end{tabular}
 }
 \end{table}
-
-
+ 
+\pnote{SLAM important in robotics, SemanticPaint relies heavily}
+\pnote{major contribution by Newcombe, KinectFusion; 3D reconstruction from a single depth sensor}
+\pnote{model-based tracking to match frame against model}
+\pnote{global volume in TSDF}
+\pnote{}
+\pnote{extends KinectFusion -> object classification}
+\pnote{match objects from the scene against a database}
+\pnote{obj-pose graph, sparse, compact repr}
+\pnote{sparse, requires offline database}
+\pnote{}
+\pnote{3D from single RGB camera}
+\pnote{tracking, key and secondary frames, stereo reconsutrction}
+\pnote{small scenes, good performance for textured}
 \end{frame}
 
 %---------------------------------------------------------------------------------------
@@ -164,6 +197,10 @@
  \includegraphics[width=\textwidth]{figures/pipeline}
 \end{figure}
 
+\pnote{depth + rgb = TSDF}
+\pnote{user interactions = touched obj into CRF => priors}
+\pnote{also into RF => predict labels for other objects}
+\pnote{feedback loop: CRF gives labels from SRF, RF is trained on CRF}
 \end{frame}
 
 \begin{frame}
@@ -183,11 +220,10 @@
     $r \times r$, $r = 13px$ with $10\frac{mm}{pixel}$\\
     CIELab\\
     Rotated to dominant gradient direction
-
-  
  \end{column}
-
 \end{columns}
+
+
 \end{frame}
 
 \begin{frame}
@@ -239,6 +275,10 @@
   
   \vspace{-0.25cm}
   $H(R_n)$ computed from a node's class distribution
+  
+  \pnote{SRF inherently online; some terminology}
+  \pnote{the behind the reservoir: samples over huge time window -> unbiased sample of all data}
+  \pnote{objective: Information Gain from normalized class distribution at each node}
 \end{frame}
 
 \begin{frame}
@@ -253,6 +293,10 @@ $P(l | T_n)$ - normalized class distribution of $R_n$
   \label{fig:forest}
 \end{figure}
 
+\pnote{create node + distribution of split functions}
+\pnote{split node -> sweep through R for every split function and compute class distributions}
+\pnote{no explicit R computations are needed, just the splits}
+\pnote{pass the statistics to child nodes}
 \end{frame}
 
 \begin{frame}
@@ -275,11 +319,18 @@ $\phi_i(x_i)$ - cost of assigning a label \\
 $\phi_{ij}(x_i, x_j)$ - cost of assuming different labels\\
 $\mathcal{E}_i$ - neighbourhood of voxel $i$
 
+\pnote{CRFS subclass of PGMs; classification of sequences; global contex}
+\pnote{in CV: segmentation; here: smoot out segm and user inter}
+\pnote{}
+\pnote{psi - likelihood and prior}
+\pnote{distr -> NLL -> energy -> minimize}
+\pnote{phi -> cost of label, smoothnes}
+\pnote{eps -> neigbourhood, 6cm}
 \end{frame}
 
 \begin{frame}
 \frametitle{CRF - User Interactions}
-% \vspace{-1cm}
+
   Touching:
   \begin{columns}
    \begin{column}{0.25\textwidth}
@@ -324,9 +375,14 @@ $\mathcal{E}_i$ - neighbourhood of voxel $i$
   fg --- inside\\
   bg --- outside
    \end{column}
-
   \end{columns}
 
+\pnote{Note -> changing energy landscape <- user interactions}
+\pnote{touch and say -> set potentials; 0 if correct or inf otherwise}
+\pnote{}
+\pnote{circle more complication -> convex hull of selection as fg, others bg}
+\pnote{fit GMM and infer in a boundix box around selection}
+\pnote{to update potentials}
 \end{frame}
 
 \begin{frame}
@@ -349,6 +405,9 @@ $\mathcal{E}_i$ - neighbourhood of voxel $i$
   $\mathbf{a}_i$ --- appearance\\
   $\mathbf{n}_i$ --- normal vector
   
+  
+\pnote{Next come forest predictions -> update pot of otherwise unaffected voxels -> NLL of current class}
+\pnote{smothness -> priors based on differences}
 \end{frame}
 
 \begin{frame}
@@ -367,6 +426,12 @@ Frame at time $t$ initialized with:
  \widetilde{Q}_i^t(x_i) = \gamma Q_i^{t-1}(x_i) + (1 - \gamma) P_F^{t-1}(x_i = l | \mathbf{D}) \text{, } \gamma \in [0, 1]
 \end{equation}
 
+\pnote{Then comes mean-field inference}
+\pnote{approximate original P(x) under KL with Q(x)}
+\pnote{iterative algo to refine}
+\pnote{gradual change of energy landscape}
+\pnote{single update in each frame}
+\pnote{to speed up RF's impact -> initialization}
 \end{frame}
 
 %---------------------------------------------------------------------------------------
@@ -377,6 +442,10 @@ Frame at time $t$ initialized with:
    \includegraphics[width=\textwidth]{figures/results}
   \end{figure}
 
+\pnote{Let's look at some segmentation results}
+\pnote{We have... for 2 different scenes}
+\pnote{inference improves results quite a lot}
+\pnote{we can relabel and correct mistakes}
 \end{frame}
 
 \begin{frame}
@@ -397,6 +466,11 @@ Frame at time $t$ initialized with:
  \label{fig:segm_results}
 \end{table}
 
+
+\pnote{if we look at percentage}
+\pnote{iteraction very well}
+\pnote{RF ok}
+\pnote{mean-field smoothing improves}
 \end{frame}
 
 \begin{frame}
@@ -408,6 +482,12 @@ Frame at time $t$ initialized with:
 %   \caption{Average Precision}
 %   \label{fig:srf_ap}
   \end{figure}
+  
+\pnote{Next, let's look at features}
+\pnote{compared indirectly by comparing how RF behaves while using different features}
+\pnote{discriminative power}
+\pnote{here: 3 best results; VOP most consistent}
+
 \end{frame}
 
 \begin{frame}
@@ -431,6 +511,9 @@ Frame at time $t$ initialized with:
  \label{fig:vop_results}
 \end{table}
 
+\pnote{Again, if we look at percentage, VOP the best}
+\pnote{Kitchen is worse -> harsh illumination}
+\pnote{makes RGB feature inconclusive}
 \end{frame}
 
 \begin{frame}
@@ -467,6 +550,12 @@ Frame at time $t$ initialized with:
   HT - Hoeffding Tree \\
  \end{column}
 \end{columns}
+
+\pnote{SRF against two other tree-based online classifiers ORF and HT}
+\pnote{simulate online setting: add new classes and PoVs sequentially}
+\pnote{SRF outperforms comfortably, more effiiicient}
+\pnote{Sad fact: accurayc drops with classes}
+\pnote{handling coplicated scenes tricky}
 \end{frame}
 
 
@@ -481,6 +570,9 @@ Frame at time $t$ initialized with:
  \item no pretraining
 \end{itemize}
 
+\pnote{To sum up: delivers pipeline that lets capture personalized 3D envs as you need}
+\pnote{fully interactive, req no pretrain and works online}
+\pnote{possible apps: robot navi, sighted people, datasets for large-scale CV}
 \end{frame}
 
 \begin{frame}
@@ -504,6 +596,9 @@ Frame at time $t$ initialized with:
  \end{column}
 \end{columns}
 
+\pnote{Unf, some failures}
+\pnote{Bleeding, or misclassif at object edges <- errors of depth and colour sensor alignm}
+\pnote{big illumination and viewpoint changes -> errors}
 \end{frame}
 
 \begin{frame}
@@ -516,7 +611,11 @@ Frame at time $t$ initialized with:
  \item better scalability
 \end{itemize}
 
-
+\pnote{Some future work to be done}
+\pnote{Geo features -> prevent bleeding}
+\pnote{class priors (vertical walls) and for diff envs -> better accuracy}
+\pnote{outdoor envs -> passive sensors}
+\pnote{bigger scenes and more classes -> scalable algos}
 \end{frame}
 
 
