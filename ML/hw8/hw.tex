@@ -25,14 +25,14 @@
 
 \section*{Problem 1}
 
-The k-nearest neighbours algorithm in the feature space by introducing the feature map is 
+The distance to a training sample in feature space is given by
 
 \begin{equation}
 |\phi(x) - \phi(x^{(s_i)})|_2.
 \label{eq:}
 \end{equation}
 
-In order that it only depends on the scalar product in feature space $K(\phi(x),\phi(x^{(s_i)})) = \phi(x)^T\phi(y)$, we square this. Using that operation, the k-nearest neighbours don't change.
+In order that it only depends on the scalar product in feature space $K(x, x^{(s_i)}) = \phi(x)^T\phi(y)$, we square this. Using that operation, the k-nearest neighbours don't change.
 
 
 \begin{align}
@@ -91,30 +91,14 @@ for any $\lambda '$, which is the maximizer of $f_\lambda((1-\alpha)x + \alpha y
 \begin{align}
 (1-\alpha)f_{\lambda '}(x) + \alpha f_{\lambda '}(y) \geq& f_{\lambda '}(1-\alpha)x + \alpha y)\\
 =& \max\limits_{\lambda}f_\lambda((1-\alpha)(x + \alpha y).
-\end{align}
-
-\section*{Problem 4}
-The Lagrangian is given by
-
-\begin{equation}
-L(x,\alpha) = f_0(x) + \sum_{i}{\alpha_i f_i(x)}.
-\end{equation}
-
-This can also be interpreted as a family of functions $L_x(\alpha) = L(x,\alpha)$, that means we interpret $x$ as fixed. Thus $L_x(\alpha)$ has the form
-
-\begin{equation}
-L_x(\alpha) = C_{0,x} + \sum_{i}{C_{i,x} \alpha_i},
-\end{equation}
-
-where the $Cs$ are constants. By applying the definition of a convex function we see immediately that $L_x(\alpha)$ is convex for any $Cs$.
-The Lagrange dual function is given by the pointwise minimum of this family of functions,
+\end{align}s
 
 \begin{equation}
 g(\alpha) = \min\limits_{x}L_x(\alpha) = -\max\limits_{x}(-L_x(\alpha)).
 \end{equation}
 
 The negative Lagragian $-L_x(\alpha)$ is also convex, because the negation only changes the sign of the
-constants $C_{0,x}$ and $C_{i,x}$. Thus, as shown in the previous exercise,$-g(\alpha)$ is convex and $g(\alpha)$ is concave.
+constants $C_{0,x}$ and $C_{i,x}$. Thus, as shown in the previous exercise,$-g(\alpha)$ is convex and $g(\alpha)$ is concave
 
 \section*{Problem 5}
 
