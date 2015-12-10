@@ -115,21 +115,38 @@
 
  Related Work:
  - what sparse tracking does Pradeep use?
+	3-Level Gaussian Pyramid with FAST for each level; Square patches extracted for each corner; Compare with cross correlation score 	
+
  Pipeline
- - what is SDF? -> sensor data fusion
+ - what is SDF? -> signed distance function
  - Why is CIELab used for VOPs? -> handle illumination changes, but why?
  - How is the dominan gradient direction chosen? -> SIFT, details
  - What are the colours? From TSDF, invalid colour value if empty voxel
+
+VOP
+  - what is stored in each voxel?
+  - what is voxel hashing and why is it used?
+	- spatial hashing of voxels with TSDF; map from integer world coordinates to hash buckets, which store pointers to grid blocks
+
  SRF
- - what kind of split functions is used? -> comparisons of random pixel itensities
+ - what kind of split functions is used? -> 
+	VOP-based - comparison of difference of pixels against a threshold
+	Surface Orientation - angle with world up vector
+	World Height - threshold
+	- use the simplest possible
+
  - how do reservoirs guarantee unbiased data? - taking samples from frames far apart on the time scale means we have non-correlated samples
- - why is data non-IID? -> subsequent frames are highly correlated
+ - why is data non-IID? -> subsequent frames are highly correlated, but if we take frames and voxel far apart, they are not.
+ 
+ - how does it differ from ORF and HT
+	ORF and HT store all samples in the leaf nodes; when a new sample comes in every possible split function and information gain is evaluated; when a node is split all samples at that node are thrown away; HT uses some theoretical bounds to decide when to split a node and ORF uses a threshild on the objective function
+
  CRF
- - how are smoothnes parameters chosen?
+ - how are smoothnes parameters chosen? -> by hand
 
  Results: 
- - why is segmentation/results worse in the kitchen sequence?
- - What are Depth and Color Probes?
- - What is delta RGB mean?
- - Why is Depth Probe better in Kitchen?
- - How do ORF and HT differ from each other and from SRF?
+ - why is segmentation/results worse in the kitchen sequence? -> harsh illumination conditions make RGB data inconclusive
+ - What are Depth and Color Probes? 
+	Difference of depth at two locations, where the locations are given by offests normalized by depth of the tested pixel	
+
+ - What is delta RGB mean? compare difference of means of different regions against a threshold 

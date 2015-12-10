@@ -59,10 +59,10 @@ order=0
 
 [item:presentation.tex]
 archive=true
-column=40
+column=42
 encoding=UTF-8
 highlight=LaTeX
-line=231
+line=34
 mode=LaTeX
 open=true
 order=1
@@ -90,7 +90,7 @@ JumpList=
 ViMarks=.,259,41,[,259,33,],259,41
 
 [view-settings,view=0,item:presentation.tex]
-CursorColumn=40
-CursorLine=231
+CursorColumn=42
+CursorLine=34
 JumpList=
-ViMarks=.,225,24,[,225,24,],225,24
+ViMarks=.,617,55,[,616,33,],617,55
