@@ -35,10 +35,10 @@ order=-1
 
 [item:hw.tex]
 archive=true
-column=184
+column=14
 encoding=UTF-8
 highlight=LaTeX
-line=88
+line=69
 mode=LaTeX
 open=false
 order=0
@@ -54,7 +54,7 @@ open=false
 order=-1
 
 [view-settings,view=0,item:hw.tex]
-CursorColumn=184
-CursorLine=88
+CursorColumn=14
+CursorLine=69
 JumpList=
-ViMarks=.,0,0,[,0,0,],-1,-1
+ViMarks=.,89,72,[,89,40,],89,101

@@ -1,0 +1,75 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\topmargin}{-.3in}
+\setlength{\textheight}{9in}
+
+
+\pagestyle{fancy}
+\begin{document}
+
+\begin{center}
+{\Large Machine Learnig Homework 11} \\[.3in]
+\end{center}
+\lhead{Adam Kosiorek}
+\rhead{IMAT: 03661883}
+\vspace*{.5in}
+
+
+\section*{Problem 1}
+
+Consider a neural network with an input layer, a hidden layer and an output layer. Assume a linear activation function in the output layer and let the output layer take form of a single neuron. The output of the network can be expressed as 
+
+\begin{equation}
+ y(x) = V^T a(x) + c = V^T f(z) = V^T f(W^T x + b)
+\end{equation}
+
+where $V$ weight matrix from the hidden layer to the output, $a$ the activation of the hidden layer, $f$ the hidden layer's nonlinearity, which acts on its input element wise, $W$ the weight matrix from the input to the hidden layer, $b$ and $c$ are biases and $x$ the input vector.
+
+Sigmoid is a scaled and translated version of tanh, since
+
+\begin{equation}
+\begin{align}
+ 2 \sigma(2x - 1) = \frac{2}{1+e^{-2x}} - 1 &= \frac{2e^{2x}}{e^{2x}+1} - 1 = \frac{e^{2x}-1}{e^{2x}+1} &= tanh(x)
+ \end{align}
+\end{equation}
+
+therefore, if we take $W = 2 \widetilde{W}$ and $b = 2 \widetilde{b}$ it is obvious that
+
+\begin{equation}
+ 2 \sigma(W^T x + b) - 1 = tanh(\widetilde{W}^T x + \widetilde{b}) 
+\end{equation}
+
+Weights $V$ and the bias $c$ of the final layer can easily account for scaling and translation of the resulting hidden's layer activation.
+
+\section*{Problem 2}
+
+\begin{equation}
+ \begin{align}
+  \frac{d}{dx} \sigma(x) = \frac{e^{-x}}{(1 + e^{-x})^2} = \frac{1 + e^{-x}}{(1 + e^{-x})^2} - \frac{1}{(1 + e^{-x})^2} = \sigma(x) - \sigma^2(x) = \sigma(x)(1 - \sigma(x))
+ \end{align}
+\end{equation}
+
+\begin{equation}
+ \begin{align}
+  \frac{d}{dx} tanh(x) &= \frac{2 e^{2x} \left( (e^{2x} + 1) - (e^{2x} - 1) \right)}{(e^{2x} + 1)^2} \\
+  &= \frac{\left( (e^{2x} + 1) + (e^{2x} - 1) \right) \left( (e^{2x} + 1) - (e^{2x} - 1) \right)}{(e^{2x} + 1)^2} \\
+  &=  \frac{(e^{2x} + 1)^2 - (e^{2x} - 1)^2}{(e^{2x} + 1)^2} \\
+  &= 1 - \frac{(e^{2x} - 1)^2}{(e^{2x} + 1)^2} = 1 - tanh^2(x)
+ \end{align}
+\end{equation}
+
+
+
+
+
+
+
+\end{document}

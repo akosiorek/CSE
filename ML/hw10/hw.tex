@@ -1,0 +1,94 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\topmargin}{-.3in}
+\setlength{\textheight}{9in}
+
+
+\pagestyle{fancy}
+\begin{document}
+
+\begin{center}
+{\Large Machine Learnig Homework 10} \\[.3in]
+\end{center}
+\lhead{Adam Kosiorek}
+\rhead{IMAT: 03661883}
+\vspace*{.5in}
+
+
+\section*{Problem 1}
+
+\begin{equation}
+\begin{align}
+  \begin{pmatrix} y \\ f(x_*) \end{pmatrix} \sim \mathcal{N} \left( \begin{matrix} \mu \\ \mu_* \end{matrix}, \begin{matrix} K & K_* \\ K_*^T & K_{**} \end{matrix} \right)
+\end{align}
+\end{equation}
+
+Since the mean function $m(X) = 0$ for every $X$, both $\mu$ and $\mu_*$ are equal to zero and:
+
+\begin{equation}
+\begin{align}
+ K_{ij} &= K(X_i, X_j) \\
+ K_{* ij} &= K(X_i, X_{* j}) \\
+ K_{** ij} &= K(X_{* i}, X_{*j}) \\
+\end{align}
+\end{equation}
+
+Therefore 
+
+\begin{equation}
+\begin{align}
+  \begin{pmatrix} y \\ f(x_*) \end{pmatrix} \sim \mathcal{N} \left( \mathbf{0}, \Sigma \right)
+\end{align}
+\end{equation}
+
+where
+
+\begin{equation}
+\begin{align}
+ \Sigma &= \begin{pmatrix} K & K_* \\ K_*^T & K_{**} \end{pmatrix} = \begin{pmatrix} K(x_1, x_1) & K(x_1, x_2) & K(x_1, x_*) \\ K(x_2, x_1) & K(x_2, x_1) & K(x_2, x_*) \\ K(x_*, x_1) & K(x_*, x_2) & K(x_*, x_*) \end{pmatrix} \\
+ &= \begin{pmatrix} 1 & 0.54 & 0.88 \\ 0.54 & 1.2 & 0.61 \\ 0.88 & 0.61 & 1 \end{pmatrix}
+ \end{align}
+\end{equation}
+
+\section*{Problem 2}
+
+\begin{equation}
+ p(f_*| \mathbf{y}, \mathbf{X}) \sim \mathcal{N} \left(\mu_{f_*| \mathbf{y}, \mathbf{X}}, \Sigma_{f_*| \mathbf{y}, \mathbf{X}} \right)
+\end{equation}
+
+where
+
+\begin{equation}
+ \begin{align}
+  \mu_{f_*| \mathbf{y}, \mathbf{X}} &= K_*^T K^{-1} y = 2.5039 \\
+  \Sigma_{f_*| \mathbf{y}, \mathbf{X}} &= K_{**} - K_*^T K^{-1} K_* = 0.196
+ \end{align}
+\end{equation}
+
+\section*{Problem 3}
+
+With noisy observations assumed, the covariance matrix takes the form of $\widetilde{K} = K + \sigma_y^2I$. Consequently, the covariance matrix of the joint distribution is 
+
+\begin{equation}
+ \widetilde{\Sigma} = \begin{pmatrix} \widetilde{K} & K_* \\ K_*^T & K_{**} \end{pmatrix} = \begin{pmatrix} K + \sigma_y^2I & K_* \\ K_*^T & K_{**} \end{pmatrix}
+\end{equation}
+
+Finally, the predictive distribution is given by
+
+\begin{equation}
+ \begin{align}
+  \mathcal{N}&(\widetilde{\mu_*}, \widetilde{\Sigma_*}) \\
+  \widetilde{\mu_*} &= m(f(x_*)) + K_*^T(K + \sigma_y^2I)^{-1}(f - m(y)) = K_*^T(K + \sigma_y^2I)^{-1}f\\
+  \widetilde{\Sigma_*} &= K_{**} - K_*^T(K + \sigma_y^2I)^{-1}K_* = 1 - K_*^T(K + \sigma_y^2I)^{-1}K_*
+ \end{align}
+\end{equation}
+
+\end{document}
