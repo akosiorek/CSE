@@ -67,7 +67,29 @@ Weights $V$ and the bias $c$ of the final layer can easily account for scaling a
 \end{equation}
 
 
+\section*{Problem 3}
 
+The joint probability distribution over target variables $z_i$ is given by
+\begin{equation}
+ \begin{align}
+  p(\{z_i\}_{i=1}^N | \mathcal{D}, w) = \prod_{i=1}^N  p(z_i | x_i, w)
+ \end{align}
+\end{equation}
+
+The log likelihood with respect to $z_i$ 
+
+\begin{equation}
+ \begin{align}
+  l(\{z_i\}_{i=1}^N | \mathcal{D}, w) &= \sum_{i=1}^N  log \left( p(z_i | x_i, w) \right) \\
+  &= \sum_{i=1}^N log{\left(\sqrt{\frac{\beta}{(2 \pi)^D}} e^{\frac{-\beta}{2} (z_i - y_i)^T (z_i - y_i)} \right) } \\
+  &\propto \frac{-\beta}{2} \sum_{i=1}^N (z_i - y_i)^T (z_i - y_i)
+ \end{align}
+\end{equation}
+
+Therefore minimizing the negative log likelihood $nl(z) = -l(z)$ is equivalent to minimizing the sum of squared errors.
+
+\section*{Problem 4}
+Done.
 
 
 

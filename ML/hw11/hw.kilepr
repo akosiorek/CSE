@@ -35,12 +35,12 @@ order=-1
 
 [item:hw.tex]
 archive=true
-column=184
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=88
+line=68
 mode=LaTeX
-open=false
+open=true
 order=0
 
 [item:perceptron6.eps]
@@ -54,7 +54,7 @@ open=false
 order=-1
 
 [view-settings,view=0,item:hw.tex]
-CursorColumn=184
-CursorLine=88
+CursorColumn=0
+CursorLine=68
 JumpList=
-ViMarks=.,0,0,[,0,0,],-1,-1
+ViMarks=.,88,95,[,88,93,],88,95
