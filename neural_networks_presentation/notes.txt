@@ -1,0 +1,75 @@
+1. Introduction
+
+Neural Networks
+Introduction and Best Practices
+
+Adam Kosiorek
+Feb 17, 2016
+
+a.kosiorek@tum.de
+
+
+
+
+Abstract:
+
+Message Objective:
+	Neural Networks are incredibly complex yet effective learning algorithm. I would like to
+	convice you to give them a try by showing you why they are so popular, what they really
+	are and why nobody used them for so long.
+
+Presentation:	
+
+
+	1. Why are Neural Networks becoming so popular?
+		a) Traditional ML
+		* feature engineering as an essential part of every machine learning problem
+		* expert knowledge, long time, high cost => nobody understands
+		* further improvements almost impossible due to complexity
+		* no clear rules for feature design
+		* features independent of classifiers
+
+		b) Feature Learning in NNs
+		* hierarchy of features
+		* knowledge transfer
+		* joint feature & classifier training
+
+	2. What are Neural Networks?
+		a) Biological origins
+		b) Three Generations of ANNs
+			1) Feed Forward Neural Networks 
+			- no neuron state; neuron activations in disjoin forward passes are independent
+			- great for object recognition and other tasks where a single input's information is enough
+
+			2) Recurrent Neural Networks 
+			- introduce neuron state; activiation of a neuron depends on the current and all previous inputs
+			- sequence learning: nlp e.g. machine translation, audio understanding, text generation
+
+			3) Spiking Neural Networks
+			- neuron's state is time dependen; closest to the human brain
+			- computationally intensive, experimental, might be useful for new types of sensors e.g. DVS
+					
+			
+		a) Structure - Computational Graph
+		b) Modeling - Cost Function & End to End Training
+		
+		
+	3. Best Practices or What Took Us So Long?
+		a) Lack of Computational Resources and Data
+		b) Vanishing Gradients
+		- pretraining		- weight initialization
+		- activation functions
+		c) Overfitting
+		- dropout
+
+Summary:
+	We've just learned why Neural Networks are so cool, what they really are and how to use them effectively. 
+	I hope I convinced you to give them a try. I guess most of you use Machine Learning on a daily basis, right? Give neural networks a try and you won't be disappointed!
+
+Questions:
+
+	The question I get the most often is: Are NNs really so easy to use? Well, the answer is: no. But neither is any of the machine learning algorithms out there. If you just throw your data on an SVM
+	and it works - good for you: you probably don't need anything better. If you want to improve, however, it's not that easy. The drawback of NNs is that it won't work out of the back. You have to
+	give it some time before getting any results. Finally, it's usually worth it.
+
+
